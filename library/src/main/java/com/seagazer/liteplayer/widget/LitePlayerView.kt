@@ -10,6 +10,7 @@ import android.graphics.Paint
 import android.os.Handler
 import android.os.Message
 import android.util.AttributeSet
+import android.view.GestureDetector
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.ViewGroup
@@ -285,7 +286,6 @@ class LitePlayerView @JvmOverloads constructor(
                     playerStateListeners.forEach {
                         it.onSeekCompleted()
                     }
-                    start()
                 }
                 PlayerState.STATE_BUFFER_UPDATE -> {
                     MediaLogger.d("----> 缓冲进度更新: ${event.bufferedPercentage}")
@@ -407,30 +407,54 @@ class LitePlayerView @JvmOverloads constructor(
         }
     }
 
+
+    private val gestureDetector by lazy {
+        GestureDetector(context, object : GestureDetector.OnGestureListener {
+            override fun onShowPress(e: MotionEvent?) {
+            }
+
+            override fun onSingleTapUp(e: MotionEvent?): Boolean {
+                return false
+            }
+
+            override fun onDown(e: MotionEvent?): Boolean {
+                handler.removeMessages(MSG_HIDE_OVERLAY)
+                if (controller != null) {
+                    if (controller!!.isShowing()) {
+                        handler.sendEmptyMessage(MSG_HIDE_OVERLAY)
+                    } else {
+                        handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
+                    }
+                } else if (topbar != null) {
+                    if (topbar!!.isShowing()) {
+                        handler.sendEmptyMessage(MSG_HIDE_OVERLAY)
+                    } else {
+                        handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
+                    }
+                }
+                return true
+            }
+
+            override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+                return false
+            }
+
+            override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+                return false
+            }
+
+            override fun onLongPress(e: MotionEvent?) {
+
+            }
+        })
+    }
+
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (event!!.action == MotionEvent.ACTION_DOWN) {
-            handler.removeMessages(MSG_HIDE_OVERLAY)
-            if (controller != null) {
-                if (controller!!.isShowing()) {
-                    handler.sendEmptyMessage(MSG_HIDE_OVERLAY)
-                } else {
-                    handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
-                }
-            } else if (topbar != null) {
-                if (topbar!!.isShowing()) {
-                    handler.sendEmptyMessage(MSG_HIDE_OVERLAY)
-                } else {
-                    handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
-                }
-            }
-        } else if (event.action == MotionEvent.ACTION_MOVE) {
-            //TODO("seek setVolume setBlight")
-        } else if (event.action == MotionEvent.ACTION_UP) {
-            //TODO("seek completed")
-        }
-        return true
+        return gestureDetector.onTouchEvent(event)
     }
+
 
     private fun registerLifecycle() {
         if (context is FragmentActivity) {

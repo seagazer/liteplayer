@@ -2,11 +2,13 @@ package com.seagazer.liteplayer.widget
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -87,5 +89,9 @@ class LiteMediaTopbar @JvmOverloads constructor(
     override fun displayModeChanged(isFullScreen: Boolean) {
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return true
+    }
 
 }

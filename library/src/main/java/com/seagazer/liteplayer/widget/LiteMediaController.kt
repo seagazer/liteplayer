@@ -7,6 +7,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -132,6 +133,11 @@ class LiteMediaController @JvmOverloads constructor(
         } else {
             fullScreen.setImageResource(R.drawable.ic_full_screen)
         }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return true
     }
 
 }
