@@ -42,7 +42,6 @@ class LitePlayerView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr), IPlayerView, LifecycleObserver {
 
     companion object {
-        const val MSG_PROGRESS_INNER = 0x1
         const val MSG_PROGRESS = 0x2
         const val MSG_SHOW_OVERLAY = 0x3
         const val MSG_HIDE_OVERLAY = 0x4
@@ -50,14 +49,14 @@ class LitePlayerView @JvmOverloads constructor(
         const val AUTO_HIDE_DELAY = 3000L
         const val PROGRESS_STROKE_WIDTH = 6f
         const val DEFAULT_BACKGROUND_COLOR = Color.BLACK
-        const val DEFAULT_PROGRESS_COLOR = Color.RED
+        const val DEFAULT_PROGRESS_COLOR = 0xffD81BA2
     }
 
     private var dataSource: DataSource? = null
     // event observer
     private val renderStateObserver = MutableLiveData<RenderStateEvent>()
     private val playerStateObserver = MutableLiveData<PlayerStateEvent>()
-    private var playerStateListeners = mutableListOf<PlayerStateChangedListener>()
+    private val playerStateListeners = mutableListOf<PlayerStateChangedListener>()
     // config
     private var render: IRender? = null
     private var playerType: PlayerType? = null
@@ -72,13 +71,14 @@ class LitePlayerView @JvmOverloads constructor(
     }
     var isFullScreen = false
     // progress
-    private var isShowProgress = true
+    private var isOverlayDisplaying = false
+    private var isSupportProgress = false
     private var currentProgress = 0
     private var maxProgress = 0
     private val progressPaint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.STROKE
-            color = DEFAULT_PROGRESS_COLOR
+            color = DEFAULT_PROGRESS_COLOR.toInt()
             strokeWidth = PROGRESS_STROKE_WIDTH
         }
     }
@@ -100,24 +100,26 @@ class LitePlayerView @JvmOverloads constructor(
         object : Handler() {
             override fun handleMessage(msg: Message) {
                 currentProgress = getCurrentPosition().toInt()
-                if (msg.what == MSG_PROGRESS_INNER) {
-                    sendEmptyMessageDelayed(MSG_PROGRESS_INNER, PROGRESS_DELAY)
-                    invalidate()
-                } else if (msg.what == MSG_PROGRESS) {
+                if (msg.what == MSG_PROGRESS) {
                     val secondProgress = getBufferedPercentage().coerceAtMost(100) * 1.0f / 100 * getDuration()
                     controller?.onProgressChanged(currentProgress, secondProgress.toInt())
                     sendEmptyMessageDelayed(MSG_PROGRESS, PROGRESS_DELAY)
+                    invalidate()
                 } else if (msg.what == MSG_SHOW_OVERLAY) {
                     controller?.show()
                     topbar?.show()
-                    hideDefaultProgress()
+                    isOverlayDisplaying = true
+                    invalidate()
                     if (isAutoHideOverlay) {
                         sendEmptyMessageDelayed(MSG_HIDE_OVERLAY, AUTO_HIDE_DELAY)
                     }
                 } else if (msg.what == MSG_HIDE_OVERLAY) {
                     controller?.hide()
                     topbar?.hide()
-                    showDefaultProgress()
+                    isOverlayDisplaying = false
+                    if (isSupportProgress) {
+                        invalidate()
+                    }
                 }
             }
         }
@@ -132,6 +134,10 @@ class LitePlayerView @JvmOverloads constructor(
         setBackgroundColor(DEFAULT_BACKGROUND_COLOR)
         registerMediaEventObservers(context)
         registerLifecycle()
+    }
+
+    fun setProgressColor(color: Int) {
+        progressPaint.color = color
     }
 
     fun attachMediaController(controller: IController) {
@@ -205,10 +211,6 @@ class LitePlayerView @JvmOverloads constructor(
                     topbar?.onPlayerPrepared(getDataSource()!!)
                     controller?.onStarted()
                     handler.sendEmptyMessage(MSG_PROGRESS)
-                    if (isShowProgress) {
-                        handler.removeMessages(MSG_PROGRESS_INNER)
-                        handler.sendEmptyMessage(MSG_PROGRESS_INNER)
-                    }
                     handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
                 }
                 PlayerState.STATE_PAUSED -> {
@@ -219,7 +221,6 @@ class LitePlayerView @JvmOverloads constructor(
                     }
                     controller?.onPaused()
                     handler.removeMessages(MSG_PROGRESS)
-                    handler.removeMessages(MSG_PROGRESS_INNER)
                 }
                 PlayerState.STATE_STOPPED -> {
                     MediaLogger.d("----> 播放停止")
@@ -228,7 +229,6 @@ class LitePlayerView @JvmOverloads constructor(
                         it.onStopped()
                     }
                     handler.removeMessages(MSG_PROGRESS)
-                    handler.removeMessages(MSG_PROGRESS_INNER)
                 }
                 PlayerState.STATE_PLAYBACK_COMPLETE -> {
                     MediaLogger.d("----> 播放完毕")
@@ -237,7 +237,6 @@ class LitePlayerView @JvmOverloads constructor(
                         it.onCompleted()
                     }
                     handler.removeMessages(MSG_PROGRESS)
-                    handler.removeMessages(MSG_PROGRESS_INNER)
                 }
                 PlayerState.STATE_ERROR -> {
                     MediaLogger.d("----> 播放错误")
@@ -246,7 +245,6 @@ class LitePlayerView @JvmOverloads constructor(
                         it.onError(playerType!!, event.errorCode)
                     }
                     handler.removeMessages(MSG_PROGRESS)
-                    handler.removeMessages(MSG_PROGRESS_INNER)
                 }
                 PlayerState.STATE_VIDEO_SIZE_CHANGED -> {
                     MediaLogger.d("---->视频宽高改变: ${event.videoWidth} * ${event.videoHeight}，刷新surface render初始尺寸:")
@@ -305,10 +303,10 @@ class LitePlayerView @JvmOverloads constructor(
         if (androidParent == null) {
             findParent()
         }
-        if (isShowProgress) {// always false when first attach
-            showDefaultProgress()
+        if (isSupportProgress) {
+            invalidate()
         }
-        controller?.let {
+        if (controller != null || topbar != null) {
             handler.sendEmptyMessage(MSG_PROGRESS)
             handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
         }
@@ -340,32 +338,16 @@ class LitePlayerView @JvmOverloads constructor(
     }
 
     fun displayProgress(showProgress: Boolean) {
-        if (this.isShowProgress == showProgress) {
+        if (this.isSupportProgress == showProgress) {
             return
         }
-        if (showProgress) {
-            showDefaultProgress()
-        } else {
-            hideDefaultProgress()
-        }
-    }
-
-    private fun showDefaultProgress() {
-        MediaLogger.d("show progress")
-        this.isShowProgress = true
-        handler.sendEmptyMessageDelayed(MSG_PROGRESS_INNER, PROGRESS_DELAY)
-    }
-
-    private fun hideDefaultProgress() {
-        MediaLogger.d("hide progress")
-        this.isShowProgress = false
-        handler.removeMessages(MSG_PROGRESS_INNER)
+        isSupportProgress = showProgress
         invalidate()
     }
 
     override fun dispatchDraw(canvas: Canvas?) {
         super.dispatchDraw(canvas)
-        if (isShowProgress) {
+        if (!isOverlayDisplaying && isSupportProgress) {
             val h = measuredHeight - PROGRESS_STROKE_WIDTH
             canvas!!.save()
             canvas.clipRect(0f, h, measuredWidth.toFloat(), measuredHeight.toFloat())
