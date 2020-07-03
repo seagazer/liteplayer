@@ -69,7 +69,7 @@ class LiteMediaController @JvmOverloads constructor(
             }
         }
         fullScreen.setOnClickListener {
-            if (player.isFullScreen) {
+            if (player.isFullScreen()) {
                 player.setFullScreenMode(false)
             } else {
                 player.setFullScreenMode(true)

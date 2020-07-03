@@ -70,7 +70,7 @@ class LitePlayerView @JvmOverloads constructor(
     private val renderMeasure by lazy {
         RenderMeasure()
     }
-    var isFullScreen = false
+    private var isFullScreen = false
     // progress
     private var isOverlayDisplaying = false
     private var isSupportProgress = false
@@ -141,21 +141,21 @@ class LitePlayerView @JvmOverloads constructor(
         progressPaint.color = color
     }
 
-    fun attachMediaController(controller: IController) {
+    override fun attachMediaController(controller: IController) {
         this.controller = controller
         if (indexOfChild(controller.getView()) == -1) {
             this.controller!!.attachPlayer(this)
         }
     }
 
-    fun attachMediaTopbar(topbar: ITopbar) {
+    override fun attachMediaTopbar(topbar: ITopbar) {
         this.topbar = topbar
         if (indexOfChild(topbar.getView()) == -1) {
             this.topbar!!.attachPlayer(this)
         }
     }
 
-    fun attachOverlay(overlay: IOverlay) {
+    override fun attachOverlay(overlay: IOverlay) {
         this.customOverlays.add(overlay)
         addOverlayInner(overlay)
     }
@@ -337,6 +337,10 @@ class LitePlayerView @JvmOverloads constructor(
         MediaLogger.d("detach window")
     }
 
+    fun setProgressColor(color: Int) {
+        progressPaint.color = color
+    }
+
     fun displayProgress(showProgress: Boolean) {
         if (this.isSupportProgress == showProgress) {
             return
@@ -351,6 +355,17 @@ class LitePlayerView @JvmOverloads constructor(
             val h = measuredHeight - PROGRESS_STROKE_WIDTH
             canvas!!.save()
             canvas.clipRect(0f, h, measuredWidth.toFloat(), measuredHeight.toFloat())
+            // draw second progress
+            progressPaint.alpha = 160
+            canvas.drawLine(
+                0f,
+                measuredHeight.toFloat(),
+                getBufferedPercentage().coerceAtMost(100) * 1.0f / 100 * measuredWidth,
+                measuredHeight.toFloat(),
+                progressPaint
+            )
+            // draw current progress
+            progressPaint.alpha = 255
             canvas.drawLine(
                 0f,
                 measuredHeight.toFloat(),
@@ -361,6 +376,8 @@ class LitePlayerView @JvmOverloads constructor(
             canvas.restore()
         }
     }
+
+    fun isFullScreen() = isFullScreen
 
     fun setFullScreenMode(isFullScreen: Boolean) {
         // do nothing if current has no attach parent

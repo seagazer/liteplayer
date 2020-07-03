@@ -43,7 +43,7 @@ class LiteMediaTopbar @JvmOverloads constructor(
         back = findViewById(R.id.lite_top_bar_back)
         title = findViewById(R.id.lite_top_bar_title)
         back.setOnClickListener {
-            if (player.isFullScreen) {
+            if (player.isFullScreen()) {
                 player.setFullScreenMode(false)
             } else {
                 if (context is Activity) {

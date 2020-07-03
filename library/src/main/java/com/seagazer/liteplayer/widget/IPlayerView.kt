@@ -29,6 +29,10 @@ interface IPlayerView : IPlayerCore {
     fun getPlayer(): IPlayer?
     fun isInPlaybackState(): Boolean
 
+    fun attachMediaController(controller: IController)
+    fun attachMediaTopbar(topbar: ITopbar)
+    fun attachOverlay(overlay: IOverlay)
+
     fun getDataSource(): DataSource?
 
 }
