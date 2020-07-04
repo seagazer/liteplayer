@@ -28,6 +28,7 @@ class LiteGestureOverlay @JvmOverloads constructor(
     private var isSeekShow = false
     private var edgeSize = 0f// left and right area to handle brightness and volume
     private var moveXDistance = 0
+    private var currentPosition = 0L
     private var targetPosition = 0L
     private var isTouchInSeekArea = false
     private var isGestureSeeking = false
@@ -83,6 +84,9 @@ class LiteGestureOverlay @JvmOverloads constructor(
     override fun onDown(e: MotionEvent?) {
         isTouchInSeekArea = e!!.x > edgeSize && e.x < (width - edgeSize)
         MediaLogger.d("isTouchInSeekArea = $isTouchInSeekArea")
+        if (isTouchInSeekArea) {
+            currentPosition = player.getCurrentPosition()
+        }
     }
 
     override fun onShowPress(e: MotionEvent?) {
@@ -128,7 +132,7 @@ class LiteGestureOverlay @JvmOverloads constructor(
         // Set max seek progress for single gesture action(down->move->up) is duration/3
         val duration = -(player.getDuration() * percent / 3).toLong()
         MediaLogger.d("seek duration =$duration")
-        var targetPosition = player.getCurrentPosition() + duration
+        var targetPosition = currentPosition + duration
         if (targetPosition < 0) {
             targetPosition = 0
         } else if (targetPosition > player.getDuration()) {
