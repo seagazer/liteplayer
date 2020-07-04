@@ -104,6 +104,8 @@ class PlayerActivity : AppCompatActivity() {
         player_view.attachMediaController(LiteMediaController(this))
         player_view.attachMediaTopbar(LiteMediaTopbar(this))
         player_view.attachMediaGesture(LiteGestureOverlay(this))
+        // custom loading overlay
+        player_view.attachOverlay(LoadingOverlay(this))
         player_view.setAutoHideOverlay(true)
 
         player_view.start()
