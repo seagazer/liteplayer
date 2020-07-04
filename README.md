@@ -27,12 +27,16 @@
 
 
 #### v1.0版本核心类结构图：
+
+<center>
+<figure>
 <img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/LitePlayer_ClassCore.png" width="820" height="500"/>
 
 #### Demo展示：
-<img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/Screenshot_1593832506.png" width="250" height="450"/>
+<img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/Screenshot_1593832506.png" width="240" height="450"/>
 
-<img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/Screenshot_1593832537.png" width="250" height="450"/>
+<img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/Screenshot_1593832537.png" width="240" height="450"/>
 
-<img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/Screenshot_1593832554.png" width="250" height="450"/>
-
+<img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/Screenshot_1593832554.png" width="240" height="450"/>
+</center>
+</figure>
