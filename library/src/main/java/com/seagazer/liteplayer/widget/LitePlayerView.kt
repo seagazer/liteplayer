@@ -88,6 +88,7 @@ class LitePlayerView @JvmOverloads constructor(
     private var isAutoHideOverlay = true
     // topbar
     private var topbar: ITopbar? = null
+    private var gestureOverlay: IGestureOverlay? = null
     // custom overlay
     private var customOverlays = mutableListOf<IOverlay>()
     // sensor
@@ -100,8 +101,8 @@ class LitePlayerView @JvmOverloads constructor(
         @SuppressLint("HandlerLeak")
         object : Handler() {
             override fun handleMessage(msg: Message) {
-                currentProgress = getCurrentPosition().toInt()
                 if (msg.what == MSG_PROGRESS) {
+                    currentProgress = getCurrentPosition().toInt()
                     val secondProgress = getBufferedPercentage().coerceAtMost(100) * 1.0f / 100 * getDuration()
                     controller?.onProgressChanged(currentProgress, secondProgress.toInt())
                     sendEmptyMessageDelayed(MSG_PROGRESS, PROGRESS_DELAY)
@@ -137,10 +138,6 @@ class LitePlayerView @JvmOverloads constructor(
         registerLifecycle()
     }
 
-    fun setProgressColor(color: Int) {
-        progressPaint.color = color
-    }
-
     override fun attachMediaController(controller: IController) {
         this.controller = controller
         if (indexOfChild(controller.getView()) == -1) {
@@ -152,6 +149,13 @@ class LitePlayerView @JvmOverloads constructor(
         this.topbar = topbar
         if (indexOfChild(topbar.getView()) == -1) {
             this.topbar!!.attachPlayer(this)
+        }
+    }
+
+    override fun attachMediaGesture(gestureOverlay: IGestureOverlay) {
+        this.gestureOverlay = gestureOverlay
+        if (indexOfChild(gestureOverlay.getView()) == -1) {
+            this.gestureOverlay!!.attachPlayer(this)
         }
     }
 
@@ -424,54 +428,72 @@ class LitePlayerView @JvmOverloads constructor(
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (event!!.action == MotionEvent.ACTION_UP) {
+            gestureOverlay?.onGestureFinish(event)
+            gestureOverlay?.hide()
+        }
+        return gestureDetector.onTouchEvent(event)
+    }
 
     private val gestureDetector by lazy {
-        GestureDetector(context, object : GestureDetector.OnGestureListener {
-            override fun onShowPress(e: MotionEvent?) {
-            }
-
-            override fun onSingleTapUp(e: MotionEvent?): Boolean {
-                return false
-            }
+        GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
 
             override fun onDown(e: MotionEvent?): Boolean {
-                handler.removeMessages(MSG_HIDE_OVERLAY)
                 if (controller != null) {
+                    handler.removeMessages(MSG_HIDE_OVERLAY)
                     if (controller!!.isShowing()) {
                         handler.sendEmptyMessage(MSG_HIDE_OVERLAY)
                     } else {
                         handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
                     }
                 } else if (topbar != null) {
+                    handler.removeMessages(MSG_HIDE_OVERLAY)
                     if (topbar!!.isShowing()) {
                         handler.sendEmptyMessage(MSG_HIDE_OVERLAY)
                     } else {
                         handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
                     }
                 }
+                gestureOverlay?.onDown(e)
                 return true
             }
 
-            override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+            override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+                gestureOverlay?.onScroll(e1, e2, distanceX, distanceY)
                 return false
             }
 
-            override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+            override fun onDoubleTap(e: MotionEvent?): Boolean {
+                gestureOverlay?.onDoubleTap(e)
+                return true
+            }
+
+            override fun onSingleTapUp(e: MotionEvent?): Boolean {
+                gestureOverlay?.onSingleTapUp(e)
                 return false
+            }
+
+            override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+                gestureOverlay?.onFling(e1, e2, velocityX, velocityY)
+                return false
+            }
+
+            override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
+                gestureOverlay?.onSingleTapConfirmed(e)
+                return false
+            }
+
+            override fun onShowPress(e: MotionEvent?) {
+                gestureOverlay?.onShowPress(e)
             }
 
             override fun onLongPress(e: MotionEvent?) {
-
+                gestureOverlay?.onLongPress(e)
             }
         })
     }
-
-
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        return gestureDetector.onTouchEvent(event)
-    }
-
 
     private fun registerLifecycle() {
         if (context is FragmentActivity) {
@@ -545,6 +567,7 @@ class LitePlayerView @JvmOverloads constructor(
         )
         controller?.attachPlayer(this)
         topbar?.attachPlayer(this)
+        gestureOverlay?.attachPlayer(this)
         customOverlays.forEach {
             addOverlayInner(it)
         }

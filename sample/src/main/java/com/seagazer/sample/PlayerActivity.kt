@@ -16,6 +16,7 @@ import com.seagazer.liteplayer.config.RenderType
 import com.seagazer.liteplayer.helper.OrientationSensorHelper
 import com.seagazer.liteplayer.helper.TimeConverter
 import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
+import com.seagazer.liteplayer.widget.LiteGestureOverlay
 import com.seagazer.liteplayer.widget.LiteMediaController
 import com.seagazer.liteplayer.widget.LiteMediaTopbar
 import kotlinx.android.synthetic.main.activity_player.*
@@ -102,6 +103,7 @@ class PlayerActivity : AppCompatActivity() {
         // media controller and topbar
         player_view.attachMediaController(LiteMediaController(this))
         player_view.attachMediaTopbar(LiteMediaTopbar(this))
+        player_view.attachMediaGesture(LiteGestureOverlay(this))
         player_view.setAutoHideOverlay(true)
 
         player_view.start()

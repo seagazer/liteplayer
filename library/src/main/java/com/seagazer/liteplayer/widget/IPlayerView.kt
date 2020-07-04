@@ -31,6 +31,7 @@ interface IPlayerView : IPlayerCore {
 
     fun attachMediaController(controller: IController)
     fun attachMediaTopbar(topbar: ITopbar)
+    fun attachMediaGesture(gestureOverlay: IGestureOverlay)
     fun attachOverlay(overlay: IOverlay)
 
     fun getDataSource(): DataSource?
