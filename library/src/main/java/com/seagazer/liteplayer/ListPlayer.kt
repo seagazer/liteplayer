@@ -1,5 +1,8 @@
 package com.seagazer.liteplayer
 
+import android.annotation.SuppressLint
+import android.os.Handler
+import android.os.Message
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import androidx.fragment.app.FragmentActivity
@@ -22,6 +25,11 @@ import com.seagazer.liteplayer.widget.LitePlayerView
  * Date: 2020/6/29
  */
 class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by playerView, LifecycleObserver {
+    companion object {
+        private const val MSG_ATTACH_CONTAINER = 0x11
+        private const val ATTACH_DELAY = 500L
+    }
+
     private var playingPosition = 0
     private var recyclerView: RecyclerView? = null
     private var layoutManager: LinearLayoutManager? = null
@@ -138,6 +146,24 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
         }
     }
 
+    @SuppressLint("HandlerLeak")
+    private val attachHandler = object : Handler() {
+        override fun handleMessage(msg: Message) {
+            if (msg.what == MSG_ATTACH_CONTAINER) {
+                val currentFirst: Int = msg.obj as Int
+                val container = listener.getVideoContainer(currentFirst)
+                detachVideoContainer()
+                container?.addView(playerView)
+                MediaLogger.d("attach container: $container")
+                val dataSource = listener.getVideoDataSource(currentFirst)
+                dataSource?.let {
+                    playerView.setDataSource(it)
+                    playerView.start()
+                }
+            }
+        }
+    }
+
     private val autoPlayScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             layoutManager?.let { lm ->
@@ -148,14 +174,8 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
                     MediaLogger.d("position: playing=$playingPosition, first=$currentFirst")
                     // 当前第一个不等于上次播放的index，播放当前第一个
                     if (playingPosition != currentFirst) {
-                        val container = listener.getVideoContainer(currentFirst)
-                        container?.addView(playerView)
-                        MediaLogger.d("attach container: $container")
-                        val dataSource = listener.getVideoDataSource(currentFirst)
-                        dataSource?.let {
-                            playerView.setDataSource(it)
-                            playerView.start()
-                        }
+                        attachHandler.removeMessages(MSG_ATTACH_CONTAINER)
+                        attachHandler.sendMessageDelayed(attachHandler.obtainMessage(MSG_ATTACH_CONTAINER, currentFirst), ATTACH_DELAY)
                     }
                 }
                 if (currentFirst != RecyclerView.NO_POSITION) {
@@ -193,19 +213,17 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private fun onActivityResume() {
-        MediaLogger.d("-->")
         resume()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private fun onActivityStop() {
-        MediaLogger.d("-->")
         pause()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private fun onActivityDestroy() {
-        MediaLogger.d("-->")
+        attachHandler.removeCallbacksAndMessages(null)
         unregisterLifecycle()
         detachRecyclerView()
     }
