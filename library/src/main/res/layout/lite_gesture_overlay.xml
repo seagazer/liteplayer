@@ -12,4 +12,31 @@
         android:textSize="16sp"
         android:visibility="invisible" />
 
+
+    <LinearLayout
+        android:id="@+id/lite_gesture_vertical_controller"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_gesture_overlay"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:visibility="invisible">
+
+        <ImageView
+            android:id="@+id/lite_gesture_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ProgressBar
+            android:id="@+id/lite_gesture_progress"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:max="100" />
+
+    </LinearLayout>
+
 </merge>

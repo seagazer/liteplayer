@@ -88,6 +88,7 @@ class LitePlayerView @JvmOverloads constructor(
     private var isAutoHideOverlay = true
     // topbar
     private var topbar: ITopbar? = null
+    // gesture overlay
     private var gestureOverlay: IGestureOverlay? = null
     // custom overlay
     private var customOverlays = mutableListOf<IOverlay>()
