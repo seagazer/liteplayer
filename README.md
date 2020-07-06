@@ -1,13 +1,13 @@
 # LitePlayer
 <font color=#4A90CE size=5>A lite player for android by Kotlin language</font>
 
-#### 目前v1.0版已支持功能：
+#### 目前v1版已支持功能：
 * <font color=#4A90CE>支持ExoPlayer解码</font>
 * <font color=#4A90CE>支持SurfaceView和TextureView渲染</font>
 * <font color=#4A90CE>支持AspectRatio画面比例模式</font>
 * <font color=#4A90CE>支持FullScreen模式</font>
 * <font color=#4A90CE>支持RecyclerView列表播放</font>
-* <font color=#4A90CE>支持手势seek,</font> setBrightness, setVolume操作
+* <font color=#4A90CE>支持手势seek, setBrightness, setVolume操作</font>
 * <font color=#4A90CE>支持预置Controller控制面板</font>
 * <font color=#4A90CE>支持预置Topbar信息面板</font>
 * <font color=#4A90CE>支持自定义Overlay面板</font>
@@ -26,17 +26,14 @@
 
 
 
-#### v1.0版本核心类结构图：
-
-<center>
-<figure>
+#### v1版本核心类结构图：
 <img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/LitePlayer_ClassCore.png" width="820" height="500"/>
 
 #### Demo展示：
-<img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/Screenshot_1593832506.png" width="240" height="450"/>
-
-<img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/Screenshot_1593832537.png" width="240" height="450"/>
-
-<img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/Screenshot_1593832554.png" width="240" height="450"/>
-</center>
-</figure>
+<table>
+<tr>
+<td><center><img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/Screenshot_1593832506.png" width="240" height="450"/></center></td>
+<td><center><img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/Screenshot_1593832537.png" width="240" height="450"/></center></td>
+<td><center><img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/Screenshot_1593832554.png" width="240" height="450"/></center></td>
+</tr>
+</table>
