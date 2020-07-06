@@ -37,3 +37,5 @@
 <td><center><img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/Screenshot_1593832554.png" width="240" height="450"/></center></td>
 </tr>
 </table>
+
+### <font color=#ff0000>注意：Demo展示中的视频链接均来源于网络，仅供学习交流使用，严禁用于商业用途，若有侵权请联系作者删除(seagazer@qq.com) </color>
