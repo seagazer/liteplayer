@@ -7,7 +7,7 @@ import android.view.MotionEvent
  * Author: Seagazer
  * Date: 2020/7/3
  */
-interface IGestureOverlay : IOverlay {
+interface IGesture : IOverlay {
     fun onDown(e: MotionEvent?)
 
     fun onShowPress(e: MotionEvent?)

@@ -90,8 +90,8 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
                 container?.addView(playerView)
                 MediaLogger.d("attach container: $container")
                 val dataSource = listener.getVideoDataSource(playingPosition)
-                if (dataSource != null) {
-                    playerView.setDataSource(dataSource)
+                dataSource?.let {
+                    playerView.setDataSource(it)
                     playerView.start()
                 }
                 this@ListPlayer.recyclerView!!.viewTreeObserver.removeOnGlobalLayoutListener(this)
@@ -129,8 +129,8 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
         container?.addView(playerView)
         MediaLogger.d("attach container: $container")
         val dataSource = listener.getVideoDataSource(position)
-        if (dataSource != null) {
-            playerView.setDataSource(dataSource)
+        dataSource?.let {
+            playerView.setDataSource(it)
             playerView.start()
         }
         if (position != RecyclerView.NO_POSITION) {
@@ -152,8 +152,8 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
                         container?.addView(playerView)
                         MediaLogger.d("attach container: $container")
                         val dataSource = listener.getVideoDataSource(currentFirst)
-                        if (dataSource != null) {
-                            playerView.setDataSource(dataSource)
+                        dataSource?.let {
+                            playerView.setDataSource(it)
                             playerView.start()
                         }
                     }

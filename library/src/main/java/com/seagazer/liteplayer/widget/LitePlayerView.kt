@@ -89,7 +89,7 @@ class LitePlayerView @JvmOverloads constructor(
     // topbar
     private var topbar: ITopbar? = null
     // gesture overlay
-    private var gestureOverlay: IGestureOverlay? = null
+    private var gestureController: IGesture? = null
     // custom overlay
     private var customOverlays = mutableListOf<IOverlay>()
     // sensor
@@ -141,22 +141,22 @@ class LitePlayerView @JvmOverloads constructor(
 
     override fun attachMediaController(controller: IController) {
         this.controller = controller
-        if (indexOfChild(controller.getView()) == -1) {
+        if (indexOfChild(this.controller!!.getView()) == -1) {
             this.controller!!.attachPlayer(this)
         }
     }
 
     override fun attachMediaTopbar(topbar: ITopbar) {
         this.topbar = topbar
-        if (indexOfChild(topbar.getView()) == -1) {
+        if (indexOfChild(this.topbar!!.getView()) == -1) {
             this.topbar!!.attachPlayer(this)
         }
     }
 
-    override fun attachMediaGesture(gestureOverlay: IGestureOverlay) {
-        this.gestureOverlay = gestureOverlay
-        if (indexOfChild(gestureOverlay.getView()) == -1) {
-            this.gestureOverlay!!.attachPlayer(this)
+    override fun attachGestureController(gestureOverlay: IGesture) {
+        this.gestureController = gestureOverlay
+        if (indexOfChild(this.gestureController!!.getView()) == -1) {
+            this.gestureController!!.attachPlayer(this)
         }
     }
 
@@ -432,8 +432,8 @@ class LitePlayerView @JvmOverloads constructor(
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event!!.action == MotionEvent.ACTION_UP) {
-            gestureOverlay?.onGestureFinish(event)
-            gestureOverlay?.hide()
+            gestureController?.onGestureFinish(event)
+            gestureController?.hide()
         }
         return gestureDetector.onTouchEvent(event)
     }
@@ -457,41 +457,41 @@ class LitePlayerView @JvmOverloads constructor(
                         handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
                     }
                 }
-                gestureOverlay?.onDown(e)
+                gestureController?.onDown(e)
                 return true
             }
 
             override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
-                gestureOverlay?.onScroll(e1, e2, distanceX, distanceY)
+                gestureController?.onScroll(e1, e2, distanceX, distanceY)
                 return false
             }
 
             override fun onDoubleTap(e: MotionEvent?): Boolean {
-                gestureOverlay?.onDoubleTap(e)
+                gestureController?.onDoubleTap(e)
                 return true
             }
 
             override fun onSingleTapUp(e: MotionEvent?): Boolean {
-                gestureOverlay?.onSingleTapUp(e)
+                gestureController?.onSingleTapUp(e)
                 return false
             }
 
             override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
-                gestureOverlay?.onFling(e1, e2, velocityX, velocityY)
+                gestureController?.onFling(e1, e2, velocityX, velocityY)
                 return false
             }
 
             override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
-                gestureOverlay?.onSingleTapConfirmed(e)
+                gestureController?.onSingleTapConfirmed(e)
                 return false
             }
 
             override fun onShowPress(e: MotionEvent?) {
-                gestureOverlay?.onShowPress(e)
+                gestureController?.onShowPress(e)
             }
 
             override fun onLongPress(e: MotionEvent?) {
-                gestureOverlay?.onLongPress(e)
+                gestureController?.onLongPress(e)
             }
         })
     }
@@ -511,19 +511,16 @@ class LitePlayerView @JvmOverloads constructor(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private fun onActivityResume() {
-        MediaLogger.d("-->")
         resume()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private fun onActivityStop() {
-        MediaLogger.d("-->")
         pause()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private fun onActivityDestroy() {
-        MediaLogger.d("-->")
         stop()
         destroy()
         unregisterLifecycle()
@@ -568,7 +565,7 @@ class LitePlayerView @JvmOverloads constructor(
         )
         controller?.attachPlayer(this)
         topbar?.attachPlayer(this)
-        gestureOverlay?.attachPlayer(this)
+        gestureController?.attachPlayer(this)
         customOverlays.forEach {
             addOverlayInner(it)
         }

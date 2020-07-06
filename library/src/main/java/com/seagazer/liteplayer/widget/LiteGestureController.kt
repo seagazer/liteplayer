@@ -21,9 +21,9 @@ import kotlin.math.abs
  * Author: Seagazer
  * Date: 2020/7/3
  */
-class LiteGestureOverlay @JvmOverloads constructor(
+class LiteGestureController @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr), IGestureOverlay {
+) : FrameLayout(context, attrs, defStyleAttr), IGesture {
     private lateinit var player: LitePlayerView
     private var edgeSize = 0f// left and right area to handle brightness and volume
 
