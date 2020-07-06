@@ -1,4 +1,4 @@
-package com.seagazer.sample
+package com.seagazer.sample.widget
 
 import android.content.Context
 import android.util.AttributeSet
@@ -11,6 +11,7 @@ import com.seagazer.liteplayer.listener.PlayerStateChangedListener
 import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
 import com.seagazer.liteplayer.widget.IOverlay
 import com.seagazer.liteplayer.widget.LitePlayerView
+import com.seagazer.sample.R
 
 /**
  * A sample to show how to make a custom overlay for loading state.

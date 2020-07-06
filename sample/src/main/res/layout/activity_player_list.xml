@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
     android:orientation="vertical"
-    tools:context=".PlayerListActivity">
+    tools:context=".example.PlayerListActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

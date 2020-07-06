@@ -1,4 +1,4 @@
-package com.seagazer.sample
+package com.seagazer.sample.widget
 
 import android.graphics.Rect
 import android.view.View

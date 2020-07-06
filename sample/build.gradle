@@ -39,5 +39,5 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.google.android.exoplayer:exoplayer:2.11.3'
     implementation project(path: ':library')
-    implementation 'com.github.seagazer:sui:1.0.1'
+    implementation 'com.github.seagazer:animlogoview:1.0.0'
 }

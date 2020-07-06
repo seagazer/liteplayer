@@ -1,7 +1,6 @@
-package com.seagazer.sample
+package com.seagazer.sample.example
 
 import android.annotation.SuppressLint
-import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
@@ -19,6 +18,9 @@ import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
 import com.seagazer.liteplayer.widget.LiteGestureOverlay
 import com.seagazer.liteplayer.widget.LiteMediaController
 import com.seagazer.liteplayer.widget.LiteMediaTopbar
+import com.seagazer.sample.R
+import com.seagazer.sample.toastShort
+import com.seagazer.sample.widget.LoadingOverlay
 import kotlinx.android.synthetic.main.activity_player.*
 
 class PlayerActivity : AppCompatActivity() {
@@ -100,7 +102,7 @@ class PlayerActivity : AppCompatActivity() {
         player_view.setPlayerType(PlayerType.TYPE_EXO_PLAYER)
         // prepare video
         player_view.setDataSource(DataSource(url1, "玩具总动员"))
-        // media controller and topbar
+        // media controller, topbar and gesture controller
         player_view.attachMediaController(LiteMediaController(this))
         player_view.attachMediaTopbar(LiteMediaTopbar(this))
         player_view.attachMediaGesture(LiteGestureOverlay(this))
@@ -167,7 +169,8 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (player_view.isFullScreen()) {
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            player_view.setFullScreenMode(false)
         } else {
             super.onBackPressed()
         }

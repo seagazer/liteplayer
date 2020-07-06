@@ -1,9 +1,10 @@
 package com.seagazer.sample
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import kotlinx.android.synthetic.main.activity_main.*
+import androidx.appcompat.app.AppCompatActivity
+import com.seagazer.sample.example.PlayerActivity
+import com.seagazer.sample.example.PlayerListActivity
 
 class MainActivity : AppCompatActivity() {
 

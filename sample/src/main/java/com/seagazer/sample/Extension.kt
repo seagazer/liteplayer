@@ -3,6 +3,7 @@ package com.seagazer.sample
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
 import android.widget.Toast
 
 /**
@@ -21,4 +22,8 @@ fun Context.toastLong(msg: String) {
 fun Activity.navigationTo(clazz: Class<*>) {
     val intent = Intent(this, clazz)
     startActivity(intent)
+}
+
+fun Activity.actionDelay(action: () -> Unit, delay: Long) {
+    Handler().postDelayed({ action() }, delay)
 }

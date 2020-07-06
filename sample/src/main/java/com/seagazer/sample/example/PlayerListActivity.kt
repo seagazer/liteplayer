@@ -1,4 +1,4 @@
-package com.seagazer.sample
+package com.seagazer.sample.example
 
 import android.content.res.Configuration
 import android.os.Bundle
@@ -15,6 +15,8 @@ import com.seagazer.liteplayer.ListPlayer
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.helper.OrientationSensorHelper
 import com.seagazer.liteplayer.widget.LitePlayerView
+import com.seagazer.sample.R
+import com.seagazer.sample.widget.SimpleItemDecoration
 import kotlinx.android.synthetic.main.activity_player_list.*
 
 class PlayerListActivity : AppCompatActivity() {
