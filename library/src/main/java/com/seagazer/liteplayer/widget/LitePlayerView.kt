@@ -10,10 +10,7 @@ import android.graphics.Paint
 import android.os.Handler
 import android.os.Message
 import android.util.AttributeSet
-import android.view.GestureDetector
-import android.view.Gravity
-import android.view.MotionEvent
-import android.view.ViewGroup
+import android.view.*
 import android.widget.FrameLayout
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
@@ -31,6 +28,7 @@ import com.seagazer.liteplayer.render.IRender
 import com.seagazer.liteplayer.render.RenderMeasure
 import com.seagazer.liteplayer.render.RenderSurfaceView
 import com.seagazer.liteplayer.render.RenderTextureView
+import java.lang.ref.WeakReference
 
 /**
  * A lite player view to play media source.
@@ -53,6 +51,7 @@ class LitePlayerView @JvmOverloads constructor(
         const val DEFAULT_PROGRESS_COLOR = 0xffD81BA2
     }
 
+    private var activityReference: WeakReference<Activity>? = null
     private var dataSource: DataSource? = null
     // event observer
     private val renderStateObserver = MutableLiveData<RenderStateEvent>()
@@ -130,6 +129,9 @@ class LitePlayerView @JvmOverloads constructor(
 
     init {
         MediaLogger.d("----> 初始化")
+        if (context is Activity) {
+            activityReference = WeakReference(context)
+        }
         if (!LitePlayerCore.isInit) {
             MediaLogger.d("----> 初始化 PlayerManager")
             LitePlayerCore.init(context)
@@ -388,36 +390,58 @@ class LitePlayerView @JvmOverloads constructor(
         // do nothing if current has no attach parent
         if (this.isFullScreen != isFullScreen && parent != null) {
             if (isFullScreen) {
+                activityReference?.let {
+                    it.get()?.run {
+                        if (requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                            sensorHelper.startWatching(this, true)
+                        }
+                    }
+                }
                 // if is list player, the directParent will be changed
                 directParent = parent as ViewGroup
                 childIndex = directParent!!.indexOfChild(this)
+                adjustFullScreen(true)
                 this.isFullScreen = true
                 detachVideoContainer()
                 androidParent?.addView(this, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
                 controller?.displayModeChanged(true)
                 topbar?.displayModeChanged(true)
-                if (context is Activity) {
-                    val activity = context as Activity
-                    if (activity.requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-                        activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                        sensorHelper.startWatching(activity, true)
-                    }
-                }
                 MediaLogger.d("开启全屏: $width * $height")
             } else {
+                activityReference?.let {
+                    it.get()?.run {
+                        if (requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                        }
+                        sensorHelper.stopWatching()
+                    }
+                }
+                adjustFullScreen(false)
                 this.isFullScreen = false
                 detachVideoContainer()
                 directParent?.addView(this, childIndex, originLayoutParams)
                 controller?.displayModeChanged(false)
                 topbar?.displayModeChanged(false)
-                if (context is Activity) {
-                    val activity = context as Activity
-                    if (activity.requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-                        activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                    }
-                    sensorHelper.stopWatching()
-                }
                 MediaLogger.d("退出全屏: $width * $height")
+            }
+        }
+    }
+
+    private fun adjustFullScreen(isFullScreen: Boolean) {
+        activityReference?.let {
+            it.get()?.run {
+                val decorView = window.decorView
+                if (isFullScreen) {
+                    decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_FULLSCREEN
+                            or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+                } else {
+                    decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                }
             }
         }
     }
@@ -521,6 +545,9 @@ class LitePlayerView @JvmOverloads constructor(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private fun onActivityDestroy() {
+        activityReference?.run {
+            clear()
+        }
         stop()
         destroy()
         unregisterLifecycle()

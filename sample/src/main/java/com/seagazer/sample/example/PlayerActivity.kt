@@ -184,23 +184,8 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        adjustFullScreen(newConfig)
         val isFullScreen = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
         player_view.setFullScreenMode(isFullScreen)
-    }
-
-    private fun adjustFullScreen(config: Configuration) {
-        val decorView = window.decorView
-        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
-        } else {
-            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-        }
     }
 
 }
