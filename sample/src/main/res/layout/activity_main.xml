@@ -33,6 +33,22 @@
             android:text="ListPlayer"
             android:textAllCaps="false" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:onClick="floatWindow"
+            android:text="FloatWindow"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:onClick="picInPic"
+            android:text="PictureInPicture"
+            android:textAllCaps="false" />
+
 
     </LinearLayout>
 

@@ -59,7 +59,6 @@ class PlayerListActivity : AppCompatActivity() {
         recycler_view.addItemDecoration(SimpleItemDecoration(0, 10, 0, 10))
         val listAdapter = ListAdapter()
         recycler_view.adapter = listAdapter
-        //LinearSnapHelper().attachToRecyclerView(recycler_view)
 
         listPlayer = ListPlayer(LitePlayerView(this).apply {
             displayProgress(true)
@@ -136,7 +135,7 @@ class PlayerListActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: VideoHolder, position: Int) {
             holder.run {
-                image.setImageResource(R.drawable.timg)
+                image.setBackgroundResource(R.drawable.timg)
                 text.text = position.toString()
             }
 

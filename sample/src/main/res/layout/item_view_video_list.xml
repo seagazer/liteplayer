@@ -8,14 +8,13 @@
         android:id="@+id/video_poster"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#cccc58"
         android:scaleType="centerCrop" />
 
     <TextView
         android:id="@+id/video_index"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:layout_gravity="center"
+        android:layout_margin="16dp"
         android:background="@drawable/circle"
         android:gravity="center"
         android:textColor="#ffffff"
