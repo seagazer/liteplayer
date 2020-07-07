@@ -27,7 +27,7 @@
 
 
 #### v1版本核心类结构图：
-<img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/LitePlayer_ClassCore.png" width="820" height="500"/>
+<img src="https://raw.githubusercontent.com/seagazer/images/master/liteplayercore.png" width="820" height="500"/>
 
 #### Demo展示：
 <table>
