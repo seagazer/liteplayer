@@ -6,12 +6,12 @@ package com.seagazer.liteplayer.config
  * Date: 2020/6/20
  */
 enum class AspectRatio {
-    WH_16_9,
-    WH_4_3,
-    WH_21_9,
+    W_16_9,
+    W_4_3,
+    W_21_9,
     FILL_PARENT,
-    FILL_WIDTH,
-    FILL_HEIGHT,
-    WH_ORIGIN,
+    FIT_WIDTH,
+    FIT_HEIGHT,
+    FILL_ORIGIN,
     ORIGIN,
 }

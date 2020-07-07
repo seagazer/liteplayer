@@ -60,11 +60,11 @@
                 android:padding="8dp">
 
                 <RadioButton
-                    android:id="@+id/ratio_origin_wh"
+                    android:id="@+id/ratio_origin_fill"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="origin_w_h" />
+                    android:text="origin_fill" />
 
                 <RadioButton
                     android:id="@+id/ratio_origin"
@@ -76,31 +76,31 @@
                     android:id="@+id/ratio_4_3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="4:3" />
+                    android:text="4:3w" />
 
                 <RadioButton
                     android:id="@+id/ratio_16_9"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="16:9" />
+                    android:text="16:9w" />
 
                 <RadioButton
                     android:id="@+id/ratio_21_9"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="21:9" />
+                    android:text="21:9w" />
 
                 <RadioButton
-                    android:id="@+id/ratio_fill_width"
+                    android:id="@+id/ratio_fit_width"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Fill Width" />
+                    android:text="Fit Width" />
 
                 <RadioButton
-                    android:id="@+id/ratio_fill_height"
+                    android:id="@+id/ratio_fit_height"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Fill Height" />
+                    android:text="Fit Height" />
 
                 <RadioButton
                     android:id="@+id/ratio_auto_fill"

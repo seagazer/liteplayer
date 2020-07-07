@@ -13,7 +13,7 @@ import com.seagazer.liteplayer.helper.MediaLogger
  */
 class RenderMeasure {
 
-    private var aspectRatio = AspectRatio.WH_ORIGIN
+    private var aspectRatio = AspectRatio.FILL_ORIGIN
     private var videoWidth = 0
     private var videoHeight = 0
     private var measureWidth = 0
@@ -39,7 +39,7 @@ class RenderMeasure {
             MediaLogger.d("视频宽高比： $videoRatio")
 
             if (widthMode == MeasureSpec.EXACTLY && heightMode == MeasureSpec.EXACTLY) {// 宽高确定
-                if (aspectRatio == AspectRatio.ORIGIN || aspectRatio == AspectRatio.WH_ORIGIN) {// 保持视频宽高比
+                if (aspectRatio == AspectRatio.ORIGIN || aspectRatio == AspectRatio.FILL_ORIGIN) {// 保持视频宽高比
                     if (videoRatio > viewRatio) {
                         measureHeight = heightSpecSize
                         //heightSize / videoHeight = measureWidth / videoWidth
@@ -62,21 +62,21 @@ class RenderMeasure {
                 } else if (aspectRatio == AspectRatio.FILL_PARENT) {// 填充视图宽高
                     measureWidth = widthSpecSize
                     measureHeight = heightSpecSize
-                } else if (aspectRatio == AspectRatio.FILL_HEIGHT) {// 填充视图高度
+                } else if (aspectRatio == AspectRatio.FIT_HEIGHT) {// 填充视图高度
                     measureHeight = heightSpecSize
                     val tempWidth = (heightSpecSize / videoRatio).toInt()
                     measureWidth = if (tempWidth < widthSpecSize) tempWidth else widthSpecSize
-                } else if (aspectRatio == AspectRatio.FILL_WIDTH) {// 填充视图宽度
+                } else if (aspectRatio == AspectRatio.FIT_WIDTH) {// 填充视图宽度
                     measureWidth = widthSpecSize
                     val tempHeight = (widthSpecSize * videoRatio).toInt()
                     measureHeight = if (tempHeight < heightSpecSize) tempHeight else heightSpecSize
-                } else if (aspectRatio == AspectRatio.WH_16_9) {// 16:9宽屏比例
+                } else if (aspectRatio == AspectRatio.W_16_9) {// 16:9宽屏比例
                     measureWidth = widthSpecSize
                     measureHeight = (widthSpecSize * 1f / 16 * 9).toInt()
-                } else if (aspectRatio == AspectRatio.WH_21_9) {// 21:9电影比例
+                } else if (aspectRatio == AspectRatio.W_21_9) {// 21:9电影比例
                     measureWidth = widthSpecSize
                     measureHeight = (widthSpecSize * 1f / 21 * 9).toInt()
-                } else if (aspectRatio == AspectRatio.WH_4_3) {// 4:3电视比例
+                } else if (aspectRatio == AspectRatio.W_4_3) {// 4:3电视比例
                     measureWidth = widthSpecSize
                     measureHeight = (widthSpecSize * 1f / 4 * 3).toInt()
                 }

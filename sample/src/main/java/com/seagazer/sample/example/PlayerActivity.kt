@@ -80,14 +80,14 @@ class PlayerActivity : AppCompatActivity() {
         // video aspect ratio
         aspect_ratio.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
-                R.id.ratio_4_3 -> player_view.setAspectRatio(AspectRatio.WH_4_3)
-                R.id.ratio_16_9 -> player_view.setAspectRatio(AspectRatio.WH_16_9)
-                R.id.ratio_21_9 -> player_view.setAspectRatio(AspectRatio.WH_21_9)
-                R.id.ratio_fill_width -> player_view.setAspectRatio(AspectRatio.FILL_WIDTH)
-                R.id.ratio_fill_height -> player_view.setAspectRatio(AspectRatio.FILL_HEIGHT)
+                R.id.ratio_4_3 -> player_view.setAspectRatio(AspectRatio.W_4_3)
+                R.id.ratio_16_9 -> player_view.setAspectRatio(AspectRatio.W_16_9)
+                R.id.ratio_21_9 -> player_view.setAspectRatio(AspectRatio.W_21_9)
+                R.id.ratio_fit_width -> player_view.setAspectRatio(AspectRatio.FIT_WIDTH)
+                R.id.ratio_fit_height -> player_view.setAspectRatio(AspectRatio.FIT_HEIGHT)
                 R.id.ratio_auto_fill -> player_view.setAspectRatio(AspectRatio.FILL_PARENT)
                 R.id.ratio_origin -> player_view.setAspectRatio(AspectRatio.ORIGIN)
-                R.id.ratio_origin_wh -> player_view.setAspectRatio(AspectRatio.WH_ORIGIN)
+                R.id.ratio_origin_fill -> player_view.setAspectRatio(AspectRatio.FILL_ORIGIN)
             }
         }
         // render view
