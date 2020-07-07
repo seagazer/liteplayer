@@ -107,12 +107,16 @@ class LitePlayerView @JvmOverloads constructor(
                     val secondProgress = getBufferedPercentage().coerceAtMost(100) * 1.0f / 100 * getDuration()
                     controller?.onProgressChanged(currentProgress, secondProgress.toInt())
                     sendEmptyMessageDelayed(MSG_PROGRESS, PROGRESS_DELAY)
-                    invalidate()
+                    if (currentProgress > 0 && maxProgress > 0) {
+                        invalidate()
+                    }
                 } else if (msg.what == MSG_SHOW_OVERLAY) {
                     controller?.show()
                     topbar?.show()
                     isOverlayDisplaying = true
-                    invalidate()
+                    if (currentProgress > 0 && maxProgress > 0) {
+                        invalidate()
+                    }
                     if (isAutoHideOverlay) {
                         sendEmptyMessageDelayed(MSG_HIDE_OVERLAY, AUTO_HIDE_DELAY)
                     }
@@ -120,7 +124,7 @@ class LitePlayerView @JvmOverloads constructor(
                     controller?.hide()
                     topbar?.hide()
                     isOverlayDisplaying = false
-                    if (isSupportProgress) {
+                    if (isSupportProgress && currentProgress > 0 && maxProgress > 0) {
                         invalidate()
                     }
                 }
@@ -221,7 +225,9 @@ class LitePlayerView @JvmOverloads constructor(
                     topbar?.onPlayerPrepared(getDataSource()!!)
                     controller?.onStarted()
                     handler.sendEmptyMessage(MSG_PROGRESS)
-                    handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
+                    if (controller != null || topbar != null) {
+                        handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
+                    }
                 }
                 PlayerState.STATE_PAUSED -> {
                     MediaLogger.d("----> 播放暂停")
@@ -316,7 +322,6 @@ class LitePlayerView @JvmOverloads constructor(
             invalidate()
         }
         if (controller != null || topbar != null) {
-            handler.sendEmptyMessage(MSG_PROGRESS)
             handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
         }
     }
