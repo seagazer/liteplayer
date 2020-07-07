@@ -53,6 +53,7 @@ class LitePlayerView @JvmOverloads constructor(
 
     private var activityReference: WeakReference<Activity>? = null
     private var dataSource: DataSource? = null
+    private var isUserPaused = false
     // event observer
     private val renderStateObserver = MutableLiveData<RenderStateEvent>()
     private val playerStateObserver = MutableLiveData<PlayerStateEvent>()
@@ -210,6 +211,7 @@ class LitePlayerView @JvmOverloads constructor(
                 }
                 PlayerState.STATE_STARTED -> {
                     MediaLogger.d("----> 播放开始")
+                    isUserPaused = false
                     keepScreenOn = true
                     playerStateListeners.forEach {
                         it.onPlaying()
@@ -535,12 +537,18 @@ class LitePlayerView @JvmOverloads constructor(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private fun onActivityResume() {
-        resume()
+        if (!isUserPaused) {
+            resume()
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private fun onActivityStop() {
-        pause()
+        if (isPlaying()) {
+            pause()
+        } else {
+            isUserPaused = true
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
