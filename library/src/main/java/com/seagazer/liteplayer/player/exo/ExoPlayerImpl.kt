@@ -274,7 +274,7 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
         isBuffering = false
         isPendingSeek = false
         setPlayerState(PlayerState.STATE_STOPPED)
-        player.stop()
+        player.stop(true)
     }
 
     override fun reset() {

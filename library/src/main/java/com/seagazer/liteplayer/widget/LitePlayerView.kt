@@ -321,6 +321,7 @@ class LitePlayerView @JvmOverloads constructor(
         if (isSupportProgress) {
             invalidate()
         }
+        handler.sendEmptyMessage(MSG_PROGRESS)
         if (controller != null || topbar != null) {
             handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
         }
