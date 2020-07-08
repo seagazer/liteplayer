@@ -478,21 +478,6 @@ class LitePlayerView @JvmOverloads constructor(
         GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
 
             override fun onDown(e: MotionEvent?): Boolean {
-                if (controller != null) {
-                    handler.removeMessages(MSG_HIDE_OVERLAY)
-                    if (controller!!.isShowing()) {
-                        handler.sendEmptyMessage(MSG_HIDE_OVERLAY)
-                    } else {
-                        handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
-                    }
-                } else if (topbar != null) {
-                    handler.removeMessages(MSG_HIDE_OVERLAY)
-                    if (topbar!!.isShowing()) {
-                        handler.sendEmptyMessage(MSG_HIDE_OVERLAY)
-                    } else {
-                        handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
-                    }
-                }
                 gestureController?.onDown(e)
                 return true
             }
@@ -518,8 +503,23 @@ class LitePlayerView @JvmOverloads constructor(
             }
 
             override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
+                if (controller != null) {
+                    handler.removeMessages(MSG_HIDE_OVERLAY)
+                    if (controller!!.isShowing()) {
+                        handler.sendEmptyMessage(MSG_HIDE_OVERLAY)
+                    } else {
+                        handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
+                    }
+                } else if (topbar != null) {
+                    handler.removeMessages(MSG_HIDE_OVERLAY)
+                    if (topbar!!.isShowing()) {
+                        handler.sendEmptyMessage(MSG_HIDE_OVERLAY)
+                    } else {
+                        handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
+                    }
+                }
                 gestureController?.onSingleTapConfirmed(e)
-                return false
+                return true
             }
 
             override fun onShowPress(e: MotionEvent?) {
