@@ -10,8 +10,8 @@ import android.view.SurfaceHolder
 import androidx.lifecycle.MutableLiveData
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.PlayerState
-import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.event.PlayerStateEvent
+import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.player.IPlayer
 
 /**
@@ -20,25 +20,25 @@ import com.seagazer.liteplayer.player.IPlayer
  * Author: Seagazer
  * Date: 2020/6/19
  */
-object LitePlayerCore : IPlayer {
-    private const val MEDIA_VOLUME_DEFAULT = 1.0f
-    private const val MEDIA_VOLUME_DUCK = 0.2f
+class LitePlayerCore constructor(val context: Context) : IPlayer {
+
+    private var currentVolume: Int = 0
+    private var maxVolume: Int = 0
     private var innerPlayer: IPlayer? = null
-    private lateinit var context: Context
-    private lateinit var audioManager: AudioManager
-    private lateinit var audioAttributes: AudioAttributes
+    private var appContext: Context = context.applicationContext
+    private var audioManager: AudioManager
+    private var audioAttributes: AudioAttributes
     private var audioFocusRequest: AudioFocusRequest? = null
     private var shouldPlayWhenReady = false
-    var isInit = false
 
-    fun init(context: Context) {
-        isInit = true
-        this.context = context.applicationContext
-        audioManager = LitePlayerCore.context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    init {
+        audioManager = appContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         audioAttributes = AudioAttributes.Builder()
             .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
             .setUsage(AudioAttributes.USAGE_MEDIA)
             .build()
+        currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+        maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
     }
 
     fun setupPlayer(player: IPlayer) {
@@ -52,13 +52,13 @@ object LitePlayerCore : IPlayer {
                 if (shouldPlayWhenReady || getPlayerState() == PlayerState.STATE_PREPARED) {
                     setPlayerState(PlayerState.STATE_STARTED)
                     innerPlayer?.start()
-                    setVolume(MEDIA_VOLUME_DEFAULT, MEDIA_VOLUME_DEFAULT)
+                    setVolume(currentVolume)
                 }
                 shouldPlayWhenReady = false
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
                 if (getPlayerState() == PlayerState.STATE_STARTED) {
-                    setVolume(MEDIA_VOLUME_DUCK, MEDIA_VOLUME_DUCK)
+                    setVolume((maxVolume * 0.1f).toInt())
                 }
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
@@ -218,8 +218,9 @@ object LitePlayerCore : IPlayer {
         innerPlayer?.setPlaySpeed(speed)
     }
 
-    override fun setVolume(left: Float, right: Float) {
-        innerPlayer?.setVolume(left, right)
+    override fun setVolume(volume: Int) {
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 0)
+        currentVolume = volume
     }
 
     override fun setPlayerState(state: PlayerState) {

@@ -219,7 +219,7 @@ class LiteGestureController @JvmOverloads constructor(
                     targetVolume = maxVolume
                 }
                 progress.progress = (targetVolume * 1f / maxVolume * 100).toInt()
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, targetVolume, 0)
+                player.setVolume(targetVolume)
                 if (targetVolume == 0) {
                     progressIcon.setImageResource(R.drawable.ic_volume_off)
                 } else {

@@ -27,7 +27,7 @@ interface IPlayerCore {
     fun getBufferedPercentage(): Int
     fun getCurrentPosition(): Long
     fun setPlaySpeed(speed: Float)
-    fun setVolume(left: Float, right: Float)
+    fun setVolume(volume: Int)
 
     fun setPlayerState(state: PlayerState)
     fun getPlayerState(): PlayerState

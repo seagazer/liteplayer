@@ -299,8 +299,8 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
         player.setPlaybackParameters(parameters)
     }
 
-    override fun setVolume(left: Float, right: Float) {
-        player.volume = left
+    override fun setVolume(volume: Int) {
+        // do nothing, audio manager will handle it always
     }
 
     override fun setPlayerState(state: PlayerState) {

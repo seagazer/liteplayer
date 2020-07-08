@@ -51,6 +51,7 @@ class LitePlayerView @JvmOverloads constructor(
         const val DEFAULT_PROGRESS_COLOR = 0xffD81BA2
     }
 
+    private val litePlayerCore: LitePlayerCore
     private var activityReference: WeakReference<Activity>? = null
     private var dataSource: DataSource? = null
     private var isUserPaused = false
@@ -137,10 +138,8 @@ class LitePlayerView @JvmOverloads constructor(
         if (context is Activity) {
             activityReference = WeakReference(context)
         }
-        if (!LitePlayerCore.isInit) {
-            MediaLogger.d("----> 初始化 PlayerManager")
-            LitePlayerCore.init(context)
-        }
+        MediaLogger.d("----> 初始化 PlayerManager")
+        litePlayerCore = LitePlayerCore(context)
         setBackgroundColor(DEFAULT_BACKGROUND_COLOR)
         registerMediaEventObservers(context)
         registerLifecycle()
@@ -189,7 +188,7 @@ class LitePlayerView @JvmOverloads constructor(
             when (event.renderState) {
                 RenderState.STATE_SURFACE_CREATED -> {
                     MediaLogger.d("----> Surface创建")
-                    LitePlayerCore.getPlayer()?.let { player ->
+                    litePlayerCore.getPlayer()?.let { player ->
                         MediaLogger.d("----> 播放器绑定surface")
                         render?.bindPlayer(player)
                     }
@@ -573,7 +572,7 @@ class LitePlayerView @JvmOverloads constructor(
     }
 
     override fun registerPlayerStateObserver(liveData: MutableLiveData<PlayerStateEvent>) {
-        LitePlayerCore.registerStateObserver(liveData)
+        litePlayerCore.registerStateObserver(liveData)
     }
 
     override fun registerRenderStateObserver(liveData: MutableLiveData<RenderStateEvent>) {
@@ -627,11 +626,11 @@ class LitePlayerView @JvmOverloads constructor(
         if (this.playerType == playerType) {
             return
         }
-        LitePlayerCore.reset()
-        LitePlayerCore.destroy()
+        litePlayerCore.reset()
+        litePlayerCore.destroy()
         when (playerType) {
             PlayerType.TYPE_EXO_PLAYER -> {
-                LitePlayerCore.setupPlayer(ExoPlayerImpl(context))
+                litePlayerCore.setupPlayer(ExoPlayerImpl(context))
             }
             PlayerType.TYPE_IJK_PLAYER -> {
                 //TODO()
@@ -646,84 +645,84 @@ class LitePlayerView @JvmOverloads constructor(
     }
 
     override fun getPlayer(): IPlayer? {
-        return LitePlayerCore.getPlayer()
+        return litePlayerCore.getPlayer()
     }
 
     override fun setDataSource(source: DataSource) {
         dataSource = source
-        LitePlayerCore.setDataSource(source)
+        litePlayerCore.setDataSource(source)
     }
 
     override fun start() {
-        LitePlayerCore.start()
+        litePlayerCore.start()
     }
 
     override fun start(startPosition: Long) {
-        LitePlayerCore.start(startPosition)
+        litePlayerCore.start(startPosition)
     }
 
     override fun pause() {
-        LitePlayerCore.pause()
+        litePlayerCore.pause()
     }
 
     override fun resume() {
-        LitePlayerCore.resume()
+        litePlayerCore.resume()
     }
 
     override fun seekTo(position: Long) {
-        LitePlayerCore.seekTo(position)
+        litePlayerCore.seekTo(position)
     }
 
     override fun stop() {
-        LitePlayerCore.stop()
+        litePlayerCore.stop()
     }
 
     override fun reset() {
-        LitePlayerCore.reset()
+        litePlayerCore.reset()
     }
 
     override fun destroy() {
-        LitePlayerCore.destroy()
+        litePlayerCore.destroy()
     }
 
     override fun getVideoWidth(): Int {
-        return LitePlayerCore.getVideoWidth()
+        return litePlayerCore.getVideoWidth()
     }
 
     override fun getVideoHeight(): Int {
-        return LitePlayerCore.getVideoHeight()
+        return litePlayerCore.getVideoHeight()
     }
 
     override fun getDuration(): Long {
-        return LitePlayerCore.getDuration()
+        return litePlayerCore.getDuration()
     }
 
     override fun isPlaying(): Boolean {
-        return LitePlayerCore.isPlaying()
+        return litePlayerCore.isPlaying()
     }
 
     override fun getBufferedPercentage(): Int {
-        return LitePlayerCore.getBufferedPercentage()
+        return litePlayerCore.getBufferedPercentage()
     }
 
     override fun getCurrentPosition(): Long {
-        return LitePlayerCore.getCurrentPosition()
+        return litePlayerCore.getCurrentPosition()
     }
 
     override fun setPlaySpeed(speed: Float) {
-        LitePlayerCore.setPlaySpeed(speed)
+        litePlayerCore.setPlaySpeed(speed)
     }
 
-    override fun setVolume(left: Float, right: Float) {
-        LitePlayerCore.setVolume(left, right)
+    override fun setVolume(volume: Int) {
+        litePlayerCore.setVolume(volume)
     }
 
     override fun setPlayerState(state: PlayerState) {
-        LitePlayerCore.setPlayerState(state)
+        litePlayerCore.setPlayerState(state)
     }
 
     override fun getPlayerState(): PlayerState {
-        return LitePlayerCore.getPlayerState()
+        return litePlayerCore.getPlayerState()
     }
 
     override fun getDataSource() = dataSource
