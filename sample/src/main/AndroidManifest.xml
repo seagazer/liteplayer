@@ -30,6 +30,10 @@
             android:name=".example.PlayerActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:theme="@style/FullScreenTheme" />
+        <activity
+            android:name=".example.AspectRatioActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:theme="@style/FullScreenTheme" />
     </application>
 
 </manifest>

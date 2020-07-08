@@ -13,7 +13,7 @@ import com.seagazer.liteplayer.helper.MediaLogger
  */
 class RenderMeasure {
 
-    private var aspectRatio = AspectRatio.FILL_ORIGIN
+    private var aspectRatio = AspectRatio.AUTO
     private var videoWidth = 0
     private var videoHeight = 0
     private var measureWidth = 0
@@ -38,8 +38,9 @@ class RenderMeasure {
             MediaLogger.d("View宽高比： $viewRatio")
             MediaLogger.d("视频宽高比： $videoRatio")
 
-            if (widthMode == MeasureSpec.EXACTLY && heightMode == MeasureSpec.EXACTLY) {// 宽高确定
-                if (aspectRatio == AspectRatio.ORIGIN || aspectRatio == AspectRatio.FILL_ORIGIN) {// 保持视频宽高比
+            if (widthMode == MeasureSpec.EXACTLY && heightMode == MeasureSpec.EXACTLY) {
+                if (aspectRatio == AspectRatio.ORIGIN || aspectRatio == AspectRatio.AUTO) {
+                    // 自适应
                     if (videoRatio > viewRatio) {
                         measureHeight = heightSpecSize
                         //heightSize / videoHeight = measureWidth / videoWidth
@@ -49,7 +50,7 @@ class RenderMeasure {
                         //widthSize / videoWidth = measureHeight / videoHeight
                         measureHeight = (widthSpecSize * videoRatio).toInt()
                     }
-                    // 原始视频尺寸
+                    // 原始尺寸，最大为视图边界
                     if (aspectRatio == AspectRatio.ORIGIN) {
                         val widthSpecRatio = videoWidth * 1f / measureWidth
                         val heightSpecRatio = videoHeight * 1f / measureHeight
@@ -59,17 +60,20 @@ class RenderMeasure {
                             measureHeight = (measureHeight * heightSpecRatio).toInt()
                         }
                     }
-                } else if (aspectRatio == AspectRatio.FILL_PARENT) {// 填充视图宽高
+                } else if (aspectRatio == AspectRatio.STRETCH) {// 拉伸模式
                     measureWidth = widthSpecSize
                     measureHeight = heightSpecSize
-                } else if (aspectRatio == AspectRatio.FIT_HEIGHT) {// 填充视图高度
-                    measureHeight = heightSpecSize
-                    val tempWidth = (heightSpecSize / videoRatio).toInt()
-                    measureWidth = if (tempWidth < widthSpecSize) tempWidth else widthSpecSize
-                } else if (aspectRatio == AspectRatio.FIT_WIDTH) {// 填充视图宽度
-                    measureWidth = widthSpecSize
-                    val tempHeight = (widthSpecSize * videoRatio).toInt()
-                    measureHeight = if (tempHeight < heightSpecSize) tempHeight else heightSpecSize
+                } else if (aspectRatio == AspectRatio.FILL) {// 填充模式
+                    // TODO()
+                    if (videoRatio < viewRatio) {
+                        // fill h
+                        measureHeight = heightSpecSize
+                        measureWidth = (heightSpecSize / videoRatio).toInt()
+                    } else {
+                        // fill w
+                        measureWidth = widthSpecSize
+                        measureHeight = (widthMeasureSpec * videoRatio).toInt()
+                    }
                 } else if (aspectRatio == AspectRatio.W_16_9) {// 16:9宽屏比例
                     measureWidth = widthSpecSize
                     measureHeight = (widthSpecSize * 1f / 16 * 9).toInt()
