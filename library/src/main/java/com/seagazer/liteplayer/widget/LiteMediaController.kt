@@ -55,9 +55,11 @@ class LiteMediaController @JvmOverloads constructor(
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                player.keepOverlayShow(true)
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                player.keepOverlayShow(false)
             }
 
         })

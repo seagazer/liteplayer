@@ -225,9 +225,6 @@ class LitePlayerView @JvmOverloads constructor(
                     topbar?.onPlayerPrepared(getDataSource()!!)
                     controller?.onStarted()
                     handler.sendEmptyMessage(MSG_PROGRESS)
-                    if (controller != null || topbar != null) {
-                        handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
-                    }
                 }
                 PlayerState.STATE_PAUSED -> {
                     MediaLogger.d("----> 播放暂停")
@@ -468,6 +465,14 @@ class LitePlayerView @JvmOverloads constructor(
             gestureController?.hide()
         }
         return gestureDetector.onTouchEvent(event)
+    }
+
+    fun keepOverlayShow(keep: Boolean) {
+        if (keep) {
+            handler.removeMessages(MSG_HIDE_OVERLAY)
+        } else {
+            handler.sendEmptyMessage(MSG_HIDE_OVERLAY)
+        }
     }
 
     private val gestureDetector by lazy {
