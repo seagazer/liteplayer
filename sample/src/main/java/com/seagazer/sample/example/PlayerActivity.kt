@@ -143,7 +143,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     fun pausePlay(view: View) {
-        if (player_view.isInPlaybackState()) {
+        if (player_view.isPlaying()) {
             player_view.pause()
         } else {
             player_view.resume()

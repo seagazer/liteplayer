@@ -644,10 +644,6 @@ class LitePlayerView @JvmOverloads constructor(
         return LitePlayerCore.getPlayer()
     }
 
-    override fun isInPlaybackState(): Boolean {
-        return LitePlayerCore.isPlaying()
-    }
-
     override fun setDataSource(source: DataSource) {
         dataSource = source
         LitePlayerCore.setDataSource(source)
