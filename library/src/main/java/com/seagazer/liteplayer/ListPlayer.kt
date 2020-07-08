@@ -35,6 +35,8 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
     private var layoutManager: LinearLayoutManager? = null
     private lateinit var listener: VideoListScrollListener
     private var autoPlay = true
+    private var playerType = PlayerType.TYPE_EXO_PLAYER
+    private var renderType = RenderType.TYPE_TEXTURE_VIEW
 
     /**
      * Attach to recyclerView.
@@ -66,6 +68,7 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
             recyclerView!!.run {
                 removeOnScrollListener(autoPlayScrollListener)
                 removeOnScrollListener(clickPlayScrollListener)
+                detachVideoContainer()
                 if (autoPlay) {
                     attachToRecyclerViewAutoPlay(this, listener)
                 } else {
@@ -87,8 +90,7 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
             throw RuntimeException("Only support LinearLayoutManager because always single item video is playing")
         }
         // default config
-        playerView.setPlayerType(PlayerType.TYPE_EXO_PLAYER)
-        playerView.setRenderType(RenderType.TYPE_TEXTURE_VIEW)
+        initConfig()
         this.layoutManager = recyclerView.layoutManager as LinearLayoutManager
         this.recyclerView = recyclerView
         this.recyclerView!!.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
@@ -116,14 +118,18 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
             throw RuntimeException("Only support LinearLayoutManager because always single item video is playing")
         }
         // default config
-        playerView.setPlayerType(PlayerType.TYPE_EXO_PLAYER)
-        playerView.setRenderType(RenderType.TYPE_TEXTURE_VIEW)
+        initConfig()
         this.layoutManager = recyclerView.layoutManager as LinearLayoutManager
         this.recyclerView = recyclerView
         this.recyclerView!!.addOnScrollListener(clickPlayScrollListener)
         this.listener = listener
         unregisterLifecycle()
         registerLifecycle()
+    }
+
+    private fun initConfig() {
+        playerView.setPlayerType(playerType)
+        playerView.setRenderType(renderType)
     }
 
     /**
@@ -188,8 +194,8 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
     private val clickPlayScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             layoutManager?.let { lm ->
-                val currentFirst = lm.findFirstCompletelyVisibleItemPosition()
-                val currentLast = lm.findLastCompletelyVisibleItemPosition()
+                val currentFirst = lm.findFirstVisibleItemPosition()
+                val currentLast = lm.findLastVisibleItemPosition()
                 MediaLogger.d("position: playing=$playingPosition, first=$currentFirst,last=$currentLast")
                 if (currentFirst != RecyclerView.NO_POSITION && currentLast != RecyclerView.NO_POSITION &&
                     currentFirst != currentLast &&
@@ -253,10 +259,12 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
     }
 
     fun setPlayerType(playerType: PlayerType) {
+        this.playerType = playerType
         playerView.setPlayerType(playerType)
     }
 
     fun setRenderType(renderType: RenderType) {
+        this.renderType = renderType
         playerView.setRenderType(renderType)
     }
 
