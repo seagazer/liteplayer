@@ -160,7 +160,7 @@ class LiteGestureController @JvmOverloads constructor(
 
     override fun onDoubleTap(e: MotionEvent?) {
         if (player.isPlaying()) {
-            player.pause()
+            player.pause(true)
         } else {
             player.resume()
         }

@@ -570,9 +570,7 @@ class LitePlayerView @JvmOverloads constructor(
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private fun onActivityStop() {
         if (isPlaying()) {
-            pause()
-        } else {
-            isUserPaused = true
+            pause(false)
         }
     }
 
@@ -677,8 +675,9 @@ class LitePlayerView @JvmOverloads constructor(
         litePlayerCore.start(startPosition)
     }
 
-    override fun pause() {
-        litePlayerCore.pause()
+    override fun pause(fromUser: Boolean) {
+        isUserPaused = fromUser
+        litePlayerCore.pause(fromUser)
     }
 
     override fun resume() {

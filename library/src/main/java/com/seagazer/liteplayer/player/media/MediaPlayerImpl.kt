@@ -113,7 +113,7 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun pause() {
+    override fun pause(fromUser: Boolean) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

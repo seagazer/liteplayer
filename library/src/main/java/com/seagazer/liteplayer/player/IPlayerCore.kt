@@ -12,7 +12,7 @@ interface IPlayerCore {
     fun setDataSource(source: DataSource)
     fun start()
     fun start(startPosition: Long)
-    fun pause()
+    fun pause(fromUser: Boolean)
     fun resume()
     fun seekTo(position: Long)
     fun stop()

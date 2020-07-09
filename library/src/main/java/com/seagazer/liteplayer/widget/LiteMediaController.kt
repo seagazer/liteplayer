@@ -65,7 +65,7 @@ class LiteMediaController @JvmOverloads constructor(
         })
         toggle.setOnClickListener {
             if (player.isPlaying()) {
-                player.pause()
+                player.pause(true)
             } else {
                 player.resume()
             }

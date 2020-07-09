@@ -19,10 +19,10 @@ import com.google.android.exoplayer2.video.VideoListener
 import com.seagazer.liteplayer.BuildConfig
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.PlayerState
-import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.event.PlayerStateEvent
-import com.seagazer.liteplayer.player.IPlayerCore
+import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.player.IPlayer
+import com.seagazer.liteplayer.player.IPlayerCore
 
 /**
  *
@@ -83,12 +83,12 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
             // 已经开始播放，两种状态：播放，暂停
             if (!isPreparing) {
                 if (playWhenReady) {
-                    MediaLogger.d("-> 播放: $currentState")
                     setPlayerState(PlayerState.STATE_STARTED)
+                    MediaLogger.d("-> 播放: $currentState")
                     liveData?.value = PlayerStateEvent(PlayerState.STATE_STARTED)
                 } else {
-                    MediaLogger.d("-> 暂停: $currentState")
                     setPlayerState(PlayerState.STATE_PAUSED)
+                    MediaLogger.d("-> 暂停: $currentState")
                     liveData?.value = PlayerStateEvent(PlayerState.STATE_PAUSED)
                 }
             }
@@ -212,7 +212,7 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
         start()
     }
 
-    override fun pause() {
+    override fun pause(fromUser: Boolean) {
         MediaLogger.d("")
         val state = getPlayerState()
         if (state != PlayerState.STATE_STOPPED && state != PlayerState.STATE_ERROR &&
@@ -252,12 +252,8 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
     }
 
     override fun isPlaying(): Boolean {
-        val state = player.playbackState
-        return if (state == Player.STATE_BUFFERING || state == Player.STATE_READY) {
-            player.playWhenReady
-        } else {
-            false
-        }
+        return isInPlaybackState() && currentState != PlayerState.STATE_INITIALIZED
+                && currentState != PlayerState.STATE_PAUSED
     }
 
     override fun getBufferedPercentage() = player.bufferedPercentage

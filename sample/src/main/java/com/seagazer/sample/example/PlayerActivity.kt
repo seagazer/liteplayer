@@ -133,7 +133,7 @@ class PlayerActivity : AppCompatActivity() {
 
     fun pausePlay(view: View) {
         if (player_view.isPlaying()) {
-            player_view.pause()
+            player_view.pause(true)
         } else {
             player_view.resume()
         }

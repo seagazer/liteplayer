@@ -50,7 +50,7 @@ class LitePlayerCore constructor(val context: Context) : IPlayer {
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
                 if (shouldPlayWhenReady || getPlayerState() == PlayerState.STATE_PREPARED) {
-                    innerPlayer?.start()
+                    //innerPlayer?.start()
                     setVolume(currentVolume)
                 }
                 shouldPlayWhenReady = false
@@ -62,11 +62,11 @@ class LitePlayerCore constructor(val context: Context) : IPlayer {
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
                 shouldPlayWhenReady = getPlayerState() == PlayerState.STATE_STARTED
-                pause()
+                pause(false)
             }
             AudioManager.AUDIOFOCUS_LOSS -> {
                 abandonAudioFocus()
-                pause()
+                pause(false)
             }
         }
     }
@@ -131,8 +131,8 @@ class LitePlayerCore constructor(val context: Context) : IPlayer {
         requestAudioFocus()
     }
 
-    override fun pause() {
-        innerPlayer?.pause()
+    override fun pause(fromUser: Boolean) {
+        innerPlayer?.pause(fromUser)
     }
 
     override fun resume() {
