@@ -6,6 +6,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
+import com.seagazer.liteplayer.config.PlayerType
 import com.seagazer.liteplayer.helper.DpHelper
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
 import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
@@ -55,6 +56,11 @@ class LoadingOverlay @JvmOverloads constructor(
 
     override fun getPlayerStateChangedListener(): PlayerStateChangedListener? {
         return object : SimplePlayerStateChangedListener() {
+
+            override fun onError(playerType: PlayerType, errorCode: Int) {
+                hide()
+            }
+
             override fun onLoadingStarted() {
                 show()
             }
