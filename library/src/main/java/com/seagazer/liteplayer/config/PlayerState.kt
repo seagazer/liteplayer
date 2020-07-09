@@ -7,6 +7,7 @@ package com.seagazer.liteplayer.config
  */
 enum class PlayerState {
     STATE_NOT_INITIALIZED,
+    STATE_INITIALIZED,
     STATE_PREPARED,
     STATE_STARTED,
     STATE_PAUSED,

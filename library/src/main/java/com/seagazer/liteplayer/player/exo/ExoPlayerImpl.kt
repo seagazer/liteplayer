@@ -194,6 +194,10 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
     }
 
     override fun setDataSource(source: DataSource) {
+        if (currentState == PlayerState.STATE_NOT_INITIALIZED) {
+            setPlayerState(PlayerState.STATE_INITIALIZED)
+            liveData?.value = PlayerStateEvent(PlayerState.STATE_INITIALIZED)
+        }
         val mediaSource = mediaSourceFactory.createMediaSource(Uri.parse(source.mediaUrl))
         player.prepare(mediaSource)
         isPreparing = true
@@ -201,7 +205,6 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
 
     override fun start() {
         player.playWhenReady = true
-        setPlayerState(PlayerState.STATE_STARTED)
     }
 
     override fun start(startPosition: Long) {
@@ -216,7 +219,6 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
             state != PlayerState.STATE_NOT_INITIALIZED && state != PlayerState.STATE_PAUSED
         ) {
             player.playWhenReady = false
-            setPlayerState(PlayerState.STATE_PAUSED)
             MediaLogger.d("暂停播放--->: $currentState")
         }
     }
@@ -225,7 +227,6 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
         MediaLogger.d("")
         if (isInPlaybackState() && getPlayerState() == PlayerState.STATE_PAUSED) {
             player.playWhenReady = true
-            setPlayerState(PlayerState.STATE_STARTED)
             MediaLogger.d("恢复播放--->: $currentState")
         }
     }

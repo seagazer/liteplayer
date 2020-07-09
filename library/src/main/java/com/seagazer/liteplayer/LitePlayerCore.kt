@@ -43,14 +43,13 @@ class LitePlayerCore constructor(val context: Context) : IPlayer {
 
     fun setupPlayer(player: IPlayer) {
         innerPlayer = player
-        requestAudioFocus()
+        //requestAudioFocus()
     }
 
     private val audioFocusListener = AudioManager.OnAudioFocusChangeListener { focusChange ->
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
                 if (shouldPlayWhenReady || getPlayerState() == PlayerState.STATE_PREPARED) {
-                    setPlayerState(PlayerState.STATE_STARTED)
                     innerPlayer?.start()
                     setVolume(currentVolume)
                 }

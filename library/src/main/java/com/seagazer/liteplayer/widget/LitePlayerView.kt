@@ -64,6 +64,7 @@ class LitePlayerView @JvmOverloads constructor(
     private var playerType: PlayerType? = null
     private var renderType: RenderType? = null
     // display mode
+    private var isSurfaceCreated = false
     private var androidParent: ViewGroup? = null// android content container
     private var directParent: ViewGroup? = null// the container of this player view
     private var childIndex = 0// the child view index of parent
@@ -188,15 +189,19 @@ class LitePlayerView @JvmOverloads constructor(
             when (event.renderState) {
                 RenderState.STATE_SURFACE_CREATED -> {
                     MediaLogger.d("----> Surface创建")
+                    isSurfaceCreated = true
                     litePlayerCore.getPlayer()?.let { player ->
-                        MediaLogger.d("----> 播放器绑定surface")
-                        render?.bindPlayer(player)
+                        render?.let { render ->
+                            MediaLogger.d("----> 播放器绑定surface")
+                            render.bindPlayer(player)
+                        }
                     }
                 }
                 RenderState.STATE_SURFACE_CHANGED -> {
                     MediaLogger.d("----> Surface改变")
                 }
                 RenderState.STATE_SURFACE_DESTROYED -> {
+                    isSurfaceCreated = false
                     MediaLogger.d("----> Surface销毁")
                 }
             }
@@ -205,6 +210,16 @@ class LitePlayerView @JvmOverloads constructor(
             when (event.playerState) {
                 PlayerState.STATE_NOT_INITIALIZED -> {
                     MediaLogger.d("----> 播放待初始化")
+                }
+                PlayerState.STATE_INITIALIZED -> {
+                    if (isSurfaceCreated) {
+                        litePlayerCore.getPlayer()?.let { player ->
+                            render?.let { render ->
+                                MediaLogger.d("----> 播放器绑定surface")
+                                render.bindPlayer(player)
+                            }
+                        }
+                    }
                 }
                 PlayerState.STATE_PREPARED -> {
                     MediaLogger.d("----> 播放准备")
@@ -642,6 +657,7 @@ class LitePlayerView @JvmOverloads constructor(
         MediaLogger.d("改变player: $playerType")
         this.playerType = playerType
         registerPlayerStateObserver(playerStateObserver)
+        handler.removeMessages(MSG_PROGRESS)
     }
 
     override fun getPlayer(): IPlayer? {

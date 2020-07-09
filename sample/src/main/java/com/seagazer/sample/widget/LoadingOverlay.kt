@@ -15,7 +15,7 @@ import com.seagazer.liteplayer.widget.LitePlayerView
 import com.seagazer.sample.R
 
 /**
- * A sample to show how to make a custom overlay for loading state.
+ * An example to show how to make a custom overlay for loading state.
  *
  * Author: Seagazer
  * Date: 2020/7/3
