@@ -14,8 +14,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.seagazer.liteplayer.ListPlayer
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.helper.OrientationSensorHelper
+import com.seagazer.liteplayer.widget.LiteMediaController
 import com.seagazer.liteplayer.widget.LitePlayerView
 import com.seagazer.sample.R
+import com.seagazer.sample.navigationTo
 import com.seagazer.sample.widget.SimpleItemDecoration
 import kotlinx.android.synthetic.main.activity_player_list.*
 
@@ -62,6 +64,7 @@ class PlayerListActivity : AppCompatActivity() {
 
         listPlayer = ListPlayer(LitePlayerView(this).apply {
             displayProgress(true)
+            attachMediaController(LiteMediaController(this@PlayerListActivity))
         })
         val videoScrollListener = object : ListPlayer.VideoListScrollListener {
 
@@ -150,6 +153,10 @@ class PlayerListActivity : AppCompatActivity() {
     override fun onDestroy() {
         orientationSensorHelper.stopWatching()
         super.onDestroy()
+    }
+
+    fun jumpToActivity(view: View) {
+        navigationTo(EmptyActivity::class.java)
     }
 
 }

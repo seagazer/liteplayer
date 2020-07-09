@@ -219,12 +219,16 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private fun onActivityResume() {
-        resume()
+        if (!playerView.isPausedFromUser()) {
+            resume()
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private fun onActivityStop() {
-        pause(false)
+        if (isPlaying()) {
+            pause(false)
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)

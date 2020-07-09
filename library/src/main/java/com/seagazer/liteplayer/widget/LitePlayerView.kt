@@ -560,6 +560,8 @@ class LitePlayerView @JvmOverloads constructor(
         }
     }
 
+    fun isPausedFromUser(): Boolean = isUserPaused
+
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private fun onActivityResume() {
         if (!isUserPaused) {
