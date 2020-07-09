@@ -57,4 +57,12 @@ class AspectRatioActivity : AppCompatActivity() {
         }
         player_view.start()
     }
+
+    override fun onBackPressed() {
+        if (player_view.isFullScreen()) {
+            player_view.setFullScreenMode(false)
+        } else {
+            super.onBackPressed()
+        }
+    }
 }

@@ -25,4 +25,7 @@ class MainActivity : AppCompatActivity() {
     fun aspectRatio(view: View) {
         navigationTo(AspectRatioActivity::class.java)
     }
+
+    fun floatWindow(view: View) {}
+    fun picInPic(view: View) {}
 }

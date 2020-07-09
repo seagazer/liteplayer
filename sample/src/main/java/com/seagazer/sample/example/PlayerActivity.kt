@@ -18,6 +18,7 @@ import com.seagazer.liteplayer.widget.LiteGestureController
 import com.seagazer.liteplayer.widget.LiteMediaController
 import com.seagazer.liteplayer.widget.LiteMediaTopbar
 import com.seagazer.sample.R
+import com.seagazer.sample.navigationTo
 import com.seagazer.sample.toastShort
 import com.seagazer.sample.widget.LoadingOverlay
 import kotlinx.android.synthetic.main.activity_player.*
@@ -28,6 +29,7 @@ class PlayerActivity : AppCompatActivity() {
     private val url2 = "https://vfx.mtime.cn/Video/2019/03/09/mp4/190309153658147087.mp4"
     private val urls = listOf(Pair(url1, "玩具总动员"), Pair(url2, "New Story"))
     private val msgProgress = 0x1
+    private var currentPlayIndex = 0
 
     @SuppressLint("HandlerLeak")
     private val H: Handler = object : Handler() {
@@ -88,7 +90,7 @@ class PlayerActivity : AppCompatActivity() {
         // player type
         player_view.setPlayerType(PlayerType.TYPE_EXO_PLAYER)
         // prepare video
-        player_view.setDataSource(DataSource(urls[0].first, urls[0].second))
+        player_view.setDataSource(DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second))
         // media controller, topbar and gesture controller
         player_view.attachMediaController(LiteMediaController(this))
         player_view.attachMediaTopbar(LiteMediaTopbar(this))
@@ -146,11 +148,12 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun playNext() {
-        if (player_view.getDataSource()?.mediaUrl == url1) {
-            player_view.setDataSource(DataSource(urls[1].first, urls[1].second))
+        currentPlayIndex = if (player_view.getDataSource()?.mediaUrl == url1) {
+            1
         } else {
-            player_view.setDataSource(DataSource(urls[0].first, urls[0].second))
+            0
         }
+        player_view.setDataSource(DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second))
         player_view.start()
     }
 
@@ -172,6 +175,10 @@ class PlayerActivity : AppCompatActivity() {
         super.onConfigurationChanged(newConfig)
         val isFullScreen = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
         player_view.setFullScreenMode(isFullScreen)
+    }
+
+    fun jumpToActivity(view: View) {
+        navigationTo(EmptyActivity::class.java)
     }
 
 }
