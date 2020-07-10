@@ -37,13 +37,13 @@ class LitePlayerCore constructor(val context: Context) : IPlayer {
             .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
             .setUsage(AudioAttributes.USAGE_MEDIA)
             .build()
-        currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-        maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
     }
 
     fun setupPlayer(player: IPlayer) {
         innerPlayer = player
         //requestAudioFocus()
+        currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+        maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
     }
 
     private val audioFocusListener = AudioManager.OnAudioFocusChangeListener { focusChange ->
