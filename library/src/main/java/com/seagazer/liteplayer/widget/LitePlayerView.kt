@@ -494,12 +494,15 @@ class LitePlayerView @JvmOverloads constructor(
 
             override fun onDown(e: MotionEvent?): Boolean {
                 gestureController?.onDown(e)
+                if (controller != null || topbar != null || gestureController != null) {
+                    parent.requestDisallowInterceptTouchEvent(true)
+                }
                 return true
             }
 
             override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
                 gestureController?.onScroll(e1, e2, distanceX, distanceY)
-                return false
+                return true
             }
 
             override fun onDoubleTap(e: MotionEvent?): Boolean {
@@ -514,7 +517,7 @@ class LitePlayerView @JvmOverloads constructor(
 
             override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
                 gestureController?.onFling(e1, e2, velocityX, velocityY)
-                return false
+                return true
             }
 
             override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
