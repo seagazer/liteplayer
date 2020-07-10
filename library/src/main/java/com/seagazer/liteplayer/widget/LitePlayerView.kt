@@ -494,7 +494,7 @@ class LitePlayerView @JvmOverloads constructor(
 
             override fun onDown(e: MotionEvent?): Boolean {
                 gestureController?.onDown(e)
-                if (controller != null || topbar != null || gestureController != null) {
+                if (gestureController != null) {
                     parent.requestDisallowInterceptTouchEvent(true)
                 }
                 return true
@@ -563,8 +563,6 @@ class LitePlayerView @JvmOverloads constructor(
         }
     }
 
-    fun isPausedFromUser(): Boolean = isUserPaused
-
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private fun onActivityResume() {
         if (!isUserPaused) {
@@ -574,7 +572,7 @@ class LitePlayerView @JvmOverloads constructor(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private fun onActivityStop() {
-        if (isPlaying()) {
+        if (!isUserPaused || isPlaying()) {
             pause(false)
         }
     }
