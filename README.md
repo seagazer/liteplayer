@@ -26,15 +26,21 @@
 
 
 
-#### v1版本核心类结构图：
-<img src="https://raw.githubusercontent.com/seagazer/images/master/liteplayercore.png" width="820" height="500"/>
+#### v1版本模块设计：
+<img src="https://upload-images.jianshu.io/upload_images/4420407-43ebcad07f04fe94.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="820" height="500"/>
 
 #### Demo展示：
 <table>
 <tr>
-<td><center><img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/Screenshot_1593832506.png" width="240" height="450"/></center></td>
-<td><center><img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/Screenshot_1593832537.png" width="240" height="450"/></center></td>
-<td><center><img src="https://raw.githubusercontent.com/seagazer/LitePlayer/master/image/Screenshot_1593832554.png" width="240" height="450"/></center></td>
+<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-0c71e3e0105d06ee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
+<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-1ad9f3aea028733d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
+<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-4c810e193ca0bcc4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
+</tr>
+</table>
+<table>
+<tr>
+<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-bb935281876eaad1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
+<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-5604dd2bbbd40acb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
 </tr>
 </table>
 
