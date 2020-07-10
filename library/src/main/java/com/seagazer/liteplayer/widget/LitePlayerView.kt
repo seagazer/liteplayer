@@ -135,11 +135,11 @@ class LitePlayerView @JvmOverloads constructor(
     }
 
     init {
-        MediaLogger.d("----> 初始化")
+        MediaLogger.d("----> init")
         if (context is Activity) {
             activityReference = WeakReference(context)
         }
-        MediaLogger.d("----> 初始化 PlayerManager")
+        MediaLogger.d("----> init PlayerCore")
         litePlayerCore = LitePlayerCore(context)
         setBackgroundColor(DEFAULT_BACKGROUND_COLOR)
         registerMediaEventObservers(context)
@@ -188,47 +188,48 @@ class LitePlayerView @JvmOverloads constructor(
         renderStateObserver.observe(context, Observer { event ->
             when (event.renderState) {
                 RenderState.STATE_SURFACE_CREATED -> {
-                    MediaLogger.d("----> Surface创建")
+                    MediaLogger.d("----> surface create")
                     isSurfaceCreated = true
                     litePlayerCore.getPlayer()?.let { player ->
                         render?.let { render ->
-                            MediaLogger.d("----> 播放器绑定surface")
+                            MediaLogger.d("----> surface bind player")
                             render.bindPlayer(player)
                         }
                     }
                 }
                 RenderState.STATE_SURFACE_CHANGED -> {
-                    MediaLogger.d("----> Surface改变")
+                    MediaLogger.d("----> surface changed")
                 }
                 RenderState.STATE_SURFACE_DESTROYED -> {
                     isSurfaceCreated = false
-                    MediaLogger.d("----> Surface销毁")
+                    MediaLogger.d("----> surface destroy")
                 }
             }
         })
         playerStateObserver.observe(context, Observer { event ->
             when (event.playerState) {
                 PlayerState.STATE_NOT_INITIALIZED -> {
-                    MediaLogger.d("----> 播放待初始化")
+                    MediaLogger.d("----> player not init")
                 }
                 PlayerState.STATE_INITIALIZED -> {
+                    MediaLogger.d("----> player init")
                     if (isSurfaceCreated) {
                         litePlayerCore.getPlayer()?.let { player ->
                             render?.let { render ->
-                                MediaLogger.d("----> 播放器绑定surface")
+                                MediaLogger.d("----> surface bind player")
                                 render.bindPlayer(player)
                             }
                         }
                     }
                 }
                 PlayerState.STATE_PREPARED -> {
-                    MediaLogger.d("----> 播放准备")
+                    MediaLogger.d("----> player prepared")
                     playerStateListeners.forEach {
                         it.onPrepared(dataSource!!)
                     }
                 }
                 PlayerState.STATE_STARTED -> {
-                    MediaLogger.d("----> 播放开始")
+                    MediaLogger.d("----> player started")
                     isUserPaused = false
                     keepScreenOn = true
                     playerStateListeners.forEach {
@@ -241,7 +242,7 @@ class LitePlayerView @JvmOverloads constructor(
                     handler.sendEmptyMessage(MSG_PROGRESS)
                 }
                 PlayerState.STATE_PAUSED -> {
-                    MediaLogger.d("----> 播放暂停")
+                    MediaLogger.d("----> player paused")
                     keepScreenOn = false
                     playerStateListeners.forEach {
                         it.onPaused()
@@ -250,7 +251,7 @@ class LitePlayerView @JvmOverloads constructor(
                     handler.removeMessages(MSG_PROGRESS)
                 }
                 PlayerState.STATE_STOPPED -> {
-                    MediaLogger.d("----> 播放停止")
+                    MediaLogger.d("----> player stopped")
                     keepScreenOn = false
                     playerStateListeners.forEach {
                         it.onStopped()
@@ -258,7 +259,7 @@ class LitePlayerView @JvmOverloads constructor(
                     handler.removeMessages(MSG_PROGRESS)
                 }
                 PlayerState.STATE_PLAYBACK_COMPLETE -> {
-                    MediaLogger.d("----> 播放完毕")
+                    MediaLogger.d("----> player completed")
                     keepScreenOn = false
                     playerStateListeners.forEach {
                         it.onCompleted()
@@ -266,7 +267,7 @@ class LitePlayerView @JvmOverloads constructor(
                     handler.removeMessages(MSG_PROGRESS)
                 }
                 PlayerState.STATE_ERROR -> {
-                    MediaLogger.d("----> 播放错误")
+                    MediaLogger.d("----> player error")
                     keepScreenOn = false
                     playerStateListeners.forEach {
                         it.onError(playerType!!, event.errorCode)
@@ -274,47 +275,47 @@ class LitePlayerView @JvmOverloads constructor(
                     handler.removeMessages(MSG_PROGRESS)
                 }
                 PlayerState.STATE_VIDEO_SIZE_CHANGED -> {
-                    MediaLogger.d("---->视频宽高改变: ${event.videoWidth} * ${event.videoHeight}，刷新surface render初始尺寸:")
+                    MediaLogger.d("---->video size changed: ${event.videoWidth} * ${event.videoHeight}，refresh surface render size")
                     render?.updateVideoSize(event.videoWidth, event.videoHeight)
                     playerStateListeners.forEach {
                         it.onVideoSizeChanged(event.videoWidth, event.videoHeight)
                     }
                 }
                 PlayerState.STATE_RENDERED_FIRST_FRAME -> {
-                    MediaLogger.d("----> 视频渲染首帧")
+                    MediaLogger.d("----> render first frame")
                     playerStateListeners.forEach {
                         it.onRenderFirstFrame()
                     }
                 }
                 PlayerState.STATE_SURFACE_SIZE_CHANGED -> {
-                    MediaLogger.d("----> Surface尺寸改变")
+                    MediaLogger.d("----> surface size changed")
                 }
                 PlayerState.STATE_BUFFER_START -> {
-                    MediaLogger.d("----> 开始缓冲")
+                    MediaLogger.d("----> start buffer")
                     playerStateListeners.forEach {
                         it.onLoadingStarted()
                     }
                 }
                 PlayerState.STATE_BUFFER_END -> {
-                    MediaLogger.d("----> 缓冲结束")
+                    MediaLogger.d("----> end buffer")
                     playerStateListeners.forEach {
                         it.onLoadingCompleted()
                     }
                 }
                 PlayerState.STATE_SEEK_START -> {
-                    MediaLogger.d("----> seek开始")
+                    MediaLogger.d("----> start seek")
                     playerStateListeners.forEach {
                         it.onSeekStarted()
                     }
                 }
                 PlayerState.STATE_SEEK_COMPLETED -> {
-                    MediaLogger.d("----> seek结束")
+                    MediaLogger.d("----> end seek")
                     playerStateListeners.forEach {
                         it.onSeekCompleted()
                     }
                 }
                 PlayerState.STATE_BUFFER_UPDATE -> {
-                    MediaLogger.d("----> 缓冲进度更新: ${event.bufferedPercentage}")
+                    MediaLogger.d("----> buffer update: ${event.bufferedPercentage}")
                     playerStateListeners.forEach {
                         it.onBufferUpdate(event.bufferedPercentage)
                     }
@@ -426,7 +427,7 @@ class LitePlayerView @JvmOverloads constructor(
                 androidParent?.addView(this, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
                 controller?.displayModeChanged(true)
                 topbar?.displayModeChanged(true)
-                MediaLogger.d("开启全屏: $width * $height")
+                MediaLogger.d("enter fullscreen: $width * $height")
             } else {
                 activityReference?.let {
                     it.get()?.run {
@@ -442,7 +443,7 @@ class LitePlayerView @JvmOverloads constructor(
                 directParent?.addView(this, childIndex, originLayoutParams)
                 controller?.displayModeChanged(false)
                 topbar?.displayModeChanged(false)
-                MediaLogger.d("退出全屏: $width * $height")
+                MediaLogger.d("exit fullscreen: $width * $height")
             }
         }
     }
@@ -617,7 +618,7 @@ class LitePlayerView @JvmOverloads constructor(
                 bindRenderMeasure(renderMeasure)
             }
         }
-        MediaLogger.d("改变render: $renderType")
+        MediaLogger.d("set render: $renderType")
         addView(
             render!!.getRenderView(), 0, LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT,
@@ -655,7 +656,7 @@ class LitePlayerView @JvmOverloads constructor(
                 //TODO()
             }
         }
-        MediaLogger.d("改变player: $playerType")
+        MediaLogger.d("set player: $playerType")
         this.playerType = playerType
         registerPlayerStateObserver(playerStateObserver)
         handler.removeMessages(MSG_PROGRESS)

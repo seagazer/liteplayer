@@ -1,6 +1,7 @@
 package com.seagazer.liteplayer.bean
 
 /**
+ * DataSource to hold media info.
  *
  * Author: Seagazer
  * Date: 2020/6/19

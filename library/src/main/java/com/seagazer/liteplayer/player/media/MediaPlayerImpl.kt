@@ -13,9 +13,10 @@ import com.seagazer.liteplayer.player.IPlayer
 import com.seagazer.liteplayer.player.IPlayerCore
 
 /**
+ * Android media decoder.
  *
  * Author: Seagazer
- * Date: 2020/6/28
+ * Date: 2020/7/9
  */
 class MediaPlayerImpl constructor(val context: Context) : IPlayer {
     private var player: MediaPlayer? = null

@@ -1,6 +1,7 @@
 package com.seagazer.liteplayer.config
 
 /**
+ * Decoder define.
  *
  * Author: Seagazer
  * Date: 2020/6/20

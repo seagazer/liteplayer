@@ -12,6 +12,7 @@ import kotlin.math.atan2
 import kotlin.math.roundToInt
 
 /**
+ * Helper to handle system accelerometer sensor event.
  *
  * Author: Seagazer
  * Date: 2020/6/30

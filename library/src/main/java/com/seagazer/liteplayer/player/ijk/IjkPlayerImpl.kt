@@ -11,6 +11,7 @@ import com.seagazer.liteplayer.player.IPlayer
 import com.seagazer.liteplayer.player.IPlayerCore
 
 /**
+ * Ijk decoder.
  *
  * Author: Seagazer
  * Date: 2020/7/1

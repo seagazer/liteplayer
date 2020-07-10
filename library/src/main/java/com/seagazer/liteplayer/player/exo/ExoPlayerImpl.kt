@@ -25,6 +25,7 @@ import com.seagazer.liteplayer.player.IPlayer
 import com.seagazer.liteplayer.player.IPlayerCore
 
 /**
+ * Google exo decoder.
  *
  * Author: Seagazer
  * Date: 2020/6/19
@@ -47,7 +48,7 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
         override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int, pixelWidthHeightRatio: Float) {
             this@ExoPlayerImpl.videoWidth = width
             this@ExoPlayerImpl.videoHeight = height
-            MediaLogger.d("视频尺寸: $width x $height  : $currentState")
+            MediaLogger.d("video size: $width x $height  : $currentState")
             liveData?.value = PlayerStateEvent(PlayerState.STATE_VIDEO_SIZE_CHANGED).apply {
                 videoWidth = width
                 videoHeight = height
@@ -55,12 +56,12 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
         }
 
         override fun onRenderedFirstFrame() {
-            MediaLogger.d("首帧渲染  : $currentState")
+            MediaLogger.d("render first frame  : $currentState")
             liveData?.value = PlayerStateEvent(PlayerState.STATE_RENDERED_FIRST_FRAME)
         }
 
         override fun onSurfaceSizeChanged(width: Int, height: Int) {
-            MediaLogger.d("surface改变: $width x $height  : $currentState")
+            MediaLogger.d("surface changed: $width x $height  : $currentState")
             liveData?.value = PlayerStateEvent(PlayerState.STATE_SURFACE_SIZE_CHANGED)
         }
     }
@@ -68,7 +69,7 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
     private val eventListener = object : Player.EventListener {
         override fun onLoadingChanged(isLoading: Boolean) {
             if (!isLoading) {
-                MediaLogger.d("加载中 ...: $currentState")
+                MediaLogger.d("loading ...: $currentState")
                 liveData?.value =
                     PlayerStateEvent(PlayerState.STATE_BUFFER_UPDATE).apply {
                         videoWidth = getVideoWidth()
@@ -79,16 +80,15 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
         }
 
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            MediaLogger.d("-> 播放状态改变: $playbackState / $playWhenReady === : $currentState")
             // 已经开始播放，两种状态：播放，暂停
             if (!isPreparing) {
                 if (playWhenReady) {
                     setPlayerState(PlayerState.STATE_STARTED)
-                    MediaLogger.d("-> 播放: $currentState")
+                    MediaLogger.d("-> start: $currentState")
                     liveData?.value = PlayerStateEvent(PlayerState.STATE_STARTED)
                 } else {
                     setPlayerState(PlayerState.STATE_PAUSED)
-                    MediaLogger.d("-> 暂停: $currentState")
+                    MediaLogger.d("-> pause: $currentState")
                     liveData?.value = PlayerStateEvent(PlayerState.STATE_PAUSED)
                 }
             }
@@ -98,11 +98,11 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
                     liveData?.value = PlayerStateEvent(PlayerState.STATE_PREPARED)
                     isPreparing = false
                     if (playWhenReady) {
-                        MediaLogger.d("-> 播放: $currentState")
+                        MediaLogger.d("-> start: $currentState")
                         setPlayerState(PlayerState.STATE_STARTED)
                         liveData?.value = PlayerStateEvent(PlayerState.STATE_STARTED)
                     } else {
-                        MediaLogger.d("-> 准备状态: $currentState")
+                        MediaLogger.d("-> prepared: $currentState")
                         setPlayerState(PlayerState.STATE_PREPARED)
                     }
                     if (startPosition > 0) {
@@ -116,7 +116,7 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
             if (isBuffering) {
                 if (playbackState == Player.STATE_READY || playbackState == Player.STATE_ENDED) {
                     isBuffering = false
-                    MediaLogger.d("-> 缓冲结束: $currentState")
+                    MediaLogger.d("-> loading end: $currentState")
                     liveData?.value = PlayerStateEvent(PlayerState.STATE_BUFFER_END)
                 }
             }
@@ -125,7 +125,7 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
             if (isPendingSeek) {
                 if (playbackState == Player.STATE_READY) {
                     isPendingSeek = false
-                    MediaLogger.d("-> seek结束: $currentState")
+                    MediaLogger.d("-> seek end: $currentState")
                     liveData?.value = PlayerStateEvent(PlayerState.STATE_SEEK_COMPLETED)
                 }
             }
@@ -133,11 +133,11 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
             if (!isPreparing) {
                 if (playbackState == Player.STATE_BUFFERING) {
                     isBuffering = true
-                    MediaLogger.d("-> 开始缓冲: $currentState")
+                    MediaLogger.d("-> loading start: $currentState")
                     liveData?.value = PlayerStateEvent(PlayerState.STATE_BUFFER_START)
                 } else if (playbackState == Player.STATE_ENDED) {
                     setPlayerState(PlayerState.STATE_PLAYBACK_COMPLETE)
-                    MediaLogger.d("-> 播放结束: $currentState")
+                    MediaLogger.d("-> end play: $currentState")
                     liveData?.value = PlayerStateEvent(PlayerState.STATE_PLAYBACK_COMPLETE)
                 }
             }
@@ -219,7 +219,7 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
             state != PlayerState.STATE_NOT_INITIALIZED && state != PlayerState.STATE_PAUSED
         ) {
             player.playWhenReady = false
-            MediaLogger.d("暂停播放--->: $currentState")
+            MediaLogger.d("pause fromUser[$fromUser]: $currentState")
         }
     }
 
@@ -227,7 +227,7 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
         MediaLogger.d("")
         if (isInPlaybackState() && getPlayerState() == PlayerState.STATE_PAUSED) {
             player.playWhenReady = true
-            MediaLogger.d("恢复播放--->: $currentState")
+            MediaLogger.d("resume: $currentState")
         }
     }
 

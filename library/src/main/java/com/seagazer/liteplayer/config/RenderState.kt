@@ -1,6 +1,7 @@
 package com.seagazer.liteplayer.config
 
 /**
+ * State of render surface define.
  *
  * Author: Seagazer
  * Date: 2020/6/20

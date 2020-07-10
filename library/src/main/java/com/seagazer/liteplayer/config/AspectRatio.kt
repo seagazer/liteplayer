@@ -1,43 +1,44 @@
 package com.seagazer.liteplayer.config
 
 /**
+ * AspectRatio mode define.
  *
  * Author: Seagazer
  * Date: 2020/6/20
  */
 enum class AspectRatio {
     /**
-     * 宽屏16:9模式
+     * W16:9
      */
     W_16_9,
 
     /**
-     * 宽屏4:3模式
+     * W4:3
      */
     W_4_3,
 
     /**
-     * 宽屏21:9模式
+     * W21:9
      */
     W_21_9,
 
     /**
-     * 拉伸模式
+     * Stretch to fill view size
      */
     STRETCH,
 
     /**
-     * 填充模式(原始比例填满视图)
+     * Keep video aspectRatio and fill view size
      */
     FILL,
 
     /**
-     * 自适应
+     * Auto
      */
     AUTO,
 
     /**
-     * 原始尺寸
+     * Video origin size
      */
     ORIGIN,
 }

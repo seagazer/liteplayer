@@ -6,7 +6,7 @@ import com.seagazer.liteplayer.config.AspectRatio
 import com.seagazer.liteplayer.helper.MediaLogger
 
 /**
- * Helper to make measure for render view.
+ * Helper to make measure for render view when aspectRatio changed.
  *
  * Author: Seagazer
  * Date: 2020/6/20
@@ -23,20 +23,20 @@ class RenderMeasure {
         val defaultWidth = getDefaultSize(videoWidth, widthMeasureSpec)
         val defaultHeight = getDefaultSize(videoHeight, heightMeasureSpec)
 
-        MediaLogger.d("视频宽高： $videoWidth $videoHeight")
-        MediaLogger.d("View默认宽高： $defaultWidth $defaultHeight")
+        MediaLogger.d("video size： $videoWidth $videoHeight")
+        MediaLogger.d("render view default size： $defaultWidth $defaultHeight")
 
         if (videoWidth > 0 && videoHeight > 0) {
             val widthMode = MeasureSpec.getMode(widthMeasureSpec)
             val widthSpecSize = MeasureSpec.getSize(widthMeasureSpec)
             val heightMode = MeasureSpec.getMode(heightMeasureSpec)
             val heightSpecSize = MeasureSpec.getSize(heightMeasureSpec)
-            MediaLogger.d("View测量宽高： $widthSpecSize $heightSpecSize")
+            MediaLogger.d("render view measure size： $widthSpecSize $heightSpecSize")
 
             val viewRatio = heightSpecSize * 1f / widthSpecSize// 视图 高/宽比
             val videoRatio = videoHeight * 1f / videoWidth// 视频 高/宽比
-            MediaLogger.d("View宽高比： $viewRatio")
-            MediaLogger.d("视频宽高比： $videoRatio")
+            MediaLogger.d("render aspectRatio： $viewRatio")
+            MediaLogger.d("video aspectRatio： $videoRatio")
 
             if (widthMode == MeasureSpec.EXACTLY && heightMode == MeasureSpec.EXACTLY) {
                 if (aspectRatio == AspectRatio.ORIGIN || aspectRatio == AspectRatio.AUTO) {
@@ -112,7 +112,7 @@ class RenderMeasure {
             measureWidth = defaultWidth
             measureHeight = defaultHeight
         }
-        MediaLogger.d("View最终宽高: $measureWidth $measureHeight")
+        MediaLogger.d("measure result: $measureWidth $measureHeight")
     }
 
     fun setVideoSize(width: Int, height: Int) {

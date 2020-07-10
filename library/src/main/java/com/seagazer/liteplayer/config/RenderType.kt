@@ -1,6 +1,7 @@
 package com.seagazer.liteplayer.config
 
 /**
+ * Render type define.
  *
  * Author: Seagazer
  * Date: 2020/6/20

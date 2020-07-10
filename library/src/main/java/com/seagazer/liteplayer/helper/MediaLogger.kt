@@ -4,6 +4,7 @@ import android.util.Log
 import com.seagazer.liteplayer.BuildConfig
 
 /**
+ * Logger helper for player.
  *
  * Author: Seagazer
  * Date: 2020/6/19
@@ -12,9 +13,14 @@ class MediaLogger {
     companion object {
         private const val TAG = "Seagazer"
         private var DEBUG = BuildConfig.DEBUG
+        private var openLogger = false
+
+        fun openLogger() {
+            openLogger = true
+        }
 
         fun i(msg: String) {
-            if (DEBUG) {
+            if (DEBUG || openLogger) {
                 val stackTrace = Thread.currentThread().stackTrace
                 if (stackTrace.size > 4) {
                     val e = stackTrace[3]
@@ -24,7 +30,7 @@ class MediaLogger {
         }
 
         fun d(msg: String) {
-            if (DEBUG) {
+            if (DEBUG || openLogger) {
                 val stackTrace = Thread.currentThread().stackTrace
                 if (stackTrace.size > 4) {
                     val e = stackTrace[3]
@@ -34,7 +40,7 @@ class MediaLogger {
         }
 
         fun w(msg: String) {
-            if (DEBUG) {
+            if (DEBUG || openLogger) {
                 val stackTrace = Thread.currentThread().stackTrace
                 if (stackTrace.size > 4) {
                     val e = stackTrace[3]
@@ -44,7 +50,7 @@ class MediaLogger {
         }
 
         fun e(msg: String) {
-            if (DEBUG) {
+            if (DEBUG || openLogger) {
                 val stackTrace = Thread.currentThread().stackTrace
                 if (stackTrace.size > 4) {
                     val e = stackTrace[3]
@@ -54,7 +60,7 @@ class MediaLogger {
         }
 
         fun i(tag: String, msg: String) {
-            if (DEBUG) {
+            if (DEBUG || openLogger) {
                 val stackTrace = Thread.currentThread().stackTrace
                 if (stackTrace.size > 4) {
                     val e = stackTrace[3]
@@ -64,7 +70,7 @@ class MediaLogger {
         }
 
         fun d(tag: String, msg: String) {
-            if (DEBUG) {
+            if (DEBUG || openLogger) {
                 val stackTrace = Thread.currentThread().stackTrace
                 if (stackTrace.size > 4) {
                     val e = stackTrace[3]
@@ -74,7 +80,7 @@ class MediaLogger {
         }
 
         fun w(tag: String, msg: String) {
-            if (DEBUG) {
+            if (DEBUG || openLogger) {
                 val stackTrace = Thread.currentThread().stackTrace
                 if (stackTrace.size > 4) {
                     val e = stackTrace[3]
@@ -84,7 +90,7 @@ class MediaLogger {
         }
 
         fun e(tag: String, msg: String) {
-            if (DEBUG) {
+            if (DEBUG || openLogger) {
                 val stackTrace = Thread.currentThread().stackTrace
                 if (stackTrace.size > 4) {
                     val e = stackTrace[3]
