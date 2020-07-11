@@ -19,7 +19,9 @@ import com.seagazer.liteplayer.widget.LitePlayerView
 import com.seagazer.sample.R
 import com.seagazer.sample.navigationTo
 import com.seagazer.sample.widget.SimpleItemDecoration
+import kotlinx.android.synthetic.main.activity_player.*
 import kotlinx.android.synthetic.main.activity_player_list.*
+import kotlinx.android.synthetic.main.activity_player_list.sensor
 
 class PlayerListActivity : AppCompatActivity() {
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -157,6 +159,14 @@ class PlayerListActivity : AppCompatActivity() {
 
     fun jumpToActivity(view: View) {
         navigationTo(EmptyActivity::class.java)
+    }
+
+    override fun onBackPressed() {
+        if (player_view.isFullScreen()) {
+            player_view.setFullScreenMode(false)
+        } else {
+            super.onBackPressed()
+        }
     }
 
 }

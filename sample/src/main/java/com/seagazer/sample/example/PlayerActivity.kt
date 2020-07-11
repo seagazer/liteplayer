@@ -1,18 +1,13 @@
 package com.seagazer.sample.example
 
-import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.view.View
-import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.PlayerType
 import com.seagazer.liteplayer.config.RenderType
 import com.seagazer.liteplayer.helper.OrientationSensorHelper
-import com.seagazer.liteplayer.helper.TimeConverter
 import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
 import com.seagazer.liteplayer.widget.LiteGestureController
 import com.seagazer.liteplayer.widget.LiteMediaController
@@ -29,44 +24,13 @@ class PlayerActivity : AppCompatActivity() {
     private val url1 = "https://vfx.mtime.cn/Video/2019/03/19/mp4/190319212559089721.mp4"
     private val url2 = "https://vfx.mtime.cn/Video/2019/03/09/mp4/190309153658147087.mp4"
     private val urls = listOf(Pair(url1, "玩具总动员"), Pair(url2, "New Story"))
-    private val msgProgress = 0x1
     private var currentPlayIndex = 0
-
-    @SuppressLint("HandlerLeak")
-    private val H: Handler = object : Handler() {
-        @SuppressLint("SetTextI18n")
-        override fun handleMessage(msg: Message) {
-            if (msg.what == msgProgress) {
-                seek_bar.progress = player_view.getCurrentPosition().toInt()
-                media_info.text =
-                    "${TimeConverter.timeToString(seek_bar.progress.toLong())} / ${TimeConverter.timeToString(
-                        player_view.getDuration()
-                    )}"
-                sendEmptyMessageDelayed(msgProgress, 1000)
-            }
-        }
-    }
 
     private lateinit var orientationSensorHelper: OrientationSensorHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
-        // seek
-        seek_bar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    player_view.seekTo(progress.toLong())
-                }
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
-
-        })
         // progress
         progress_controller.setOnCheckedChangeListener { _, isChecked ->
             player_view.displayProgress(isChecked)
@@ -98,14 +62,10 @@ class PlayerActivity : AppCompatActivity() {
         player_view.attachGestureController(LiteGestureController(this))
         // custom loading overlay
         player_view.attachOverlay(LoadingOverlay(this).apply { show() })
-        player_view.setAutoHideOverlay(true)
+        player_view.setAutoHideOverlay(false)
 
         player_view.start()
         player_view.setPlayerStateChangedListener(object : SimplePlayerStateChangedListener() {
-            override fun onPrepared(dataSource: DataSource) {
-                seek_bar.max = player_view.getDuration().toInt()
-                H.sendEmptyMessageDelayed(msgProgress, 1000)
-            }
 
             override fun onCompleted() {
                 playNext()
@@ -121,11 +81,6 @@ class PlayerActivity : AppCompatActivity() {
 
             override fun onLoadingCompleted() {
                 toastShort("缓冲结束")
-            }
-
-            override fun onBufferUpdate(bufferedPercentage: Int) {
-                seek_bar.secondaryProgress =
-                    (player_view.getDuration() * bufferedPercentage * 1f / 100).toInt()
             }
 
         })
@@ -167,7 +122,6 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        H.removeCallbacksAndMessages(null)
         orientationSensorHelper.stopWatching()
         super.onDestroy()
     }

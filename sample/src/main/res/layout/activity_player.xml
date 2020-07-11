@@ -16,18 +16,6 @@
             android:layout_width="match_parent"
             android:layout_height="220dp" />
 
-        <TextView
-            android:id="@+id/media_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="18sp" />
-
-        <SeekBar
-            android:id="@+id/seek_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
