@@ -29,8 +29,9 @@ class SplashActivity : AppCompatActivity() {
         })
         val anim = AnimatorSet()
         val alpha = ObjectAnimator.ofFloat(icon, "alpha", 0f, 1f)
+        val alpha2 = ObjectAnimator.ofFloat(version, "alpha", 0f, 1f)
         val translationY = ObjectAnimator.ofFloat(icon, "translationY", 100f, 0f)
-        anim.playTogether(alpha, translationY)
+        anim.playTogether(alpha, alpha2, translationY)
         anim.duration = 1500
         anim.start()
     }

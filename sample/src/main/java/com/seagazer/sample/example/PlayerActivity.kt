@@ -18,6 +18,7 @@ import com.seagazer.liteplayer.widget.LiteGestureController
 import com.seagazer.liteplayer.widget.LiteMediaController
 import com.seagazer.liteplayer.widget.LiteMediaTopbar
 import com.seagazer.sample.R
+import com.seagazer.sample.cache.VideoCacheHelper
 import com.seagazer.sample.navigationTo
 import com.seagazer.sample.toastShort
 import com.seagazer.sample.widget.LoadingOverlay
@@ -90,7 +91,7 @@ class PlayerActivity : AppCompatActivity() {
         // player type
         player_view.setPlayerType(PlayerType.TYPE_EXO_PLAYER)
         // prepare video
-        player_view.setDataSource(DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second))
+        player_view.setDataSource(DataSource(VideoCacheHelper.url(urls[currentPlayIndex].first), urls[currentPlayIndex].second))
         // media controller, topbar and gesture controller
         player_view.attachMediaController(LiteMediaController(this))
         player_view.attachMediaTopbar(LiteMediaTopbar(this))
@@ -153,7 +154,7 @@ class PlayerActivity : AppCompatActivity() {
         } else {
             0
         }
-        player_view.setDataSource(DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second))
+        player_view.setDataSource(DataSource(VideoCacheHelper.url(urls[currentPlayIndex].first), urls[currentPlayIndex].second))
         player_view.start()
     }
 
