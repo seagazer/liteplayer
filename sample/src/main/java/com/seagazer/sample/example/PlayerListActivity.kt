@@ -162,8 +162,8 @@ class PlayerListActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (player_view.isFullScreen()) {
-            player_view.setFullScreenMode(false)
+        if (listPlayer.isFullScreen()) {
+            listPlayer.setFullScreenMode(false)
         } else {
             super.onBackPressed()
         }

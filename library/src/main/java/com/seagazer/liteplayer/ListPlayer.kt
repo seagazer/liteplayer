@@ -36,7 +36,7 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
     private lateinit var listener: VideoListScrollListener
     private var autoPlay = true
     private var playerType = PlayerType.TYPE_EXO_PLAYER
-    private var renderType = RenderType.TYPE_TEXTURE_VIEW
+    private var renderType = RenderType.TYPE_SURFACE_VIEW
 
     /**
      * Attach to recyclerView.
@@ -83,6 +83,13 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
      */
     fun setFullScreenMode(isFullScreen: Boolean) {
         playerView.setFullScreenMode(isFullScreen)
+    }
+
+    /**
+     * Get current display mode is fullscreen or not.
+     */
+    fun isFullScreen(): Boolean {
+        return playerView.isFullScreen()
     }
 
     private fun attachToRecyclerViewAutoPlay(recyclerView: RecyclerView, listener: VideoListScrollListener) {

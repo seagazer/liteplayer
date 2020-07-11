@@ -23,7 +23,7 @@ class PlayerActivity : AppCompatActivity() {
 
     private val url1 = "https://vfx.mtime.cn/Video/2019/03/19/mp4/190319212559089721.mp4"
     private val url2 = "https://vfx.mtime.cn/Video/2019/03/09/mp4/190309153658147087.mp4"
-    private val urls = listOf(Pair(url1, "玩具总动员"), Pair(url2, "New Story"))
+    private val urls = listOf(Pair(VideoCacheHelper.url(url1), "玩具总动员"), Pair(VideoCacheHelper.url(url2), "New Story"))
     private var currentPlayIndex = 0
 
     private lateinit var orientationSensorHelper: OrientationSensorHelper
@@ -55,7 +55,7 @@ class PlayerActivity : AppCompatActivity() {
         // player type
         player_view.setPlayerType(PlayerType.TYPE_EXO_PLAYER)
         // prepare video
-        player_view.setDataSource(DataSource(VideoCacheHelper.url(urls[currentPlayIndex].first), urls[currentPlayIndex].second))
+        player_view.setDataSource(DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second))
         // media controller, topbar and gesture controller
         player_view.attachMediaController(LiteMediaController(this))
         player_view.attachMediaTopbar(LiteMediaTopbar(this))
@@ -104,12 +104,12 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun playNext() {
-        currentPlayIndex = if (player_view.getDataSource()?.mediaUrl == url1) {
+        currentPlayIndex = if (currentPlayIndex == 0) {
             1
         } else {
             0
         }
-        player_view.setDataSource(DataSource(VideoCacheHelper.url(urls[currentPlayIndex].first), urls[currentPlayIndex].second))
+        player_view.setDataSource(DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second))
         player_view.start()
     }
 
