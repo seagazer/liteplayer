@@ -5,10 +5,10 @@ import android.util.AttributeSet
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.lifecycle.MutableLiveData
-import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.config.AspectRatio
 import com.seagazer.liteplayer.config.RenderState
 import com.seagazer.liteplayer.event.RenderStateEvent
+import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.player.IPlayer
 import java.lang.ref.WeakReference
 
@@ -24,6 +24,7 @@ class RenderSurfaceView @JvmOverloads constructor(
     private var renderMeasure: RenderMeasure? = null
     private var holderReference: WeakReference<SurfaceHolder>? = null
     private var liveData: MutableLiveData<RenderStateEvent>? = null
+    private var firstAttach = true
 
     init {
         MediaLogger.d("surface view init")
@@ -45,7 +46,17 @@ class RenderSurfaceView @JvmOverloads constructor(
         MediaLogger.d("surface view  update size")
         renderMeasure?.let {
             it.setVideoSize(videoWidth, videoHeight)
-            requestLayout()
+            // fix the surfaceView is flash when first attach view system at a short time to requestLayout again.
+            if (firstAttach) {
+                postDelayed({
+                    MediaLogger.d("first attach, delay 500ms to update layout")
+                    requestLayout()
+                }, 500)
+            } else {
+                MediaLogger.d("normal attach")
+                requestLayout()
+            }
+            firstAttach = false
         }
     }
 
