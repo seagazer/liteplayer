@@ -24,6 +24,7 @@ import com.seagazer.liteplayer.helper.OrientationSensorHelper
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
 import com.seagazer.liteplayer.player.IPlayer
 import com.seagazer.liteplayer.player.exo.ExoPlayerImpl
+import com.seagazer.liteplayer.player.media.MediaPlayerImpl
 import com.seagazer.liteplayer.render.IRender
 import com.seagazer.liteplayer.render.RenderMeasure
 import com.seagazer.liteplayer.render.RenderSurfaceView
@@ -653,7 +654,7 @@ class LitePlayerView @JvmOverloads constructor(
                 //TODO()
             }
             PlayerType.TYPE_MEDIA_PLAYER -> {
-                //TODO()
+                litePlayerCore.setupPlayer(MediaPlayerImpl(context))
             }
         }
         MediaLogger.d("set player: $playerType")
