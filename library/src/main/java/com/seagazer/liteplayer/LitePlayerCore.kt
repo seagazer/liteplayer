@@ -41,7 +41,6 @@ class LitePlayerCore constructor(val context: Context) : IPlayer {
 
     fun setupPlayer(player: IPlayer) {
         innerPlayer = player
-        //requestAudioFocus()
         currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
         maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
     }
@@ -50,8 +49,11 @@ class LitePlayerCore constructor(val context: Context) : IPlayer {
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
                 if (shouldPlayWhenReady || getPlayerState() == PlayerState.STATE_PREPARED) {
-                    //innerPlayer?.start()
-                    setVolume(currentVolume)
+                    // refresh current volume again because maybe other app will change the volume of system
+                    val volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+                    if (currentVolume != volume) {
+                        setVolume(volume)
+                    }
                 }
                 shouldPlayWhenReady = false
             }
