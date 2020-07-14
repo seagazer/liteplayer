@@ -38,7 +38,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="listPlayer"
-            android:text="ListPlayer"
+            android:text="SingleListPlayer"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="multiListPlay"
+            android:text="MultiListPlayer"
             android:textAllCaps="false" />
 
         <Button
