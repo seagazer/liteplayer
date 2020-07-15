@@ -44,6 +44,21 @@ class PlayerActivity : AppCompatActivity() {
                 orientationSensorHelper.stopWatching()
             }
         }
+        // player config
+        player_config.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.player_exo -> {
+                    player_view.setPlayerType(PlayerType.TYPE_EXO_PLAYER)
+                    player_view.setDataSource(DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second))
+                    player_view.start()
+                }
+                R.id.player_media -> {
+                    player_view.setPlayerType(PlayerType.TYPE_MEDIA_PLAYER)
+                    player_view.setDataSource(DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second))
+                    player_view.start()
+                }
+            }
+        }
         // render view
         render_config.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {

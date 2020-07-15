@@ -39,6 +39,28 @@
 
 
         <RadioGroup
+            android:id="@+id/player_config"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <RadioButton
+                android:id="@+id/player_exo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="ExoPlayer" />
+
+            <RadioButton
+                android:id="@+id/player_media"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MediaPlayer" />
+
+        </RadioGroup>
+
+        <RadioGroup
             android:id="@+id/render_config"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
