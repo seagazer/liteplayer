@@ -24,17 +24,21 @@ class MultiListPlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_multi_list_player)
+
+        tab_layout.setupWithViewPager(view_pager)
         view_pager.adapter = object : FragmentPagerAdapter(supportFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
-            val fragments = mutableListOf<Fragment>().apply {
-                add(ListFragment())
-                add(ListFragment())
-                add(ListFragment())
-                add(ListFragment())
-                add(ListFragment())
+            val fragments = mutableListOf<Pair<String, Fragment>>().apply {
+                add(Pair("Tab1", ListFragment()))
+                add(Pair("Tab2", ListFragment()))
+                add(Pair("Tab3", ListFragment()))
+                add(Pair("Tab4", ListFragment()))
+                add(Pair("Tab5", ListFragment()))
             }
 
-            override fun getItem(position: Int) = fragments[position]
+            override fun getItem(position: Int) = fragments[position].second
+
+            override fun getPageTitle(position: Int) = fragments[position].first
 
             override fun getCount() = fragments.size
         }
@@ -42,7 +46,7 @@ class MultiListPlayerActivity : AppCompatActivity() {
     }
 
     class ListFragment : Fragment() {
-        private val urls = arrayListOf(
+        private var urls = arrayListOf(
             "https://vfx.mtime.cn/Video/2019/03/19/mp4/190319212559089721.mp4",
             "https://vfx.mtime.cn/Video/2019/03/09/mp4/190309153658147087.mp4",
             "https://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4",
@@ -63,6 +67,7 @@ class MultiListPlayerActivity : AppCompatActivity() {
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
             if (rootView == null) {
+                urls.shuffle()
                 rootView = inflater.inflate(R.layout.fragment_video_list, container, false)
                 recyclerView = rootView!!.findViewById(R.id.recycler_view)
                 val linearLayoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
