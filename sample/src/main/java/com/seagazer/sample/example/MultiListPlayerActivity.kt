@@ -42,7 +42,7 @@ class MultiListPlayerActivity : AppCompatActivity() {
 
             override fun getCount() = fragments.size
         }
-
+        view_pager.offscreenPageLimit = 4
     }
 
     class ListFragment : Fragment() {
@@ -107,6 +107,12 @@ class MultiListPlayerActivity : AppCompatActivity() {
         override fun onStop() {
             super.onStop()
             listPlayer.pause(true)
+        }
+
+        override fun onDestroyView() {
+            super.onDestroyView()
+            listPlayer.detachRecyclerView()
+            rootView = null
         }
 
         inner class ListAdapter : RecyclerView.Adapter<ListAdapter.VideoHolder>() {
