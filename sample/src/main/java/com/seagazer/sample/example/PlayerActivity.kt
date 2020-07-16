@@ -1,13 +1,11 @@
 package com.seagazer.sample.example
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.PlayerType
 import com.seagazer.liteplayer.config.RenderType
-import com.seagazer.liteplayer.helper.OrientationSensorHelper
 import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
 import com.seagazer.liteplayer.widget.LiteGestureController
 import com.seagazer.liteplayer.widget.LiteMediaController
@@ -26,22 +24,20 @@ class PlayerActivity : AppCompatActivity() {
     private val urls = listOf(Pair(VideoCacheHelper.url(url1), "玩具总动员"), Pair(VideoCacheHelper.url(url2), "New Story"))
     private var currentPlayIndex = 0
 
-    private lateinit var orientationSensorHelper: OrientationSensorHelper
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
         // progress
+        player_view.setProgressColor(resources.getColor(R.color.colorAccent), resources.getColor(R.color.colorPrimaryDark))
         progress_controller.setOnCheckedChangeListener { _, isChecked ->
             player_view.displayProgress(isChecked)
         }
         // sensor auto turn around
-        orientationSensorHelper = OrientationSensorHelper(this)
         sensor.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                orientationSensorHelper.startWatching(this)
+                player_view.setAutoSensorEnable(true)
             } else {
-                orientationSensorHelper.stopWatching()
+                player_view.setAutoSensorEnable(false)
             }
         }
         // player config
@@ -78,7 +74,6 @@ class PlayerActivity : AppCompatActivity() {
         // custom loading overlay
         player_view.attachOverlay(LoadingOverlay(this).apply { show() })
         player_view.setAutoHideOverlay(false)
-
         player_view.start()
         player_view.setPlayerStateChangedListener(object : SimplePlayerStateChangedListener() {
 
@@ -134,17 +129,6 @@ class PlayerActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
-    }
-
-    override fun onDestroy() {
-        orientationSensorHelper.stopWatching()
-        super.onDestroy()
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        val isFullScreen = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
-        player_view.setFullScreenMode(isFullScreen)
     }
 
     fun jumpToActivity(view: View) {

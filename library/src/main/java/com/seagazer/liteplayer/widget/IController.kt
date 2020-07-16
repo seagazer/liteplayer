@@ -19,5 +19,5 @@ interface IController : IOverlay {
 
     fun displayModeChanged(isFullScreen: Boolean)
 
-
+    fun autoSensorModeChanged(isAutoSensor: Boolean)
 }

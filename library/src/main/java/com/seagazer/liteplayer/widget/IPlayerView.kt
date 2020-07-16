@@ -1,15 +1,15 @@
 package com.seagazer.liteplayer.widget
 
 import androidx.lifecycle.MutableLiveData
-import com.seagazer.liteplayer.config.AspectRatio
 import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.liteplayer.config.AspectRatio
 import com.seagazer.liteplayer.config.PlayerType
 import com.seagazer.liteplayer.config.RenderType
-import com.seagazer.liteplayer.listener.PlayerStateChangedListener
 import com.seagazer.liteplayer.event.PlayerStateEvent
 import com.seagazer.liteplayer.event.RenderStateEvent
-import com.seagazer.liteplayer.player.IPlayerCore
+import com.seagazer.liteplayer.listener.PlayerStateChangedListener
 import com.seagazer.liteplayer.player.IPlayer
+import com.seagazer.liteplayer.player.IPlayerCore
 
 /**
  *
@@ -34,5 +34,12 @@ interface IPlayerView : IPlayerCore {
     fun attachOverlay(overlay: IOverlay)
 
     fun getDataSource(): DataSource?
+
+    fun displayProgress(showProgress: Boolean)
+    fun setProgressColor(progressColor: Int, secondProgressColor: Int)
+
+    fun setFullScreenMode(isFullScreen: Boolean)
+    fun isFullScreen(): Boolean
+    fun setAutoSensorEnable(enable: Boolean)
 
 }

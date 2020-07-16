@@ -15,7 +15,7 @@ import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.PlayerType
 import com.seagazer.liteplayer.config.RenderType
 import com.seagazer.liteplayer.helper.MediaLogger
-import com.seagazer.liteplayer.player.IPlayerCore
+import com.seagazer.liteplayer.widget.IPlayerView
 import com.seagazer.liteplayer.widget.LitePlayerView
 
 /**
@@ -24,7 +24,7 @@ import com.seagazer.liteplayer.widget.LitePlayerView
  * Author: Seagazer
  * Date: 2020/6/29
  */
-class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by playerView, LifecycleObserver {
+class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by playerView, LifecycleObserver {
     companion object {
         private const val MSG_ATTACH_CONTAINER = 0x11
         private const val ATTACH_DELAY = 500L
@@ -76,20 +76,6 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
                 }
             }
         }
-    }
-
-    /**
-     * Set full screen mode or not.
-     */
-    fun setFullScreenMode(isFullScreen: Boolean) {
-        playerView.setFullScreenMode(isFullScreen)
-    }
-
-    /**
-     * Get current display mode is fullscreen or not.
-     */
-    fun isFullScreen(): Boolean {
-        return playerView.isFullScreen()
     }
 
     private fun attachToRecyclerViewAutoPlay(recyclerView: RecyclerView, listener: VideoListScrollListener) {
@@ -203,11 +189,11 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
             layoutManager?.let { lm ->
                 val currentFirst = lm.findFirstVisibleItemPosition()
                 val currentLast = lm.findLastVisibleItemPosition()
-                MediaLogger.d("position: playing=$playingPosition, first=$currentFirst,last=$currentLast")
                 if (currentFirst != RecyclerView.NO_POSITION && currentLast != RecyclerView.NO_POSITION &&
                     currentFirst != currentLast &&
                     (playingPosition < currentFirst || playingPosition > currentLast)
                 ) {
+                    MediaLogger.d("position: playing=$playingPosition, first=$currentFirst,last=$currentLast")
                     MediaLogger.d("detach container")
                     detachVideoContainer()
                 }
@@ -226,8 +212,6 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private fun onActivityDestroy() {
-        attachHandler.removeCallbacksAndMessages(null)
-        unregisterLifecycle()
         detachRecyclerView()
     }
 
@@ -240,29 +224,22 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerCore by pl
 
     private fun unregisterLifecycle() {
         if (recyclerView!!.context is FragmentActivity) {
+            MediaLogger.d("detached, unregister lifecycle")
             (recyclerView?.context as FragmentActivity).lifecycle.removeObserver(this)
         }
     }
 
     /**
-     * You should call this method if use the original Activity when the activity onDestroy.
-     * If use sub class of FragmentActivity, it can call this method automatic when activity onDestroy.
+     * You should call this method if use in original Activity when the activity onDestroy or fragment when onDestroyView.
+     * If use in sub class of FragmentActivity, it can call this method automatic when activity onDestroy.
      */
     fun detachRecyclerView() {
+        attachHandler.removeCallbacksAndMessages(null)
+        unregisterLifecycle()
         recyclerView?.removeOnScrollListener(autoPlayScrollListener)
         recyclerView?.removeOnScrollListener(clickPlayScrollListener)
         playerView.stop()
         playerView.destroy()
-    }
-
-    fun setPlayerType(playerType: PlayerType) {
-        this.playerType = playerType
-        playerView.setPlayerType(playerType)
-    }
-
-    fun setRenderType(renderType: RenderType) {
-        this.renderType = renderType
-        playerView.setRenderType(renderType)
     }
 
     interface VideoListScrollListener {

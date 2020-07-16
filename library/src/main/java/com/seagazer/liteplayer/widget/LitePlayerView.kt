@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.hardware.SensorManager
 import android.os.Handler
 import android.os.Message
 import android.util.AttributeSet
@@ -79,10 +80,12 @@ class LitePlayerView @JvmOverloads constructor(
     private var isSupportProgress = false
     private var currentProgress = 0
     private var maxProgress = 0
+    private var progressColor = DEFAULT_PROGRESS_COLOR.toInt()
+    private var secondProgressColor = Color.LTGRAY
     private val progressPaint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.STROKE
-            color = DEFAULT_PROGRESS_COLOR.toInt()
+            color = progressColor
             strokeWidth = PROGRESS_STROKE_WIDTH
         }
     }
@@ -365,11 +368,12 @@ class LitePlayerView @JvmOverloads constructor(
         MediaLogger.d("detach window")
     }
 
-    fun setProgressColor(color: Int) {
-        progressPaint.color = color
+    override fun setProgressColor(progressColor: Int, secondProgressColor: Int) {
+        this.progressColor = progressColor
+        this.secondProgressColor = secondProgressColor
     }
 
-    fun displayProgress(showProgress: Boolean) {
+    override fun displayProgress(showProgress: Boolean) {
         if (this.isSupportProgress == showProgress) {
             return
         }
@@ -384,7 +388,7 @@ class LitePlayerView @JvmOverloads constructor(
             canvas!!.save()
             canvas.clipRect(0f, h, measuredWidth.toFloat(), measuredHeight.toFloat())
             // draw second progress
-            progressPaint.alpha = 160
+            progressPaint.color = secondProgressColor
             canvas.drawLine(
                 0f,
                 measuredHeight.toFloat(),
@@ -393,7 +397,7 @@ class LitePlayerView @JvmOverloads constructor(
                 progressPaint
             )
             // draw current progress
-            progressPaint.alpha = 255
+            progressPaint.color = progressColor
             canvas.drawLine(
                 0f,
                 measuredHeight.toFloat(),
@@ -405,15 +409,48 @@ class LitePlayerView @JvmOverloads constructor(
         }
     }
 
-    fun isFullScreen() = isFullScreen
+    override fun isFullScreen() = isFullScreen
 
-    fun setFullScreenMode(isFullScreen: Boolean) {
+    override fun setAutoSensorEnable(enable: Boolean) {
+        if (enable) {
+            sensorListener.enable()
+            controller?.autoSensorModeChanged(true)
+        } else {
+            controller?.autoSensorModeChanged(false)
+            sensorListener.disable()
+        }
+    }
+
+    private val sensorListener: OrientationEventListener by lazy {
+        object : OrientationEventListener(context, SensorManager.SENSOR_DELAY_UI) {
+            override fun onOrientationChanged(orientation: Int) {
+                if (orientation in 46..134) {
+                    (context as Activity).requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+                    setFullScreenMode(true)
+                } else if (orientation in 136..224) {
+                    (context as Activity).requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+                    setFullScreenMode(false)
+                } else if (orientation in 226..314) {
+                    (context as Activity).requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                    setFullScreenMode(true)
+                } else if ((orientation in 316..359) || (orientation in 1..44)) {
+                    (context as Activity).requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                    setFullScreenMode(false)
+                }
+            }
+        }
+    }
+
+
+    override fun setFullScreenMode(isFullScreen: Boolean) {
         // do nothing if current has no attach parent
         if (this.isFullScreen != isFullScreen && parent != null) {
             if (isFullScreen) {
                 activityReference?.let {
                     it.get()?.run {
-                        if (requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                        if (requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                            && requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+                        ) {
                             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                             sensorHelper.startWatching(this, true)
                         }
@@ -434,8 +471,8 @@ class LitePlayerView @JvmOverloads constructor(
                     it.get()?.run {
                         if (requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
                             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                            sensorHelper.stopWatching()
                         }
-                        sensorHelper.stopWatching()
                     }
                 }
                 adjustFullScreen(false)

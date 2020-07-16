@@ -1,6 +1,5 @@
 package com.seagazer.sample.example
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.seagazer.liteplayer.ListPlayer
 import com.seagazer.liteplayer.bean.DataSource
-import com.seagazer.liteplayer.helper.OrientationSensorHelper
 import com.seagazer.liteplayer.widget.LiteMediaController
 import com.seagazer.liteplayer.widget.LitePlayerView
 import com.seagazer.sample.R
@@ -52,7 +50,6 @@ class ListPlayerActivity : AppCompatActivity() {
         "https://vfx.mtime.cn/Video/2019/03/19/mp4/190319104618910544.mp4",
         "https://vfx.mtime.cn/Video/2019/03/19/mp4/190319125415785691.mp4"
     )
-    private lateinit var orientationSensorHelper: OrientationSensorHelper
     private lateinit var overlay: ListCoverOverlay
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,11 +61,12 @@ class ListPlayerActivity : AppCompatActivity() {
         val listAdapter = ListAdapter()
         recycler_view.adapter = listAdapter
         overlay = ListCoverOverlay(this)
-        listPlayer = ListPlayer(LitePlayerView(this).apply {
+        listPlayer = ListPlayer(LitePlayerView(this)).apply {
             displayProgress(true)
+            setProgressColor(resources.getColor(R.color.colorAccent), resources.getColor(R.color.colorPrimaryDark))
             attachMediaController(LiteMediaController(this@ListPlayerActivity))
             attachOverlay(this@ListPlayerActivity.overlay)
-        })
+        }
         val videoScrollListener = object : ListPlayer.VideoListScrollListener {
 
             override fun getVideoContainer(position: Int): ViewGroup? {
@@ -106,12 +104,11 @@ class ListPlayerActivity : AppCompatActivity() {
             }
         }
 
-        orientationSensorHelper = OrientationSensorHelper(this)
         sensor.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                orientationSensorHelper.startWatching(this)
+                listPlayer.setAutoSensorEnable(true)
             } else {
-                orientationSensorHelper.stopWatching()
+                listPlayer.setAutoSensorEnable(false)
             }
         }
     }
@@ -153,16 +150,6 @@ class ListPlayerActivity : AppCompatActivity() {
             }
 
         }
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        listPlayer.setFullScreenMode(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
-    }
-
-    override fun onDestroy() {
-        orientationSensorHelper.stopWatching()
-        super.onDestroy()
     }
 
     fun jumpToActivity(view: View) {
