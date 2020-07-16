@@ -16,7 +16,6 @@ import com.seagazer.liteplayer.config.PlayerType
 import com.seagazer.liteplayer.config.RenderType
 import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.widget.IPlayerView
-import com.seagazer.liteplayer.widget.LitePlayerView
 
 /**
  * A helper to play media list for recyclerView.
@@ -217,14 +216,14 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by pl
 
     private fun registerLifecycle() {
         if (recyclerView!!.context is FragmentActivity) {
-            MediaLogger.d("attached, register lifecycle")
+            MediaLogger.d("register lifecycle")
             (recyclerView!!.context as FragmentActivity).lifecycle.addObserver(this)
         }
     }
 
     private fun unregisterLifecycle() {
         if (recyclerView!!.context is FragmentActivity) {
-            MediaLogger.d("detached, unregister lifecycle")
+            MediaLogger.d("unregister lifecycle")
             (recyclerView?.context as FragmentActivity).lifecycle.removeObserver(this)
         }
     }

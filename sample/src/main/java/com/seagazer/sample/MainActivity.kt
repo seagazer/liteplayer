@@ -3,10 +3,7 @@ package com.seagazer.sample
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.seagazer.sample.example.AspectRatioActivity
-import com.seagazer.sample.example.MultiListPlayerActivity
-import com.seagazer.sample.example.PlayerActivity
-import com.seagazer.sample.example.ListPlayerActivity
+import com.seagazer.sample.example.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         navigationTo(PlayerActivity::class.java)
     }
 
-    fun listPlayer(view: View) {
+    fun recyclerView(view: View) {
         navigationTo(ListPlayerActivity::class.java)
     }
 
@@ -33,4 +30,5 @@ class MainActivity : AppCompatActivity() {
 
     fun floatWindow(view: View) {}
     fun picInPic(view: View) {}
+
 }

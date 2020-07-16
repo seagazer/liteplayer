@@ -14,6 +14,7 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.R
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.helper.DpHelper

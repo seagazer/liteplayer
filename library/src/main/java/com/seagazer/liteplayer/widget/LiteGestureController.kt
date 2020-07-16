@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.widget.*
+import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.R
 import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.helper.TimeConverter

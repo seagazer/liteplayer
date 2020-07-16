@@ -17,6 +17,10 @@ import com.seagazer.sample.toastShort
 import com.seagazer.sample.widget.LoadingOverlay
 import kotlinx.android.synthetic.main.activity_player.*
 
+
+/**
+ * Example for base use.
+ */
 class PlayerActivity : AppCompatActivity() {
 
     private val url1 = "https://vfx.mtime.cn/Video/2019/03/19/mp4/190319212559089721.mp4"

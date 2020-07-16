@@ -14,11 +14,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.seagazer.liteplayer.ListPlayer
 import com.seagazer.liteplayer.bean.DataSource
-import com.seagazer.liteplayer.widget.LitePlayerView
+import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.sample.R
 import com.seagazer.sample.widget.SimpleItemDecoration
 import kotlinx.android.synthetic.main.activity_multi_list_player.*
 
+/**
+ * Example for use in fragments with viewPager.
+ */
 class MultiListPlayerActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

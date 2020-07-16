@@ -11,7 +11,7 @@ import com.seagazer.liteplayer.helper.DpHelper
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
 import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
 import com.seagazer.liteplayer.widget.IOverlay
-import com.seagazer.liteplayer.widget.LitePlayerView
+import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.sample.R
 
 /**

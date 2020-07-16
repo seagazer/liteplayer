@@ -15,6 +15,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="n">
+
         <activity
             android:name=".SplashActivity"
             android:theme="@style/FullScreenTheme">

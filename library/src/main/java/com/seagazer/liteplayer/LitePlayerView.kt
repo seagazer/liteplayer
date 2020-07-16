@@ -1,4 +1,4 @@
-package com.seagazer.liteplayer.widget
+package com.seagazer.liteplayer
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -15,7 +15,6 @@ import android.view.*
 import android.widget.FrameLayout
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
-import com.seagazer.liteplayer.LitePlayerCore
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.*
 import com.seagazer.liteplayer.event.PlayerStateEvent
@@ -30,6 +29,7 @@ import com.seagazer.liteplayer.render.IRender
 import com.seagazer.liteplayer.render.RenderMeasure
 import com.seagazer.liteplayer.render.RenderSurfaceView
 import com.seagazer.liteplayer.render.RenderTextureView
+import com.seagazer.liteplayer.widget.*
 import java.lang.ref.WeakReference
 
 /**
@@ -112,7 +112,10 @@ class LitePlayerView @JvmOverloads constructor(
                     currentProgress = getCurrentPosition().toInt()
                     val secondProgress = getBufferedPercentage().coerceAtMost(100) * 1.0f / 100 * getDuration()
                     controller?.onProgressChanged(currentProgress, secondProgress.toInt())
-                    sendEmptyMessageDelayed(MSG_PROGRESS, PROGRESS_DELAY)
+                    sendEmptyMessageDelayed(
+                        MSG_PROGRESS,
+                        PROGRESS_DELAY
+                    )
                     if (currentProgress > 0 && maxProgress > 0) {
                         invalidate()
                     }
@@ -124,7 +127,10 @@ class LitePlayerView @JvmOverloads constructor(
                         invalidate()
                     }
                     if (isAutoHideOverlay) {
-                        sendEmptyMessageDelayed(MSG_HIDE_OVERLAY, AUTO_HIDE_DELAY)
+                        sendEmptyMessageDelayed(
+                            MSG_HIDE_OVERLAY,
+                            AUTO_HIDE_DELAY
+                        )
                     }
                 } else if (msg.what == MSG_HIDE_OVERLAY) {
                     controller?.hide()

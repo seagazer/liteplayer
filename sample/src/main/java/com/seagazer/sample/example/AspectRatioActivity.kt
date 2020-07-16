@@ -15,6 +15,9 @@ import com.seagazer.sample.widget.LoadingOverlay
 import kotlinx.android.synthetic.main.activity_aspect_ratio.*
 import kotlinx.android.synthetic.main.activity_player.player_view
 
+/**
+ * Example for set aspectRatio.
+ */
 class AspectRatioActivity : AppCompatActivity() {
 
     private val url1 = "https://vfx.mtime.cn/Video/2019/03/19/mp4/190319212559089721.mp4"

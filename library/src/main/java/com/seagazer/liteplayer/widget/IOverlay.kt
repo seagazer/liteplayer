@@ -1,6 +1,7 @@
 package com.seagazer.liteplayer.widget
 
 import android.view.View
+import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
 
 /**

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
 import com.seagazer.liteplayer.widget.IOverlay
-import com.seagazer.liteplayer.widget.LitePlayerView
+import com.seagazer.liteplayer.LitePlayerView
 
 /**
  *

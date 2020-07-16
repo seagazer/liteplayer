@@ -37,8 +37,8 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="listPlayer"
-            android:text="SingleListPlayer"
+            android:onClick="recyclerView"
+            android:text="RecyclerViewPlayer"
             android:textAllCaps="false" />
 
         <Button
