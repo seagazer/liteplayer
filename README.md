@@ -65,6 +65,8 @@
     litePlayerView.setAutoHideOverlay(false)
     // 设置媒体播放资源
     litePlayerView.setDataSource(DataSource(url))
+    // 设置播放速率
+    litePlayerView.setPlaySpeed(1.5f)
     // 设置监听播放器状态
     litePlayerView.setPlayerStateChangedListener(PlayerStateChangedListener())
     // 开始播放
@@ -73,9 +75,9 @@
     litePlayerView.pause(true)
     // 恢复播放
     litePlayerView.resume()
-    // 停止播放：在支持LifeCycle环境下无需主动调用，框架内部会自动调用
+    // 停止播放：在支持Lifecycle环境下无需主动调用，框架内部会自动调用
     litePlayerView.stop()
-    // 销毁释放播放器：在支持LifeCycle环境下无需主动调用，框架内部会自动调用
+    // 销毁释放播放器：在支持Lifecycle环境下无需主动调用，框架内部会自动调用
     litePlayerView.destroy()
 ```
 
@@ -84,7 +86,7 @@
 <ListPlayer.kt>
 
     // 默认构造需传入一个LitePlayerView实例，LitePlayerView可根据上面api进行定制
-    val listPlayer = ListPlayer(LitePlayerView(this))
+    val listPlayer = ListPlayer(LitePlayerView(context))
     // 定义列表滑动回调
     val videoScrollListener = object : ListPlayer.VideoListScrollListener {
             override fun getVideoContainer(position: Int): ViewGroup? {

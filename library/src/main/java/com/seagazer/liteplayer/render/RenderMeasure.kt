@@ -64,7 +64,6 @@ class RenderMeasure {
                     measureWidth = widthSpecSize
                     measureHeight = heightSpecSize
                 } else if (aspectRatio == AspectRatio.FILL) {// 填充模式
-                    // TODO()
                     if (videoRatio < viewRatio) {
                         // fill h
                         measureHeight = heightSpecSize

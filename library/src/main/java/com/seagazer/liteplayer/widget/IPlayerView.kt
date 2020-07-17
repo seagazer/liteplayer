@@ -17,9 +17,16 @@ import com.seagazer.liteplayer.player.IPlayerCore
  * Date: 2020/6/20
  */
 interface IPlayerView : IPlayerCore {
-
+    /**
+     * You should not call this method, otherwise you should handle all state of player.
+     * If you want to listen player state, you should call {setPlayerStateChangedListener(PlayerStateChangedListener)} instead.
+     */
     fun registerPlayerStateObserver(liveData: MutableLiveData<PlayerStateEvent>)
+    /**
+     * You should not call this method, otherwise you should handle all state of render surface.
+     */
     fun registerRenderStateObserver(liveData: MutableLiveData<RenderStateEvent>)
+
     fun setPlayerStateChangedListener(listener: PlayerStateChangedListener)
 
     fun setRenderType(renderType: RenderType)
