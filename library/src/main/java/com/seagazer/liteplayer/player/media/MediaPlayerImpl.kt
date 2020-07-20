@@ -12,7 +12,6 @@ import com.seagazer.liteplayer.config.PlayerState
 import com.seagazer.liteplayer.event.PlayerStateEvent
 import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.player.IPlayer
-import com.seagazer.liteplayer.player.IPlayerCore
 
 /**
  * Android media decoder.
@@ -94,9 +93,7 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
         }
     }
 
-    override fun getPlayer(): IPlayerCore? {
-        return this
-    }
+    override fun getPlayer() = this
 
     override fun setSurfaceHolder(surfaceHolder: SurfaceHolder) {
         this.surface = surfaceHolder.surface
@@ -243,8 +240,8 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
 
     override fun getVideoHeight(): Int = videoHeight
 
-    override fun getDuration(): Long {
-        return if (player == null) {
+    override fun getDuration() =
+        if (player == null) {
             0
         } else {
             if (currentState == PlayerState.STATE_STARTED || currentState == PlayerState.STATE_PREPARED
@@ -255,31 +252,13 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
                 0
             }
         }
-    }
 
-    override fun isPlaying(): Boolean {
-        return if (player == null) {
-            false
-        } else {
-            player!!.isPlaying
-        }
-    }
 
-    override fun getBufferedPercentage(): Int {
-        return if (player == null) {
-            0
-        } else {
-            currentBufferedPercentage
-        }
-    }
+    override fun isPlaying() = if (player == null) false else player!!.isPlaying
 
-    override fun getCurrentPosition(): Long {
-        return if (player == null) {
-            0
-        } else {
-            player!!.currentPosition.toLong()
-        }
-    }
+    override fun getBufferedPercentage() = if (player == null) 0 else currentBufferedPercentage
+
+    override fun getCurrentPosition() = if (player == null) 0 else player!!.currentPosition.toLong()
 
     override fun setPlaySpeed(speed: Float) {
         // not support

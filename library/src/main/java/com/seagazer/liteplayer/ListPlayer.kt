@@ -242,7 +242,16 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by pl
     }
 
     interface VideoListScrollListener {
+        /**
+         * Return a container to hold the player view.
+         * @param position Current adapter position of recyclerView.
+         */
         fun getVideoContainer(position: Int): ViewGroup?
+
+        /**
+         * Return a data source to play.
+         * @param position Current adapter position.
+         */
         fun getVideoDataSource(position: Int): DataSource?
     }
 

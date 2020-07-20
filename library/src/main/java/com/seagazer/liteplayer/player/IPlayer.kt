@@ -12,11 +12,28 @@ import com.seagazer.liteplayer.event.PlayerStateEvent
  */
 interface IPlayer : IPlayerCore {
 
+    /**
+     * Add a liveData to observe the state changed of player.
+     * @param liveData The liveData to observe player state.
+     */
     fun registerStateObserver(liveData: MutableLiveData<PlayerStateEvent>)
 
-    fun getPlayer(): IPlayerCore?
+    /**
+     * Get a player core instance.
+     * @return The instance of player core.
+     */
+    fun getPlayer(): IPlayer?
 
+    /**
+     * Set a surfaceHolder to render video.
+     * @param surfaceHolder The surfaceHolder to render video
+     */
     fun setSurfaceHolder(surfaceHolder: SurfaceHolder)
+
+    /**
+     * Set a surface to render video.
+     * @param surface The surface to render video
+     */
     fun setSurface(surface: Surface)
 
 }

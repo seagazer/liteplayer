@@ -79,7 +79,7 @@ class PlayerActivity : AppCompatActivity() {
         player_view.attachOverlay(LoadingOverlay(this).apply { show() })
         player_view.setAutoHideOverlay(false)
         player_view.start()
-        player_view.setPlayerStateChangedListener(object : SimplePlayerStateChangedListener() {
+        player_view.addPlayerStateChangedListener(object : SimplePlayerStateChangedListener() {
 
             override fun onCompleted() {
                 playNext()

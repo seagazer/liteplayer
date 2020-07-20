@@ -21,7 +21,7 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getPlayer(): IPlayerCore? {
+    override fun getPlayer(): IPlayer? {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

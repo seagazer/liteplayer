@@ -22,7 +22,6 @@ import com.seagazer.liteplayer.event.RenderStateEvent
 import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.helper.OrientationSensorHelper
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
-import com.seagazer.liteplayer.player.IPlayer
 import com.seagazer.liteplayer.player.exo.ExoPlayerImpl
 import com.seagazer.liteplayer.player.media.MediaPlayerImpl
 import com.seagazer.liteplayer.render.IRender
@@ -186,7 +185,7 @@ class LitePlayerView @JvmOverloads constructor(
         if (indexOfChild(overlay.getView()) == -1) {
             overlay.attachPlayer(this)
             overlay.getPlayerStateChangedListener()?.run {
-                setPlayerStateChangedListener(this)
+                addPlayerStateChangedListener(this)
             }
         }
     }
@@ -526,14 +525,6 @@ class LitePlayerView @JvmOverloads constructor(
         return gestureDetector.onTouchEvent(event)
     }
 
-    fun keepOverlayShow(keep: Boolean) {
-        if (keep) {
-            handler.removeMessages(MSG_HIDE_OVERLAY)
-        } else {
-            handler.sendEmptyMessage(MSG_HIDE_OVERLAY)
-        }
-    }
-
     private val gestureDetector by lazy {
         GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
 
@@ -640,7 +631,7 @@ class LitePlayerView @JvmOverloads constructor(
         render!!.registerStateObserver(liveData)
     }
 
-    override fun setPlayerStateChangedListener(listener: PlayerStateChangedListener) {
+    override fun addPlayerStateChangedListener(listener: PlayerStateChangedListener) {
         if (playerStateListeners.indexOf(listener) == -1) {
             playerStateListeners.add(listener)
         }
@@ -695,6 +686,7 @@ class LitePlayerView @JvmOverloads constructor(
             }
             PlayerType.TYPE_IJK_PLAYER -> {
                 //TODO()
+                throw RuntimeException("Not support now, please use TYPE_EXO_PLAYER or TYPE_MEDIA_PLAYER instead.")
             }
             PlayerType.TYPE_MEDIA_PLAYER -> {
                 litePlayerCore.setupPlayer(MediaPlayerImpl(context))
@@ -706,9 +698,7 @@ class LitePlayerView @JvmOverloads constructor(
         handler.removeMessages(MSG_PROGRESS)
     }
 
-    override fun getPlayer(): IPlayer? {
-        return litePlayerCore.getPlayer()
-    }
+    override fun getPlayer() = litePlayerCore.getPlayer()
 
     override fun setDataSource(source: DataSource) {
         dataSource = source
@@ -748,29 +738,17 @@ class LitePlayerView @JvmOverloads constructor(
         litePlayerCore.destroy()
     }
 
-    override fun getVideoWidth(): Int {
-        return litePlayerCore.getVideoWidth()
-    }
+    override fun getVideoWidth() = litePlayerCore.getVideoWidth()
 
-    override fun getVideoHeight(): Int {
-        return litePlayerCore.getVideoHeight()
-    }
+    override fun getVideoHeight() = litePlayerCore.getVideoHeight()
 
-    override fun getDuration(): Long {
-        return litePlayerCore.getDuration()
-    }
+    override fun getDuration() = litePlayerCore.getDuration()
 
-    override fun isPlaying(): Boolean {
-        return litePlayerCore.isPlaying()
-    }
+    override fun isPlaying() = litePlayerCore.isPlaying()
 
-    override fun getBufferedPercentage(): Int {
-        return litePlayerCore.getBufferedPercentage()
-    }
+    override fun getBufferedPercentage() = litePlayerCore.getBufferedPercentage()
 
-    override fun getCurrentPosition(): Long {
-        return litePlayerCore.getCurrentPosition()
-    }
+    override fun getCurrentPosition() = litePlayerCore.getCurrentPosition()
 
     override fun setPlaySpeed(speed: Float) {
         litePlayerCore.setPlaySpeed(speed)
@@ -784,14 +762,27 @@ class LitePlayerView @JvmOverloads constructor(
         litePlayerCore.setPlayerState(state)
     }
 
-    override fun getPlayerState(): PlayerState {
-        return litePlayerCore.getPlayerState()
-    }
+    override fun getPlayerState() = litePlayerCore.getPlayerState()
 
     override fun getDataSource() = dataSource
 
+    /**
+     * Set auto hide the mediaController and topBar.
+     * @param autoHide True auto hide, false otherwise.
+     */
     fun setAutoHideOverlay(autoHide: Boolean) {
         isAutoHideOverlay = autoHide
     }
 
+    /**
+     * Stop or resume auto hide the mediaController and topBar one time.
+     * @param keep True stop auto hide, false resume auto hide.
+     */
+    fun keepOverlayShow(keep: Boolean) {
+        if (keep) {
+            handler.removeMessages(MSG_HIDE_OVERLAY)
+        } else {
+            handler.sendEmptyMessage(MSG_HIDE_OVERLAY)
+        }
+    }
 }

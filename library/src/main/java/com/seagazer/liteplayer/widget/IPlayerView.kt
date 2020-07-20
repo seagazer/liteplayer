@@ -19,34 +19,108 @@ import com.seagazer.liteplayer.player.IPlayerCore
 interface IPlayerView : IPlayerCore {
     /**
      * You should not call this method, otherwise you should handle all state of player.
-     * If you want to listen player state, you should call {setPlayerStateChangedListener(PlayerStateChangedListener)} instead.
+     * If you want to listen player state, you should call {@link addPlayerStateChangedListener(PlayerStateChangedListener)} instead.
      */
     fun registerPlayerStateObserver(liveData: MutableLiveData<PlayerStateEvent>)
+
     /**
      * You should not call this method, otherwise you should handle all state of render surface.
      */
     fun registerRenderStateObserver(liveData: MutableLiveData<RenderStateEvent>)
 
-    fun setPlayerStateChangedListener(listener: PlayerStateChangedListener)
+    /**
+     * Add a listener to listen the state changed of player.
+     * @param listener The listener to listen player state.
+     */
+    fun addPlayerStateChangedListener(listener: PlayerStateChangedListener)
 
+    /**
+     * Set a type to display the picture of video.
+     * @param renderType TYPE_SURFACE_VIEW or TYPE_TEXTURE_VIEW
+     */
     fun setRenderType(renderType: RenderType)
+
+    /**
+     * Set the aspectRatio to display the picture of video.
+     * @param aspectRatio  AUTO, ORIGIN, FILL, STRETCH, W_16_9, W_4_3, W_21_9
+     */
     fun setAspectRatio(aspectRatio: AspectRatio)
 
+    /**
+     * Set core player to do the play logic.
+     * @param playerType TYPE_EXO_PLAYER, TYPE_IJK_PLAYER or TYPE_MEDIA_PLAYER
+     */
     fun setPlayerType(playerType: PlayerType)
+
+    /**
+     * Get a player core instance.
+     * @return The instance of player core.
+     */
     fun getPlayer(): IPlayer?
 
+    /**
+     * Attach an overlay to control the player.
+     *
+     * @param controller IController to be attached.
+     */
     fun attachMediaController(controller: IController)
+
+    /**
+     * Attach an overlay to show the title of player.
+     *
+     * @param topbar ITopbar to be attached.
+     */
     fun attachMediaTopbar(topbar: ITopbar)
+
+    /**
+     * Attach an overlay to handle the gesture to control player.
+     *
+     * @param gestureOverlay IGesture to be attached.
+     */
     fun attachGestureController(gestureOverlay: IGesture)
+
+    /**
+     * Attach a custom overlay to do something when playing.
+     *
+     * @param overlay IOverlay to be attached.
+     */
     fun attachOverlay(overlay: IOverlay)
 
+    /**
+     * Get current playing data source.
+     * @return The current playing data source.
+     */
     fun getDataSource(): DataSource?
 
+    /**
+     * Set visibility of inner progressbar.
+     * @param showProgress True show, false hide.
+     */
     fun displayProgress(showProgress: Boolean)
+
+    /**
+     * Set color of inner progressbar.
+     * @param progressColor Color of progress.
+     * @param secondProgressColor Color of second progress.
+     */
     fun setProgressColor(progressColor: Int, secondProgressColor: Int)
 
+    /**
+     * Enter or exit fullscreen.
+     * @param isFullScreen True enter fullscreen, false otherwise.
+     */
     fun setFullScreenMode(isFullScreen: Boolean)
+
+    /**
+     * Check current state is fullscreen or not.
+     * @return True fullscreen, false otherwise.
+     */
     fun isFullScreen(): Boolean
+
+    /**
+     * Set auto enter or exit fullscreen mode by sensor.
+     * @param enable True enable, false otherwise.
+     */
     fun setAutoSensorEnable(enable: Boolean)
 
 }

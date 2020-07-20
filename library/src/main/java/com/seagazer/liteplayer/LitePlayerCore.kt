@@ -167,53 +167,17 @@ class LitePlayerCore constructor(val context: Context) : IPlayer {
         innerPlayer?.setSurface(surface)
     }
 
-    override fun getVideoWidth(): Int {
-        return if (innerPlayer != null) {
-            innerPlayer!!.getVideoWidth()
-        } else {
-            0
-        }
-    }
+    override fun getVideoWidth() = if (innerPlayer != null) innerPlayer!!.getVideoWidth() else 0
 
-    override fun getVideoHeight(): Int {
-        return if (innerPlayer != null) {
-            innerPlayer!!.getVideoHeight()
-        } else {
-            0
-        }
-    }
+    override fun getVideoHeight() = if (innerPlayer != null) innerPlayer!!.getVideoHeight() else 0
 
-    override fun getDuration(): Long {
-        return if (innerPlayer != null) {
-            innerPlayer!!.getDuration()
-        } else {
-            0
-        }
-    }
+    override fun getDuration() = if (innerPlayer != null) innerPlayer!!.getDuration() else 0
 
-    override fun isPlaying(): Boolean {
-        return if (innerPlayer != null) {
-            innerPlayer!!.isPlaying()
-        } else {
-            false
-        }
-    }
+    override fun isPlaying() = if (innerPlayer != null) innerPlayer!!.isPlaying() else false
 
-    override fun getBufferedPercentage(): Int {
-        return if (innerPlayer != null) {
-            innerPlayer!!.getBufferedPercentage()
-        } else {
-            0
-        }
-    }
+    override fun getBufferedPercentage() = if (innerPlayer != null) innerPlayer!!.getBufferedPercentage() else 0
 
-    override fun getCurrentPosition(): Long {
-        return if (innerPlayer != null) {
-            innerPlayer!!.getCurrentPosition()
-        } else {
-            0
-        }
-    }
+    override fun getCurrentPosition() = if (innerPlayer != null) innerPlayer!!.getCurrentPosition() else 0
 
     override fun setPlaySpeed(speed: Float) {
         innerPlayer?.setPlaySpeed(speed)
@@ -228,13 +192,5 @@ class LitePlayerCore constructor(val context: Context) : IPlayer {
         innerPlayer?.setPlayerState(state)
     }
 
-    override fun getPlayerState(): PlayerState {
-        return if (innerPlayer != null) {
-            innerPlayer!!.getPlayerState()
-        } else {
-            PlayerState.STATE_NOT_INITIALIZED
-        }
-    }
-
-
+    override fun getPlayerState() = if (innerPlayer != null) innerPlayer!!.getPlayerState() else PlayerState.STATE_NOT_INITIALIZED
 }

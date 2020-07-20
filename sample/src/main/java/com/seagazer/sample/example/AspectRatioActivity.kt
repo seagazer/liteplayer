@@ -47,7 +47,7 @@ class AspectRatioActivity : AppCompatActivity() {
         player_view.setPlayerType(PlayerType.TYPE_EXO_PLAYER)
         player_view.setDataSource(DataSource(urls[0].first, urls[0].second))
         player_view.start()
-        player_view.setPlayerStateChangedListener(object : SimplePlayerStateChangedListener() {
+        player_view.addPlayerStateChangedListener(object : SimplePlayerStateChangedListener() {
             override fun onCompleted() {
                 playNext()
             }

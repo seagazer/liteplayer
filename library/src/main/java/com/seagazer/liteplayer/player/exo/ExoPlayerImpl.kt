@@ -22,7 +22,6 @@ import com.seagazer.liteplayer.config.PlayerState
 import com.seagazer.liteplayer.event.PlayerStateEvent
 import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.player.IPlayer
-import com.seagazer.liteplayer.player.IPlayerCore
 
 /**
  * Google exo decoder.
@@ -189,9 +188,7 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
         }
     }
 
-    override fun getPlayer(): IPlayerCore? {
-        return this
-    }
+    override fun getPlayer() = this
 
     override fun setDataSource(source: DataSource) {
         if (currentState == PlayerState.STATE_NOT_INITIALIZED) {
@@ -243,18 +240,11 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
 
     override fun getVideoHeight() = videoHeight
 
-    override fun getDuration(): Long {
-        return if (player.duration < 0) {
-            0
-        } else {
-            player.duration
-        }
-    }
+    override fun getDuration() = if (player.duration < 0) 0 else player.duration
 
-    override fun isPlaying(): Boolean {
-        return isInPlaybackState() && currentState != PlayerState.STATE_INITIALIZED
+    override fun isPlaying() =
+        isInPlaybackState() && currentState != PlayerState.STATE_INITIALIZED
                 && currentState != PlayerState.STATE_PAUSED
-    }
 
     override fun getBufferedPercentage() = player.bufferedPercentage
 
