@@ -35,7 +35,7 @@
 1. `LitePlayerView`为基础视频播放控件，继承至`FrameLayout`，下面列举一些基础`API`：
 ```kotlin
 <LitePlayerView.kt>
-
+    // xml解析或者代码构建实例
     val litePlayerView = findViewById(R.id.lite_player_view)
     // 设置内置progress颜色
     litePlayerView.setProgressColor(progressColor, secondProgressColor)
@@ -68,7 +68,7 @@
     // 设置播放速率
     litePlayerView.setPlaySpeed(1.5f)
     // 设置监听播放器状态
-    litePlayerView.setPlayerStateChangedListener(PlayerStateChangedListener())
+    litePlayerView.addPlayerStateChangedListener(PlayerStateChangedListener())
     // 开始播放
     litePlayerView.start()
     // 暂停(是否用户主动暂停)[例如Activity移入后台，框架内部会标记为非用户暂停，页面状态恢复时会自动开启播放]
