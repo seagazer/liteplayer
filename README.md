@@ -1,4 +1,4 @@
-# LitePlayer
+# LitePlayer [![](https://www.jitpack.io/v/seagazer/liteplayer.svg)](https://www.jitpack.io/#seagazer/liteplayer)
 <font color=#4A90CE size=5>A lite player for android by Kotlin language</font>
 <font color=#4A90CE size=5>一个完全使用Kotlin开发的简洁高效，轻量级的播放器框架</font>
 
@@ -32,7 +32,42 @@
 
 
 #### 基本使用方法：
-1. `LitePlayerView`为基础视频播放控件，继承至`FrameLayout`，下面列举一些基础`API`：
+1. 添加依赖和相关配置：
+```java
+    // 1.根目录的build.gradle配置maven地址:
+    allprojects {
+	    repositories {
+		    ...
+		    maven { url 'https://www.jitpack.io' }
+	    }
+    }
+
+    // 2.注意：使用exoplayer时需要添加java8支持:
+    android {
+        // 添加java8支持
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
+    }
+
+    // 3.项目中添加远程依赖:
+    dependencies {
+            // 依赖LitePlayer库
+            implementation 'com.github.seagazer:liteplayer:1.0.0'
+            // 项目部分api使用需要依赖livedata
+            implementation 'androidx.lifecycle:lifecycle-livedata:2.2.0'
+            implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+	}
+
+    // 4.存在全屏切换场景时，manifest中对应的Activity需要配置`configChanges`属性，并且使用NoActionBar主题:
+    <activity
+        android:name=".XXActivity"
+        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+        android:theme="@style/FullScreenTheme" />
+```
+
+2. `LitePlayerView`为基础视频播放控件，继承至`FrameLayout`，下面列举一些基础`API`：
 ```kotlin
 <LitePlayerView.kt>
     // xml解析或者代码构建实例
@@ -81,7 +116,7 @@
     litePlayerView.destroy()
 ```
 
-2. `ListPlayer`支持以极简的方式接入`RecyclerView`列表播放，框架设计使用代理模式，因此上述`LitePlayerView`的所有`API`都适用于`ListPlayer`：
+3. `ListPlayer`支持以极简的方式接入`RecyclerView`列表播放，框架设计使用代理模式，因此上述`LitePlayerView`的所有`API`都适用于`ListPlayer`：
 ```kotlin
 <ListPlayer.kt>
 
