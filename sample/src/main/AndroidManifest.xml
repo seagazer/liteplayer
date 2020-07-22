@@ -31,7 +31,11 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:theme="@style/FullScreenTheme" />
         <activity
-            android:name=".example.PlayerActivity"
+            android:name=".example.ListPlayerActivity2"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:theme="@style/FullScreenTheme" />
+        <activity
+            android:name=".example.BasePlayerActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:theme="@style/FullScreenTheme" />
         <activity

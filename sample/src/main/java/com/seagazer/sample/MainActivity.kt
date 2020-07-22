@@ -13,11 +13,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun player(view: View) {
-        navigationTo(PlayerActivity::class.java)
+        navigationTo(BasePlayerActivity::class.java)
     }
 
     fun recyclerView(view: View) {
         navigationTo(ListPlayerActivity::class.java)
+    }
+
+    fun listView(view: View) {
+        navigationTo(ListPlayerActivity2::class.java)
     }
 
     fun aspectRatio(view: View) {

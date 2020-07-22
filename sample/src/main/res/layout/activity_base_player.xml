@@ -4,17 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
-    tools:context=".example.PlayerActivity">
+    tools:context=".example.BasePlayerActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.seagazer.liteplayer.LitePlayerView
-            android:id="@+id/player_view"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="220dp" />
+            android:layout_height="220dp"
+            android:background="#000000">
+
+            <com.seagazer.liteplayer.LitePlayerView
+                android:id="@+id/player_view"
+                android:layout_width="match_parent"
+                android:layout_height="220dp" />
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,7 +41,6 @@
                 android:layout_marginStart="8dp"
                 android:text="Auto Sensor" />
         </LinearLayout>
-
 
 
         <RadioGroup

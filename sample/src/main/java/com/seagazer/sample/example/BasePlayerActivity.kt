@@ -12,25 +12,25 @@ import com.seagazer.liteplayer.widget.LiteMediaController
 import com.seagazer.liteplayer.widget.LiteMediaTopbar
 import com.seagazer.sample.R
 import com.seagazer.sample.cache.VideoCacheHelper
+import com.seagazer.sample.data.DataProvider
 import com.seagazer.sample.navigationTo
 import com.seagazer.sample.toastShort
 import com.seagazer.sample.widget.LoadingOverlay
-import kotlinx.android.synthetic.main.activity_player.*
+import kotlinx.android.synthetic.main.activity_base_player.*
 
 
 /**
  * Example for base use.
  */
-class PlayerActivity : AppCompatActivity() {
+class BasePlayerActivity : AppCompatActivity() {
 
-    private val url1 = "https://vfx.mtime.cn/Video/2019/03/19/mp4/190319212559089721.mp4"
-    private val url2 = "https://vfx.mtime.cn/Video/2019/03/09/mp4/190309153658147087.mp4"
-    private val urls = listOf(Pair(VideoCacheHelper.url(url1), "玩具总动员"), Pair(VideoCacheHelper.url(url2), "New Story"))
+    private val urls =
+        listOf(Pair(VideoCacheHelper.url(DataProvider.url1), "玩具总动员"), Pair(VideoCacheHelper.url(DataProvider.url2), "New Story"))
     private var currentPlayIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_player)
+        setContentView(R.layout.activity_base_player)
         // progress
         player_view.setProgressColor(resources.getColor(R.color.colorAccent), resources.getColor(R.color.colorPrimaryDark))
         progress_controller.setOnCheckedChangeListener { _, isChecked ->

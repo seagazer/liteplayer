@@ -11,18 +11,17 @@ import com.seagazer.liteplayer.widget.LiteGestureController
 import com.seagazer.liteplayer.widget.LiteMediaController
 import com.seagazer.liteplayer.widget.LiteMediaTopbar
 import com.seagazer.sample.R
+import com.seagazer.sample.data.DataProvider
 import com.seagazer.sample.widget.LoadingOverlay
 import kotlinx.android.synthetic.main.activity_aspect_ratio.*
-import kotlinx.android.synthetic.main.activity_player.player_view
+import kotlinx.android.synthetic.main.activity_base_player.player_view
 
 /**
  * Example for set aspectRatio.
  */
 class AspectRatioActivity : AppCompatActivity() {
 
-    private val url1 = "https://vfx.mtime.cn/Video/2019/03/19/mp4/190319212559089721.mp4"
-    private val url2 = "https://vfx.mtime.cn/Video/2019/03/09/mp4/190309153658147087.mp4"
-    private val urls = listOf(Pair(url1, "玩具总动员"), Pair(url2, "New Story"))
+    private val urls = listOf(Pair(DataProvider.url1, "玩具总动员"), Pair(DataProvider.url2, "New Story"))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +54,7 @@ class AspectRatioActivity : AppCompatActivity() {
     }
 
     private fun playNext() {
-        if (player_view.getDataSource()?.mediaUrl == url1) {
+        if (player_view.getDataSource()?.mediaUrl == DataProvider.url1) {
             player_view.setDataSource(DataSource(urls[1].first, urls[1].second))
         } else {
             player_view.setDataSource(DataSource(urls[0].first, urls[0].second))
