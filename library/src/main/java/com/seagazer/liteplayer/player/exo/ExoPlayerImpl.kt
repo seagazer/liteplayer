@@ -6,11 +6,12 @@ import android.net.Uri
 import android.view.Surface
 import android.view.SurfaceHolder
 import androidx.lifecycle.MutableLiveData
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.PlaybackParameters
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.source.dash.DashMediaSource
+import com.google.android.exoplayer2.source.hls.HlsMediaSource
+import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.EventLogger
@@ -30,10 +31,13 @@ import com.seagazer.liteplayer.player.IPlayer
  * Date: 2020/6/19
  */
 class ExoPlayerImpl constructor(val context: Context) : IPlayer {
+    companion object {
+        private const val TYPE_RTMP = -110
+    }
+
     private val appContext = context.applicationContext
     private lateinit var player: SimpleExoPlayer
     private var dataSourceFactory: DefaultDataSourceFactory
-    private var mediaSourceFactory: ProgressiveMediaSource.Factory
     private var currentState = PlayerState.STATE_NOT_INITIALIZED
     private var videoWidth = 0
     private var videoHeight = 0
@@ -173,7 +177,6 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
             player.addAnalyticsListener(EventLogger(DefaultTrackSelector(appContext)))
         }
         dataSourceFactory = DefaultDataSourceFactory(appContext, Util.getUserAgent(appContext, appContext.packageName))
-        mediaSourceFactory = ProgressiveMediaSource.Factory(dataSourceFactory)
     }
 
     private fun isInPlaybackState(): Boolean {
@@ -195,7 +198,21 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
             setPlayerState(PlayerState.STATE_INITIALIZED)
             liveData?.value = PlayerStateEvent(PlayerState.STATE_INITIALIZED)
         }
-        val mediaSource = mediaSourceFactory.createMediaSource(Uri.parse(source.mediaUrl))
+        val url = source.mediaUrl
+        val uri = Uri.parse(url)
+        val contentType = if (url.startsWith("rtmp:")) {
+            TYPE_RTMP
+        } else {
+            Util.inferContentType(uri)
+        }
+        val mediaSource = when (contentType) {
+            TYPE_RTMP -> ProgressiveMediaSource.Factory(RtmpDataSourceFactory(null)).createMediaSource(uri)
+            C.TYPE_DASH -> DashMediaSource.Factory(dataSourceFactory).createMediaSource(uri)
+            C.TYPE_SS -> SsMediaSource.Factory(dataSourceFactory).createMediaSource(uri)
+            C.TYPE_HLS -> HlsMediaSource.Factory(dataSourceFactory).createMediaSource(uri)
+            C.TYPE_OTHER -> ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri)
+            else -> ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri)
+        }
         player.prepare(mediaSource)
         isPreparing = true
     }

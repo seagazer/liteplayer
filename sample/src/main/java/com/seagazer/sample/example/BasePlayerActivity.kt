@@ -25,7 +25,10 @@ import kotlinx.android.synthetic.main.activity_base_player.*
 class BasePlayerActivity : AppCompatActivity() {
 
     private val urls =
-        listOf(Pair(VideoCacheHelper.url(DataProvider.url1), "玩具总动员"), Pair(VideoCacheHelper.url(DataProvider.url2), "New Story"))
+        listOf(
+            Pair(VideoCacheHelper.url(DataProvider.url1), "玩具总动员"), Pair(VideoCacheHelper.url(DataProvider.url2), "New Story")
+            , Pair(DataProvider.url3, "RTMP")
+        )
     private var currentPlayIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,10 +121,9 @@ class BasePlayerActivity : AppCompatActivity() {
     }
 
     private fun playNext() {
-        currentPlayIndex = if (currentPlayIndex == 0) {
-            1
-        } else {
-            0
+        currentPlayIndex++
+        if (currentPlayIndex > urls.size - 1) {
+            currentPlayIndex = 0
         }
         player_view.setDataSource(DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second))
         player_view.start()
