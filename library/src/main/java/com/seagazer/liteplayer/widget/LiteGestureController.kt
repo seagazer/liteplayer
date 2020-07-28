@@ -53,6 +53,11 @@ class LiteGestureController @JvmOverloads constructor(
     private val audioManager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     private val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
+    // support switch
+    var supportSeek = true
+    var supportBrightness = true
+    var supportVolume = true
+
     init {
         LayoutInflater.from(context).inflate(R.layout.lite_gesture_overlay, this, true)
         seekController = findViewById(R.id.lite_gesture_seek_text)
@@ -133,9 +138,9 @@ class LiteGestureController @JvmOverloads constructor(
     }
 
     override fun onDown(e: MotionEvent?) {
-        isTouchInSeekArea = e!!.x > edgeSize && e.x < (width - edgeSize)
-        isTouchInBrightnessArea = e.x > 0 && e.x < edgeSize
-        isTouchInVolumeArea = e.x > (width - edgeSize) && e.x < width
+        isTouchInSeekArea = e!!.x > edgeSize && e.x < (width - edgeSize) && supportSeek
+        isTouchInBrightnessArea = e.x > 0 && e.x < edgeSize && supportBrightness
+        isTouchInVolumeArea = e.x > (width - edgeSize) && e.x < width && supportVolume
         MediaLogger.d("isTouchInSeekArea = $isTouchInSeekArea")
         if (isTouchInSeekArea) {
             currentPosition = player.getCurrentPosition()
