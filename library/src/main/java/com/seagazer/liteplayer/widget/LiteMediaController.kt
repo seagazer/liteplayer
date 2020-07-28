@@ -142,6 +142,12 @@ class LiteMediaController @JvmOverloads constructor(
         fullScreen.isEnabled = !isAutoSensor
     }
 
+    override fun floatWindowModeChanged(isFloatWindow: Boolean) {
+        if (isFloatWindow) {
+            hide()
+        }
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         return true

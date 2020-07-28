@@ -90,6 +90,15 @@ class LiteMediaTopbar @JvmOverloads constructor(
     override fun displayModeChanged(isFullScreen: Boolean) {
     }
 
+    override fun autoSensorModeChanged(isAutoSensor: Boolean) {
+    }
+
+    override fun floatWindowModeChanged(isFloatWindow: Boolean) {
+        if (isFloatWindow) {
+            hide()
+        }
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         return true

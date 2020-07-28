@@ -23,4 +23,10 @@ interface IOverlay {
 
     fun getPlayerStateChangedListener(): PlayerStateChangedListener?
 
+    fun displayModeChanged(isFullScreen: Boolean)
+
+    fun autoSensorModeChanged(isAutoSensor: Boolean)
+
+    fun floatWindowModeChanged(isFloatWindow: Boolean)
+
 }

@@ -14,7 +14,6 @@ import com.seagazer.sample.R
 import com.seagazer.sample.data.DataProvider
 import com.seagazer.sample.widget.LoadingOverlay
 import kotlinx.android.synthetic.main.activity_aspect_ratio.*
-import kotlinx.android.synthetic.main.activity_base_player.player_view
 
 /**
  * Example for set aspectRatio.

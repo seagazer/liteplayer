@@ -17,7 +17,4 @@ interface IController : IOverlay {
 
     fun onPaused()
 
-    fun displayModeChanged(isFullScreen: Boolean)
-
-    fun autoSensorModeChanged(isAutoSensor: Boolean)
 }

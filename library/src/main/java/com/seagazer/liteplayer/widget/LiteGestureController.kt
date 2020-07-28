@@ -118,6 +118,15 @@ class LiteGestureController @JvmOverloads constructor(
 
     override fun getPlayerStateChangedListener(): PlayerStateChangedListener? = null
 
+    override fun displayModeChanged(isFullScreen: Boolean) {
+    }
+
+    override fun autoSensorModeChanged(isAutoSensor: Boolean) {
+    }
+
+    override fun floatWindowModeChanged(isFloatWindow: Boolean) {
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         edgeSize = width * 1f / 5

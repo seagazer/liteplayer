@@ -11,5 +11,4 @@ interface ITopbar : IOverlay {
 
     fun onPlayerPrepared(dataSource: DataSource)
 
-    fun displayModeChanged(isFullScreen: Boolean)
 }

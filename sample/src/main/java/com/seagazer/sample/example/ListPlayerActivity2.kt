@@ -10,9 +10,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.seagazer.liteplayer.ListPlayer2
+import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.widget.LiteMediaController
-import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.sample.R
 import com.seagazer.sample.data.DataProvider
 import com.seagazer.sample.navigationTo

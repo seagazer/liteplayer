@@ -118,6 +118,18 @@ interface IPlayerView : IPlayerCore {
     fun isFullScreen(): Boolean
 
     /**
+     * Enter or exit float window.
+     * @param isFloatWindow True enter float window, false otherwise.
+     */
+    fun setFloatWindowMode(isFloatWindow: Boolean)
+
+    /**
+     * Check current state is float window or not.
+     * @return True float window, false otherwise.
+     */
+    fun isFloatWindow(): Boolean
+
+    /**
      * Set auto enter or exit fullscreen mode by sensor.
      * @param enable True enable, false otherwise.
      */

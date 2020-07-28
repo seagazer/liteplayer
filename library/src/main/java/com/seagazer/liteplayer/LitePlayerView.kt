@@ -1,26 +1,36 @@
 package com.seagazer.liteplayer
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.hardware.SensorManager
+import android.net.Uri
+import android.os.Build
 import android.os.Handler
 import android.os.Message
+import android.provider.Settings
 import android.util.AttributeSet
 import android.view.*
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.*
 import com.seagazer.liteplayer.event.PlayerStateEvent
 import com.seagazer.liteplayer.event.RenderStateEvent
+import com.seagazer.liteplayer.helper.DpHelper
 import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.helper.OrientationSensorHelper
+import com.seagazer.liteplayer.helper.SystemUiHelper
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
 import com.seagazer.liteplayer.player.exo.ExoPlayerImpl
 import com.seagazer.liteplayer.player.media.MediaPlayerImpl
@@ -56,14 +66,17 @@ class LitePlayerView @JvmOverloads constructor(
     private var activityReference: WeakReference<Activity>? = null
     private var dataSource: DataSource? = null
     private var isUserPaused = false
+
     // event observer
     private val renderStateObserver = MutableLiveData<RenderStateEvent>()
     private val playerStateObserver = MutableLiveData<PlayerStateEvent>()
     private val playerStateListeners = mutableListOf<PlayerStateChangedListener>()
+
     // config
     private var render: IRender? = null
     private var playerType: PlayerType? = null
     private var renderType: RenderType? = null
+
     // display mode
     private var isSurfaceCreated = false
     private var androidParent: ViewGroup? = null// android content container
@@ -74,6 +87,7 @@ class LitePlayerView @JvmOverloads constructor(
         RenderMeasure()
     }
     private var isFullScreen = false
+
     // progress
     private var isOverlayDisplaying = false
     private var isSupportProgress = false
@@ -88,19 +102,53 @@ class LitePlayerView @JvmOverloads constructor(
             strokeWidth = PROGRESS_STROKE_WIDTH
         }
     }
+
     // controller
     private var controller: IController? = null
     private var isAutoHideOverlay = true
+
     // topbar
     private var topbar: ITopbar? = null
+
     // gesture overlay
     private var gestureController: IGesture? = null
+
     // custom overlay
     private var customOverlays = mutableListOf<IOverlay>()
+
     // sensor
     private val sensorHelper: OrientationSensorHelper by lazy {
         OrientationSensorHelper(context)
     }
+
+    // float window
+    private var statusBarHeight = -1
+    private var isFloatWindowMode = false
+    private val windowManager by lazy {
+        context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    }
+    private var downX = 0f
+    private var downY = 0f
+    private val lp by lazy {
+        WindowManager.LayoutParams().apply {
+            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+            // define aspectRatio of float window is 3:2
+            val w = context.resources.displayMetrics.widthPixels / 2.2f
+            val h = w / 3 * 2
+            width = w.toInt()
+            height = h.toInt()
+            gravity = Gravity.START or Gravity.TOP
+            type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            } else {
+                WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
+            }
+        }
+    }
+    private val floatWindowContainer by lazy {
+        FrameLayout(context)
+    }
+    private var isActivityBackground = false
 
     // message event handler
     private val handler by lazy {
@@ -424,6 +472,13 @@ class LitePlayerView @JvmOverloads constructor(
             controller?.autoSensorModeChanged(false)
             sensorListener.disable()
         }
+        notifyAutoSensorModeChanged(enable)
+    }
+
+    private fun notifyAutoSensorModeChanged(isAutoSensor: Boolean) {
+        customOverlays.forEach {
+            it.autoSensorModeChanged(isAutoSensor)
+        }
     }
 
     private val sensorListener: OrientationEventListener by lazy {
@@ -446,49 +501,64 @@ class LitePlayerView @JvmOverloads constructor(
         }
     }
 
-
     override fun setFullScreenMode(isFullScreen: Boolean) {
         // do nothing if current has no attach parent
         if (this.isFullScreen != isFullScreen && parent != null) {
             if (isFullScreen) {
-                activityReference?.let {
-                    it.get()?.run {
-                        if (requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                            && requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
-                        ) {
-                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                            sensorHelper.startWatching(this, true)
-                        }
-                    }
-                }
-                // if is list player, the directParent will be changed
-                directParent = parent as ViewGroup
-                childIndex = directParent!!.indexOfChild(this)
-                adjustFullScreen(true)
-                this.isFullScreen = true
-                detachVideoContainer()
-                androidParent?.addView(this, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
-                controller?.displayModeChanged(true)
-                topbar?.displayModeChanged(true)
-                MediaLogger.d("enter fullscreen: $width * $height")
+                enterFullScreen()
             } else {
-                activityReference?.let {
-                    it.get()?.run {
-                        if (requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                            sensorHelper.stopWatching()
-                        }
-                    }
-                }
-                adjustFullScreen(false)
-                this.isFullScreen = false
-                detachVideoContainer()
-                directParent?.addView(this, childIndex, originLayoutParams)
-                controller?.displayModeChanged(false)
-                topbar?.displayModeChanged(false)
-                MediaLogger.d("exit fullscreen: $width * $height")
+                exitFullScreen()
             }
         }
+    }
+
+    private fun enterFullScreen() {
+        activityReference?.let {
+            it.get()?.run {
+                if (requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                    && requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+                ) {
+                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                    sensorHelper.startWatching(this, true)
+                }
+            }
+        }
+        // if is list player, the directParent will be changed
+        directParent = parent as ViewGroup
+        childIndex = directParent!!.indexOfChild(this)
+        adjustFullScreen(true)
+        this.isFullScreen = true
+        detachVideoContainer()
+        androidParent?.addView(this, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
+        controller?.displayModeChanged(true)
+        topbar?.displayModeChanged(true)
+        notifyDisplayModeChanged(true)
+        MediaLogger.d("enter fullscreen: $width * $height")
+    }
+
+    private fun notifyDisplayModeChanged(isFullScreen: Boolean) {
+        customOverlays.forEach {
+            it.displayModeChanged(isFullScreen)
+        }
+    }
+
+    private fun exitFullScreen() {
+        activityReference?.let {
+            it.get()?.run {
+                if (requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                    sensorHelper.stopWatching()
+                }
+            }
+        }
+        adjustFullScreen(false)
+        this.isFullScreen = false
+        detachVideoContainer()
+        directParent?.addView(this, childIndex, originLayoutParams)
+        controller?.displayModeChanged(false)
+        topbar?.displayModeChanged(false)
+        notifyDisplayModeChanged(false)
+        MediaLogger.d("exit fullscreen: $width * $height")
     }
 
     private fun adjustFullScreen(isFullScreen: Boolean) {
@@ -516,13 +586,26 @@ class LitePlayerView @JvmOverloads constructor(
         }
     }
 
+    private var handleTouchEvent = true
+
+    fun handleTouchEvent(handleTouchEvent: Boolean) {
+        this.handleTouchEvent = handleTouchEvent
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (!handleTouchEvent) {
+            return super.onTouchEvent(event)
+        }
         if (event!!.action == MotionEvent.ACTION_UP) {
             gestureController?.onGestureFinish(event)
             gestureController?.hide()
         }
-        return gestureDetector.onTouchEvent(event)
+        if (gestureController != null && !isFloatWindowMode) {
+            return gestureDetector.onTouchEvent(event)
+        } else {
+            return super.onTouchEvent(event)
+        }
     }
 
     private val gestureDetector by lazy {
@@ -590,17 +673,22 @@ class LitePlayerView @JvmOverloads constructor(
         if (context is FragmentActivity) {
             MediaLogger.d("attached, register lifecycle")
             (context as FragmentActivity).lifecycle.addObserver(this)
+        } else {
+            MediaLogger.w("Not support lifecycle, you must handle player state when activity stop or resume by yourself!")
         }
     }
 
     private fun unregisterLifecycle() {
         if (context is FragmentActivity) {
             (context as FragmentActivity).lifecycle.removeObserver(this)
+        } else {
+            MediaLogger.w("Not support lifecycle, you must handle player state when activity stop or resume by yourself!")
         }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private fun onActivityResume() {
+        isActivityBackground = false
         if (!isUserPaused) {
             resume()
         }
@@ -608,7 +696,8 @@ class LitePlayerView @JvmOverloads constructor(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private fun onActivityStop() {
-        if (!isUserPaused || isPlaying()) {
+        isActivityBackground = true
+        if (!isFloatWindowMode && (!isUserPaused || isPlaying())) {
             pause(false)
         }
     }
@@ -618,6 +707,7 @@ class LitePlayerView @JvmOverloads constructor(
         activityReference?.run {
             clear()
         }
+        detachFromFloatWindow()
         stop()
         destroy()
         unregisterLifecycle()
@@ -785,4 +875,127 @@ class LitePlayerView @JvmOverloads constructor(
             handler.sendEmptyMessage(MSG_HIDE_OVERLAY)
         }
     }
+
+    override fun setFloatWindowMode(isFloatWindow: Boolean) {
+        if (this.isFloatWindowMode != isFloatWindow) {
+            if (isFloatWindow) {
+                // check overlay permission
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (!Settings.canDrawOverlays(context)) {
+                        val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:${context.packageName}"))
+                        (context as Activity).startActivityForResult(intent, 0x110)
+                    } else {
+                        enterFloatWindow()
+                    }
+                }
+            } else {
+                exitFloatWindow()
+            }
+        }
+    }
+
+    override fun isFloatWindow() = isFloatWindowMode
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun enterFloatWindow() {
+        // lazy get status bar height
+        if (statusBarHeight == -1) {
+            statusBarHeight = SystemUiHelper.getStatusBarHeight(context)
+            if (statusBarHeight <= 0) {
+                statusBarHeight = DpHelper.dp2px(context, 25f)
+            }
+        }
+        isFloatWindowMode = true
+        // hide all inner overlay
+        notifyFloatWindowModeChanged(true)
+        detachVideoContainer()
+        windowManager.addView(floatWindowContainer, lp)
+        floatWindowContainer.layoutParams.width = lp.width
+        floatWindowContainer.layoutParams.height = lp.height
+        floatWindowContainer.addView(this, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
+        // add an exit button after the floatWindowContainer attach to window
+        val bound = DpHelper.dp2px(context, 20f)
+        floatWindowContainer.addView(ImageView(context).apply {
+            setImageResource(R.drawable.ic_close)
+            scaleType = ImageView.ScaleType.CENTER_INSIDE
+            setOnClickListener {
+                setFloatWindowMode(false)
+            }
+        }, LayoutParams(bound, bound).apply {
+            gravity = Gravity.END
+            setMargins(0, DpHelper.dp2px(context, 2f), DpHelper.dp2px(context, 2f), 0)
+        })
+        AnimatorSet().apply {
+            playTogether(
+                ObjectAnimator.ofFloat(floatWindowContainer, "scaleX", 0f, 1f),
+                ObjectAnimator.ofFloat(floatWindowContainer, "scaleY", 0f, 1f),
+                ObjectAnimator.ofFloat(floatWindowContainer, "alpha", 0f, 1f)
+            )
+            duration = 300
+            interpolator = AccelerateDecelerateInterpolator()
+            start()
+        }
+        // float window touch event
+        floatWindowContainer.setOnTouchListener { _, event ->
+            floatWindowGesture.onTouchEvent(event)
+        }
+    }
+
+    private val floatWindowGesture by lazy {
+        GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+
+            override fun onDown(e: MotionEvent?): Boolean {
+                downX = e!!.x
+                downY = e.y + statusBarHeight
+                return true
+            }
+
+            override fun onDoubleTap(e: MotionEvent?): Boolean {
+                if (this@LitePlayerView.isPlaying()) {
+                    this@LitePlayerView.pause(true)
+                } else {
+                    this@LitePlayerView.resume()
+                }
+                return true
+            }
+
+            override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+                lp.x = (e2!!.rawX - downX).toInt()
+                lp.y = (e2.rawY - downY).toInt()
+                windowManager.updateViewLayout(floatWindowContainer, lp)
+                return true
+            }
+        })
+    }
+
+    private fun exitFloatWindow() {
+        notifyFloatWindowModeChanged(false)
+        detachFromFloatWindow()
+        detachVideoContainer()
+        directParent?.addView(this)
+        isFloatWindowMode = false
+        // if current activity is background running when close float window, we pause the player and resume play when activity resume.
+        if (isActivityBackground) {
+            pause(false)
+        }
+    }
+
+    private fun notifyFloatWindowModeChanged(floatWindow: Boolean) {
+        controller?.floatWindowModeChanged(floatWindow)
+        gestureController?.floatWindowModeChanged(floatWindow)
+        topbar?.floatWindowModeChanged(floatWindow)
+        customOverlays.forEach {
+            it.floatWindowModeChanged(floatWindow)
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun detachFromFloatWindow() {
+        if (isFloatWindowMode) {
+            windowManager.removeViewImmediate(floatWindowContainer)
+            floatWindowContainer.removeAllViews()
+            floatWindowContainer.setOnTouchListener(null)
+        }
+    }
+
 }

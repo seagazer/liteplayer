@@ -70,4 +70,13 @@ class LoadingOverlay @JvmOverloads constructor(
             }
         }
     }
+
+    override fun displayModeChanged(isFullScreen: Boolean) {
+    }
+
+    override fun autoSensorModeChanged(isAutoSensor: Boolean) {
+    }
+
+    override fun floatWindowModeChanged(isFloatWindow: Boolean) {
+    }
 }

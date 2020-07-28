@@ -32,7 +32,10 @@ class MainActivity : AppCompatActivity() {
         navigationTo(MultiListPlayerActivity::class.java)
     }
 
-    fun floatWindow(view: View) {}
+    fun floatWindow(view: View) {
+        navigationTo(FloatWindowActivity::class.java)
+    }
+
     fun picInPic(view: View) {}
 
 }

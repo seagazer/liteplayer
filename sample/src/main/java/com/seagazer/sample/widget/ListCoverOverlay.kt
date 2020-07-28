@@ -51,4 +51,13 @@ class ListCoverOverlay @JvmOverloads constructor(
             hide()
         }
     }
+
+    override fun displayModeChanged(isFullScreen: Boolean) {
+    }
+
+    override fun autoSensorModeChanged(isAutoSensor: Boolean) {
+    }
+
+    override fun floatWindowModeChanged(isFloatWindow: Boolean) {
+    }
 }
