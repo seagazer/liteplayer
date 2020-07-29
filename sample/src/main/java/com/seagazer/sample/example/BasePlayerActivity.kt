@@ -78,7 +78,11 @@ class BasePlayerActivity : AppCompatActivity() {
         // media controller, topbar and gesture controller
         player_view.attachMediaController(LiteMediaController(this))
         player_view.attachMediaTopbar(LiteMediaTopbar(this))
-        player_view.attachGestureController(LiteGestureController(this))
+        player_view.attachGestureController(LiteGestureController(this).apply {
+            supportSeek = true
+            supportBrightness = true
+            supportVolume = true
+        })
         // custom loading overlay
         player_view.attachOverlay(LoadingOverlay(this).apply { show() })
         // custom error overlay

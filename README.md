@@ -2,13 +2,16 @@
 <font color=#4A90CE size=5>A lite player for android by Kotlin language</font>
 <font color=#4A90CE size=5>一个完全使用Kotlin开发的简洁高效，轻量级的播放器框架</font>
 
-#### 目前v1版已支持功能：
+#### 目前v1.0.1版已支持功能：
 * <font color=#4A90CE>支持ExoPlayer解码</font>
 * <font color=#4A90CE>支持MediaPlayer解码</font>
 * <font color=#4A90CE>支持SurfaceView和TextureView渲染</font>
 * <font color=#4A90CE>支持AspectRatio画面比例模式</font>
 * <font color=#4A90CE>支持FullScreen模式</font>
+* <font color=#4A90CE>支持Window悬浮窗模式</font>
 * <font color=#4A90CE>支持RecyclerView列表播放</font>
+* <font color=#4A90CE>支持ListView列表播放</font>
+* <font color=#4A90CE>支持RTMP,DASH和其他数据流播放</font>
 * <font color=#4A90CE>支持手势seek, setBrightness, setVolume操作</font>
 * <font color=#4A90CE>支持预置Controller控制面板</font>
 * <font color=#4A90CE>支持预置Topbar信息面板</font>
@@ -17,10 +20,7 @@
 #### TODO计划：
 * 支持IjkPlayer解码
 * 支持Cache本地缓存
-* 支持适应各种类型数据流
-* 支持Window悬浮窗模式
 * 支持系统PictureInPicture模式
-* 支持ListView列表播放
 * 提供预置清晰度设置面板
 * 提供预置播放速率设置面板
 * 提供预置弹幕控制面板
@@ -54,7 +54,7 @@
     // 3.项目中添加远程依赖:
     dependencies {
             // 依赖LitePlayer库
-            implementation 'com.github.seagazer:liteplayer:1.0.0'
+            implementation 'com.github.seagazer:liteplayer:1.0.1'
             // 项目部分api使用需要依赖livedata
             implementation 'androidx.lifecycle:lifecycle-livedata:2.2.0'
             implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
@@ -82,18 +82,26 @@
     litePlayerView.setPlayerType(PlayerType.TYPE_EXO_PLAYER)
     // 设置渲染方式：模式定义在RenderType中
     litePlayerView.setRenderType(RenderType.TYPE_SURFACE_VIEW)
-    // 设置是否全屏
+    // 设置是否全屏模式
     litePlayerView.setFullScreenMode(true)
-    // 判断当前是否全屏
+    // 判断当前是否全屏模式
     litePlayerView.isFullScreen()
+    // 设置是否悬浮窗模式
+    litePlayerView.setFloatWindowMode(true)
+    // 判断当前是否悬浮窗模式
+    litePlayerView.isFloatWindow()
     // 设置比例模式：模式定义在AspectRatio中
     litePlayerView.setAspectRatio(AspectRatio.W_21_9)
     // 添加内置媒体控制面板
     litePlayerView.attachMediaController(LiteMediaController(context))
     // 添加内置媒体顶部面板
     litePlayerView.attachMediaTopbar(LiteMediaTopbar(context))
-    // 添加内置手势控制面板
-    litePlayerView.attachGestureController(LiteGestureController(context))
+    // 添加内置手势控制面板(可单独开关某个手势支持)
+    litePlayerView.attachGestureController(LiteGestureController(this).apply {
+        supportSeek = true
+        supportBrightness = true
+        supportVolume = true
+    })
     // 添加自定义面板(Loading等)
     litePlayerView.attachOverlay(LoadingOverlay(context))
     // 设置是否自动隐藏ITopbar和IController面板(IGesture面板会在操作后自动隐藏，自定义overlay需自己控制显示隐藏时机)
