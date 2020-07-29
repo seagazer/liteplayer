@@ -11,8 +11,8 @@ android {
         applicationId "com.seagazer.liteplayer"
         minSdkVersion minSdk
         targetSdkVersion targetSdk
-        versionCode 1
-        versionName "1.0"
+        versionCode verCode
+        versionName verName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

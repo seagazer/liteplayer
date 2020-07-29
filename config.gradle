@@ -2,4 +2,6 @@ ext {
     compileSdk = 29
     minSdk = 22
     targetSdk = 29
+    verCode = 2
+    verName = "1.0.1"
 }
