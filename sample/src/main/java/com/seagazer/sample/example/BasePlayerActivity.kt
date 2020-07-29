@@ -15,6 +15,7 @@ import com.seagazer.sample.cache.VideoCacheHelper
 import com.seagazer.sample.data.DataProvider
 import com.seagazer.sample.navigationTo
 import com.seagazer.sample.toastShort
+import com.seagazer.sample.widget.ErrorOverlay
 import com.seagazer.sample.widget.LoadingOverlay
 import kotlinx.android.synthetic.main.activity_base_player.*
 
@@ -80,6 +81,8 @@ class BasePlayerActivity : AppCompatActivity() {
         player_view.attachGestureController(LiteGestureController(this))
         // custom loading overlay
         player_view.attachOverlay(LoadingOverlay(this).apply { show() })
+        // custom error overlay
+        player_view.attachOverlay(ErrorOverlay(this))
         player_view.setAutoHideOverlay(false)
         player_view.start()
         player_view.addPlayerStateChangedListener(object : SimplePlayerStateChangedListener() {

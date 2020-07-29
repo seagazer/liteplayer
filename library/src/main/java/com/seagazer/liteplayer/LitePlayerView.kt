@@ -247,12 +247,7 @@ class LitePlayerView @JvmOverloads constructor(
                 RenderState.STATE_SURFACE_CREATED -> {
                     MediaLogger.d("----> surface create")
                     isSurfaceCreated = true
-                    litePlayerCore.getPlayer()?.let { player ->
-                        render?.let { render ->
-                            MediaLogger.d("----> surface bind player")
-                            render.bindPlayer(player)
-                        }
-                    }
+                    tryBindSurface()
                 }
                 RenderState.STATE_SURFACE_CHANGED -> {
                     MediaLogger.d("----> surface changed")
@@ -271,12 +266,7 @@ class LitePlayerView @JvmOverloads constructor(
                 PlayerState.STATE_INITIALIZED -> {
                     MediaLogger.d("----> player init")
                     if (isSurfaceCreated) {
-                        litePlayerCore.getPlayer()?.let { player ->
-                            render?.let { render ->
-                                MediaLogger.d("----> surface bind player")
-                                render.bindPlayer(player)
-                            }
-                        }
+                        tryBindSurface()
                     }
                 }
                 PlayerState.STATE_PREPARED -> {
@@ -379,6 +369,15 @@ class LitePlayerView @JvmOverloads constructor(
                 }
             }
         })
+    }
+
+    private fun tryBindSurface() {
+        litePlayerCore.getPlayer()?.let { player ->
+            render?.let { render ->
+                MediaLogger.d("----> surface bind player")
+                render.bindPlayer(player)
+            }
+        }
     }
 
     override fun onAttachedToWindow() {
