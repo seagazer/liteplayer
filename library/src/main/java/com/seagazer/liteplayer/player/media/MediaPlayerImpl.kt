@@ -31,6 +31,7 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
     private var dataSource: DataSource? = null
     private var surface: Surface? = null
     private var asyncToStart = false
+    private var isBuffering = true
 
     private val preparedListener = MediaPlayer.OnPreparedListener { mp ->
         MediaLogger.d("prepared")
@@ -45,6 +46,26 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
             setPlayerState(PlayerState.STATE_STARTED)
             liveData?.value = PlayerStateEvent(PlayerState.STATE_STARTED)
         }
+    }
+
+    private val infoListener = MediaPlayer.OnInfoListener { mp, what, extra ->
+        when (what) {
+            MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START -> {
+                MediaLogger.d("render first frame  : $currentState")
+                liveData?.value = PlayerStateEvent(PlayerState.STATE_RENDERED_FIRST_FRAME)
+            }
+            MediaPlayer.MEDIA_INFO_BUFFERING_START -> {
+                isBuffering = true
+                MediaLogger.d("-> loading start: $currentState")
+                liveData?.value = PlayerStateEvent(PlayerState.STATE_BUFFER_START)
+            }
+            MediaPlayer.MEDIA_INFO_BUFFERING_END -> {
+                isBuffering = false
+                MediaLogger.d("-> loading end: $currentState")
+                liveData?.value = PlayerStateEvent(PlayerState.STATE_BUFFER_END)
+            }
+        }
+        true
     }
 
     private val errorListener = MediaPlayer.OnErrorListener { _, what, _ ->
@@ -122,6 +143,7 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
             player!!.setOnCompletionListener(completionListener)
             player!!.setOnBufferingUpdateListener(bufferUpdateListener)
             player!!.setOnErrorListener(errorListener)
+            player!!.setOnInfoListener(infoListener)
             player!!.setDataSource(context, Uri.parse(dataSource!!.mediaUrl))
             this.surface?.run {
                 player!!.setSurface(surface)
@@ -206,6 +228,7 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
     override fun stop() {
         MediaLogger.d("stop play")
         asyncToStart = false
+        isBuffering = false
         player?.stop()
         setPlayerState(PlayerState.STATE_STOPPED)
         liveData?.value = PlayerStateEvent(PlayerState.STATE_STOPPED)
@@ -214,6 +237,7 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
     override fun reset() {
         MediaLogger.d("reset play")
         asyncToStart = false
+        isBuffering = false
         player?.reset()
         setPlayerState(PlayerState.STATE_STOPPED)
         liveData?.value = PlayerStateEvent(PlayerState.STATE_STOPPED)
@@ -221,9 +245,11 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
 
     override fun destroy() {
         asyncToStart = false
+        isBuffering = false
         player?.run {
             MediaLogger.d("destroy player")
             setOnPreparedListener(null)
+            setOnInfoListener(null)
             setOnErrorListener(null)
             setOnBufferingUpdateListener(null)
             setOnVideoSizeChangedListener(null)
