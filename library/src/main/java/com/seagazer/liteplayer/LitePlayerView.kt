@@ -761,7 +761,7 @@ class LitePlayerView @JvmOverloads constructor(
 
     override fun setAspectRatio(aspectRatio: AspectRatio) {
         if (render == null) {
-            throw RuntimeException("You has not setup a RenderType, you must call setRenderType() first!")
+            throw RuntimeException("Instance of render view is null, you must call setRenderType() to create a render view first!")
         }
         render!!.updateAspectRatio(aspectRatio)
     }
@@ -844,10 +844,16 @@ class LitePlayerView @JvmOverloads constructor(
     override fun getCurrentPosition() = litePlayerCore.getCurrentPosition()
 
     override fun setPlaySpeed(speed: Float) {
+        if (playerType == null) {
+            throw RuntimeException("Instance of player is null, you must call setPlayerType() to create a player first!")
+        }
         litePlayerCore.setPlaySpeed(speed)
     }
 
     override fun setVolume(volume: Int) {
+        if (playerType == null) {
+            throw RuntimeException("Instance of player is null, you must call setPlayerType() to create a player first!")
+        }
         litePlayerCore.setVolume(volume)
     }
 
