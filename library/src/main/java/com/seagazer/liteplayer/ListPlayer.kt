@@ -12,6 +12,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.liteplayer.config.AspectRatio
 import com.seagazer.liteplayer.config.PlayerType
 import com.seagazer.liteplayer.config.RenderType
 import com.seagazer.liteplayer.helper.MediaLogger
@@ -36,6 +37,7 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by pl
     private var autoPlay = true
     private var playerType = PlayerType.TYPE_EXO_PLAYER
     private var renderType = RenderType.TYPE_SURFACE_VIEW
+    private var aspectRatio = AspectRatio.AUTO
 
     /**
      * Attach to recyclerView.
@@ -122,6 +124,19 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by pl
     private fun initConfig() {
         playerView.setPlayerType(playerType)
         playerView.setRenderType(renderType)
+        playerView.setAspectRatio(aspectRatio)
+    }
+
+    override fun setPlayerType(playerType: PlayerType) {
+        this.playerType = playerType
+    }
+
+    override fun setRenderType(renderType: RenderType) {
+        this.renderType = renderType
+    }
+
+    override fun setAspectRatio(aspectRatio: AspectRatio) {
+        this.aspectRatio = aspectRatio
     }
 
     /**

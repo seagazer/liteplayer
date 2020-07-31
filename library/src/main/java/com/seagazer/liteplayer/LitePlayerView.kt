@@ -39,6 +39,7 @@ import com.seagazer.liteplayer.render.RenderMeasure
 import com.seagazer.liteplayer.render.RenderSurfaceView
 import com.seagazer.liteplayer.render.RenderTextureView
 import com.seagazer.liteplayer.widget.*
+import java.lang.RuntimeException
 import java.lang.ref.WeakReference
 
 /**
@@ -759,7 +760,10 @@ class LitePlayerView @JvmOverloads constructor(
     }
 
     override fun setAspectRatio(aspectRatio: AspectRatio) {
-        render?.updateAspectRatio(aspectRatio)
+        if (render == null) {
+            throw RuntimeException("You has not setup a RenderType, you must call setRenderType() first!")
+        }
+        render!!.updateAspectRatio(aspectRatio)
     }
 
     override fun setPlayerType(playerType: PlayerType) {

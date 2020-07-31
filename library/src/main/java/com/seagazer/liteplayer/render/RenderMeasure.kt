@@ -71,7 +71,7 @@ class RenderMeasure {
                     } else {
                         // fill w
                         measureWidth = widthSpecSize
-                        measureHeight = (widthMeasureSpec * videoRatio).toInt()
+                        measureHeight = (widthSpecSize * videoRatio).toInt()
                     }
                 } else if (aspectRatio == AspectRatio.W_16_9) {// 16:9宽屏比例
                     measureWidth = widthSpecSize
@@ -99,8 +99,8 @@ class RenderMeasure {
                 measureWidth = videoWidth
                 measureHeight = videoHeight
                 if (heightMode == MeasureSpec.AT_MOST && measureHeight > heightSpecSize) {
-                    measureHeight = heightMeasureSpec
-                    measureWidth = (heightMeasureSpec / videoRatio).toInt()
+                    measureHeight = heightSpecSize
+                    measureWidth = (heightSpecSize / videoRatio).toInt()
                 }
                 if (widthMode == MeasureSpec.AT_MOST && measureWidth > widthSpecSize) {
                     measureWidth = widthSpecSize

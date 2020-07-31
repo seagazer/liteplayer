@@ -25,6 +25,7 @@ class RenderSurfaceView @JvmOverloads constructor(
     private var holderReference: WeakReference<SurfaceHolder>? = null
     private var liveData: MutableLiveData<RenderStateEvent>? = null
     private var firstAttach = true
+    private var aspectRatio = AspectRatio.AUTO
 
     init {
         MediaLogger.d("surface view init")
@@ -63,8 +64,10 @@ class RenderSurfaceView @JvmOverloads constructor(
     override fun updateAspectRatio(aspectRatio: AspectRatio) {
         MediaLogger.d("surface view update aspect ratio")
         renderMeasure?.let {
-            it.setAspectRatio(aspectRatio)
-            requestLayout()
+            if (this.aspectRatio != aspectRatio) {
+                it.setAspectRatio(aspectRatio)
+                requestLayout()
+            }
         }
     }
 

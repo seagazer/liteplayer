@@ -25,6 +25,7 @@ class RenderTextureView @JvmOverloads constructor(
     private var renderMeasure: RenderMeasure? = null
     private var surfaceReference: WeakReference<SurfaceTexture>? = null
     private var liveData: MutableLiveData<RenderStateEvent>? = null
+    private var aspectRatio = AspectRatio.AUTO
 
     init {
         MediaLogger.d("texture view init")
@@ -53,8 +54,10 @@ class RenderTextureView @JvmOverloads constructor(
     override fun updateAspectRatio(aspectRatio: AspectRatio) {
         MediaLogger.d("texture view update aspect ratio")
         renderMeasure?.let {
-            it.setAspectRatio(aspectRatio)
-            requestLayout()
+            if (this.aspectRatio != aspectRatio) {
+                it.setAspectRatio(aspectRatio)
+                requestLayout()
+            }
         }
     }
 
