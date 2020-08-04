@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.liteplayer.config.AspectRatio
 import com.seagazer.liteplayer.config.PlayerType
 import com.seagazer.liteplayer.config.RenderType
 import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
@@ -35,7 +36,7 @@ class BasePlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base_player)
-        // progress
+        // show progress
         player_view.setProgressColor(resources.getColor(R.color.colorAccent), resources.getColor(R.color.colorPrimaryDark))
         progress_controller.setOnCheckedChangeListener { _, isChecked ->
             player_view.displayProgress(isChecked)
@@ -46,6 +47,18 @@ class BasePlayerActivity : AppCompatActivity() {
                 player_view.setAutoSensorEnable(true)
             } else {
                 player_view.setAutoSensorEnable(false)
+            }
+        }
+        // video aspect ratio
+        aspect_ratio.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.ratio_4_3 -> player_view.setAspectRatio(AspectRatio.W_4_3)
+                R.id.ratio_16_9 -> player_view.setAspectRatio(AspectRatio.W_16_9)
+                R.id.ratio_21_9 -> player_view.setAspectRatio(AspectRatio.W_21_9)
+                R.id.ratio_fill -> player_view.setAspectRatio(AspectRatio.FILL)
+                R.id.ratio_stretch -> player_view.setAspectRatio(AspectRatio.STRETCH)
+                R.id.ratio_origin -> player_view.setAspectRatio(AspectRatio.ORIGIN)
+                R.id.ratio_auto -> player_view.setAspectRatio(AspectRatio.AUTO)
             }
         }
         // player config
@@ -63,15 +76,15 @@ class BasePlayerActivity : AppCompatActivity() {
                 }
             }
         }
-        // render view
+        // render config
         render_config.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.render_surface_view -> player_view.setRenderType(RenderType.TYPE_SURFACE_VIEW)
                 R.id.render_texture_view -> player_view.setRenderType(RenderType.TYPE_TEXTURE_VIEW)
             }
         }
+        // default config
         player_view.setRenderType(RenderType.TYPE_SURFACE_VIEW)
-        // player type
         player_view.setPlayerType(PlayerType.TYPE_EXO_PLAYER)
         // prepare video
         player_view.setDataSource(DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second))
@@ -88,7 +101,7 @@ class BasePlayerActivity : AppCompatActivity() {
         // custom error overlay
         player_view.attachOverlay(ErrorOverlay(this))
         player_view.setAutoHideOverlay(false)
-        player_view.start()
+        // add event listener
         player_view.addPlayerStateChangedListener(object : SimplePlayerStateChangedListener() {
 
             override fun onCompleted() {
@@ -108,6 +121,8 @@ class BasePlayerActivity : AppCompatActivity() {
             }
 
         })
+        // start play
+        player_view.start()
 
     }
 

@@ -11,9 +11,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.seagazer.liteplayer.ListPlayer
+import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.widget.LiteMediaController
-import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.sample.R
 import com.seagazer.sample.data.DataProvider
 import com.seagazer.sample.navigationTo
@@ -118,9 +118,9 @@ class ListPlayerActivity : AppCompatActivity() {
             )
         }
 
-        override fun getItemCount() = DataProvider.urls.size
+        override fun getItemCount() = DataProvider.urls.size * 10
 
-        fun getVideoUrl(position: Int) = DataProvider.urls[position]
+        fun getVideoUrl(position: Int) = DataProvider.urls[position % 2]
 
         override fun onBindViewHolder(holder: VideoHolder, position: Int) {
             holder.run {

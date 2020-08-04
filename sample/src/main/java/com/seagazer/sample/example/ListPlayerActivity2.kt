@@ -114,11 +114,11 @@ class ListPlayerActivity2 : AppCompatActivity() {
             return itemView
         }
 
-        override fun getItem(position: Int) = DataProvider.urls[position]
+        override fun getItem(position: Int) = DataProvider.urls[position % 2]
 
         override fun getItemId(position: Int) = position.toLong()
 
-        override fun getCount() = DataProvider.urls.size
+        override fun getCount() = DataProvider.urls.size * 10
 
         inner class VideoHolder {
             lateinit var text: TextView

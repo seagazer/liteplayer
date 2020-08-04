@@ -24,10 +24,6 @@ class MainActivity : AppCompatActivity() {
         navigationTo(ListPlayerActivity2::class.java)
     }
 
-    fun aspectRatio(view: View) {
-        navigationTo(AspectRatioActivity::class.java)
-    }
-
     fun multiListPlay(view: View) {
         navigationTo(MultiListPlayerActivity::class.java)
     }

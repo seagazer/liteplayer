@@ -19,7 +19,7 @@
             <com.seagazer.liteplayer.LitePlayerView
                 android:id="@+id/player_view"
                 android:layout_width="match_parent"
-                android:layout_height="220dp" />
+                android:layout_height="match_parent" />
         </FrameLayout>
 
         <LinearLayout
@@ -42,6 +42,62 @@
                 android:text="Auto Sensor" />
         </LinearLayout>
 
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioGroup
+                android:id="@+id/aspect_ratio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <RadioButton
+                    android:id="@+id/ratio_auto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="自动" />
+
+                <RadioButton
+                    android:id="@+id/ratio_origin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="原始" />
+
+                <RadioButton
+                    android:id="@+id/ratio_fill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="填充" />
+
+                <RadioButton
+                    android:id="@+id/ratio_stretch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="拉伸" />
+
+                <RadioButton
+                    android:id="@+id/ratio_4_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4:3w" />
+
+                <RadioButton
+                    android:id="@+id/ratio_16_9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="16:9w" />
+
+                <RadioButton
+                    android:id="@+id/ratio_21_9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="21:9w" />
+
+            </RadioGroup>
+        </HorizontalScrollView>
 
         <RadioGroup
             android:id="@+id/player_config"
