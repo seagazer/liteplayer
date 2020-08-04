@@ -55,6 +55,7 @@ class RenderTextureView @JvmOverloads constructor(
         MediaLogger.d("texture view update aspect ratio")
         renderMeasure?.let {
             if (this.aspectRatio != aspectRatio) {
+                this.aspectRatio = aspectRatio
                 it.setAspectRatio(aspectRatio)
                 requestLayout()
             }

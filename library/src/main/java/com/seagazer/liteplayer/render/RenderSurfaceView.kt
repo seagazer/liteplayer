@@ -65,6 +65,7 @@ class RenderSurfaceView @JvmOverloads constructor(
         MediaLogger.d("surface view update aspect ratio")
         renderMeasure?.let {
             if (this.aspectRatio != aspectRatio) {
+                this.aspectRatio = aspectRatio
                 it.setAspectRatio(aspectRatio)
                 requestLayout()
             }
