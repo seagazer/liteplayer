@@ -33,13 +33,13 @@ import com.seagazer.liteplayer.helper.OrientationSensorHelper
 import com.seagazer.liteplayer.helper.SystemUiHelper
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
 import com.seagazer.liteplayer.player.exo.ExoPlayerImpl
+import com.seagazer.liteplayer.player.ijk.IjkPlayerImpl
 import com.seagazer.liteplayer.player.media.MediaPlayerImpl
 import com.seagazer.liteplayer.render.IRender
 import com.seagazer.liteplayer.render.RenderMeasure
 import com.seagazer.liteplayer.render.RenderSurfaceView
 import com.seagazer.liteplayer.render.RenderTextureView
 import com.seagazer.liteplayer.widget.*
-import java.lang.RuntimeException
 import java.lang.ref.WeakReference
 
 /**
@@ -77,6 +77,7 @@ class LitePlayerView @JvmOverloads constructor(
     private var render: IRender? = null
     private var playerType: PlayerType? = null
     private var renderType: RenderType? = null
+    var autoHideDelay = AUTO_HIDE_DELAY
 
     // display mode
     private var isSurfaceCreated = false
@@ -177,7 +178,7 @@ class LitePlayerView @JvmOverloads constructor(
                     if (isAutoHideOverlay) {
                         sendEmptyMessageDelayed(
                             MSG_HIDE_OVERLAY,
-                            AUTO_HIDE_DELAY
+                            autoHideDelay
                         )
                     }
                 } else if (msg.what == MSG_HIDE_OVERLAY) {
@@ -778,8 +779,7 @@ class LitePlayerView @JvmOverloads constructor(
                 litePlayerCore.setupPlayer(ExoPlayerImpl(context))
             }
             PlayerType.TYPE_IJK_PLAYER -> {
-                //TODO()
-                throw RuntimeException("Not support now, please use TYPE_EXO_PLAYER or TYPE_MEDIA_PLAYER instead.")
+                litePlayerCore.setupPlayer(IjkPlayerImpl(context))
             }
             PlayerType.TYPE_MEDIA_PLAYER -> {
                 litePlayerCore.setupPlayer(MediaPlayerImpl(context))
