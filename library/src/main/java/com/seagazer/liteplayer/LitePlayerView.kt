@@ -105,7 +105,7 @@ class LitePlayerView @JvmOverloads constructor(
     }
 
     // controller
-    private var controller: IController? = null
+    private var mediaController: IController? = null
     private var isAutoHideOverlay = true
 
     // topbar
@@ -159,7 +159,7 @@ class LitePlayerView @JvmOverloads constructor(
                 if (msg.what == MSG_PROGRESS) {
                     currentProgress = getCurrentPosition().toInt()
                     val secondProgress = getBufferedPercentage().coerceAtMost(100) * 1.0f / 100 * getDuration()
-                    controller?.onProgressChanged(currentProgress, secondProgress.toInt())
+                    mediaController?.onProgressChanged(currentProgress, secondProgress.toInt())
                     sendEmptyMessageDelayed(
                         MSG_PROGRESS,
                         PROGRESS_DELAY
@@ -168,7 +168,7 @@ class LitePlayerView @JvmOverloads constructor(
                         invalidate()
                     }
                 } else if (msg.what == MSG_SHOW_OVERLAY) {
-                    controller?.show()
+                    mediaController?.show()
                     topbar?.show()
                     isOverlayDisplaying = true
                     if (currentProgress > 0 && maxProgress > 0) {
@@ -181,7 +181,7 @@ class LitePlayerView @JvmOverloads constructor(
                         )
                     }
                 } else if (msg.what == MSG_HIDE_OVERLAY) {
-                    controller?.hide()
+                    mediaController?.hide()
                     topbar?.hide()
                     isOverlayDisplaying = false
                     if (isSupportProgress && currentProgress > 0 && maxProgress > 0) {
@@ -205,9 +205,9 @@ class LitePlayerView @JvmOverloads constructor(
     }
 
     override fun attachMediaController(controller: IController) {
-        this.controller = controller
-        if (indexOfChild(this.controller!!.getView()) == -1) {
-            this.controller!!.attachPlayer(this)
+        this.mediaController = controller
+        if (indexOfChild(this.mediaController!!.getView()) == -1) {
+            this.mediaController!!.attachPlayer(this)
         }
     }
 
@@ -284,9 +284,9 @@ class LitePlayerView @JvmOverloads constructor(
                         it.onPlaying()
                     }
                     maxProgress = getDuration().toInt()
-                    controller?.onPlayerPrepared(getDataSource()!!)
+                    mediaController?.onPlayerPrepared(getDataSource()!!)
                     topbar?.onPlayerPrepared(getDataSource()!!)
-                    controller?.onStarted()
+                    mediaController?.onStarted()
                     handler.sendEmptyMessage(MSG_PROGRESS)
                 }
                 PlayerState.STATE_PAUSED -> {
@@ -295,7 +295,7 @@ class LitePlayerView @JvmOverloads constructor(
                     playerStateListeners.forEach {
                         it.onPaused()
                     }
-                    controller?.onPaused()
+                    mediaController?.onPaused()
                     handler.removeMessages(MSG_PROGRESS)
                 }
                 PlayerState.STATE_STOPPED -> {
@@ -391,7 +391,7 @@ class LitePlayerView @JvmOverloads constructor(
             invalidate()
         }
         handler.sendEmptyMessage(MSG_PROGRESS)
-        if (controller != null || topbar != null) {
+        if (mediaController != null || topbar != null) {
             handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
         }
     }
@@ -467,9 +467,9 @@ class LitePlayerView @JvmOverloads constructor(
     override fun setAutoSensorEnable(enable: Boolean) {
         if (enable) {
             sensorListener.enable()
-            controller?.autoSensorModeChanged(true)
+            mediaController?.autoSensorModeChanged(true)
         } else {
-            controller?.autoSensorModeChanged(false)
+            mediaController?.autoSensorModeChanged(false)
             sensorListener.disable()
         }
         notifyAutoSensorModeChanged(enable)
@@ -530,7 +530,7 @@ class LitePlayerView @JvmOverloads constructor(
         this.isFullScreen = true
         detachVideoContainer()
         androidParent?.addView(this, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
-        controller?.displayModeChanged(true)
+        mediaController?.displayModeChanged(true)
         topbar?.displayModeChanged(true)
         notifyDisplayModeChanged(true)
         MediaLogger.d("enter fullscreen: $width * $height")
@@ -555,7 +555,7 @@ class LitePlayerView @JvmOverloads constructor(
         this.isFullScreen = false
         detachVideoContainer()
         directParent?.addView(this, childIndex, originLayoutParams)
-        controller?.displayModeChanged(false)
+        mediaController?.displayModeChanged(false)
         topbar?.displayModeChanged(false)
         notifyDisplayModeChanged(false)
         MediaLogger.d("exit fullscreen: $width * $height")
@@ -601,14 +601,14 @@ class LitePlayerView @JvmOverloads constructor(
             gestureController?.onGestureFinish(event)
             gestureController?.hide()
         }
-        if (gestureController != null && !isFloatWindowMode) {
-            return gestureDetector.onTouchEvent(event)
+        return if (gestureController != null || mediaController != null && !isFloatWindowMode) {
+            controllerDetector.onTouchEvent(event)
         } else {
-            return super.onTouchEvent(event)
+            super.onTouchEvent(event)
         }
     }
 
-    private val gestureDetector by lazy {
+    private val controllerDetector by lazy {
         GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
 
             override fun onDown(e: MotionEvent?): Boolean {
@@ -640,9 +640,9 @@ class LitePlayerView @JvmOverloads constructor(
             }
 
             override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
-                if (controller != null) {
+                if (mediaController != null) {
                     handler.removeMessages(MSG_HIDE_OVERLAY)
-                    if (controller!!.isShowing()) {
+                    if (mediaController!!.isShowing()) {
                         handler.sendEmptyMessage(MSG_HIDE_OVERLAY)
                     } else {
                         handler.sendEmptyMessage(MSG_SHOW_OVERLAY)
@@ -750,7 +750,7 @@ class LitePlayerView @JvmOverloads constructor(
                 Gravity.CENTER
             )
         )
-        controller?.attachPlayer(this)
+        mediaController?.attachPlayer(this)
         topbar?.attachPlayer(this)
         gestureController?.attachPlayer(this)
         customOverlays.forEach {
@@ -990,7 +990,7 @@ class LitePlayerView @JvmOverloads constructor(
     }
 
     private fun notifyFloatWindowModeChanged(floatWindow: Boolean) {
-        controller?.floatWindowModeChanged(floatWindow)
+        mediaController?.floatWindowModeChanged(floatWindow)
         gestureController?.floatWindowModeChanged(floatWindow)
         topbar?.floatWindowModeChanged(floatWindow)
         customOverlays.forEach {
