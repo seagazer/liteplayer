@@ -282,12 +282,14 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
         isBuffering = false
         isPendingSeek = false
         setPlayerState(PlayerState.STATE_STOPPED)
+        liveData?.value = PlayerStateEvent(PlayerState.STATE_STOPPED)
         player.stop(true)
     }
 
     override fun reset() {
-        // not support reset, just stop
-        stop()
+        // not support reset, just mark state not init
+        setPlayerState(PlayerState.STATE_NOT_INITIALIZED)
+        liveData?.value = PlayerStateEvent(PlayerState.STATE_NOT_INITIALIZED)
     }
 
     override fun destroy() {

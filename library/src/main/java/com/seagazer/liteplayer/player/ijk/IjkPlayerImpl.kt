@@ -185,12 +185,15 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
             currentBufferedPercentage = 0
             if (player == null) {
                 player = IjkMediaPlayer()
+                // 0 cpu decode, 1 mediacodec decode
+                player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", if (softwareDecode) 0L else 1L)
+                this.surface?.run {
+                    player!!.setSurface(surface)
+                }
             } else {
                 stop()
                 reset()
             }
-            // 0 cpu decode, 1 gpu decode
-            player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", if (softwareDecode) 0L else 1L)
             // fix play delay
             player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 0)
             player!!.setOnPreparedListener(preparedListener)
@@ -202,9 +205,6 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
             player!!.setOnInfoListener(infoListener)
             player!!.setAudioStreamType(AudioManager.STREAM_MUSIC)
             player!!.setDataSource(context, Uri.parse(dataSource!!.mediaUrl))
-            this.surface?.run {
-                player!!.setSurface(surface)
-            }
             MediaLogger.d("-->prepareAsync")
             player!!.prepareAsync()
             if (currentState == PlayerState.STATE_NOT_INITIALIZED) {
@@ -295,18 +295,10 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
         MediaLogger.d("reset play")
         asyncToStart = false
         isBuffering = false
+        player?.resetListeners()
         player?.reset()
-        player?.run {
-            setOnPreparedListener(null)
-            setOnInfoListener(null)
-            setOnErrorListener(null)
-            setOnBufferingUpdateListener(null)
-            setOnVideoSizeChangedListener(null)
-            setOnCompletionListener(null)
-            setOnInfoListener(null)
-        }
-        setPlayerState(PlayerState.STATE_STOPPED)
-        liveData?.value = PlayerStateEvent(PlayerState.STATE_STOPPED)
+        setPlayerState(PlayerState.STATE_NOT_INITIALIZED)
+        liveData?.value = PlayerStateEvent(PlayerState.STATE_NOT_INITIALIZED)
     }
 
     override fun destroy() {

@@ -77,6 +77,7 @@ class LitePlayerView @JvmOverloads constructor(
     private var render: IRender? = null
     private var playerType: PlayerType? = null
     private var renderType: RenderType? = null
+    private var softwareDecode = false
     var autoHideDelay = AUTO_HIDE_DELAY
 
     // display mode
@@ -785,6 +786,7 @@ class LitePlayerView @JvmOverloads constructor(
                 litePlayerCore.setupPlayer(MediaPlayerImpl(context))
             }
         }
+        litePlayerCore.supportSoftwareDecode(softwareDecode)
         MediaLogger.d("set player: $playerType")
         this.playerType = playerType
         registerPlayerStateObserver(playerStateObserver)
@@ -1011,7 +1013,14 @@ class LitePlayerView @JvmOverloads constructor(
      * Set decode mode.
      * @param softwareDecode True software decode, false mediacodec decode
      */
-    fun setSupportSoftwareDecode(softwareDecode: Boolean) {
-        litePlayerCore.supportSoftwareDecode(softwareDecode)
+    fun supportSoftwareDecode(softwareDecode: Boolean) {
+        if (this.softwareDecode != softwareDecode) {
+            this.softwareDecode = softwareDecode
+            if (playerType != null) {
+                litePlayerCore.supportSoftwareDecode(softwareDecode)
+            } else {
+                MediaLogger.w("Instance of player is null, this method may called after you setup a playerType!")
+            }
+        }
     }
 }

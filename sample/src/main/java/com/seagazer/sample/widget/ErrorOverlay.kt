@@ -41,12 +41,12 @@ class ErrorOverlay @JvmOverloads constructor(
     override fun getView() = this
 
     override fun show() {
-        MediaLogger.e("show cover")
+        MediaLogger.d("show cover")
         alpha = 1f
     }
 
     override fun hide() {
-        MediaLogger.e("hide cover")
+        MediaLogger.d("hide cover")
         animate().alpha(0f).start()
     }
 

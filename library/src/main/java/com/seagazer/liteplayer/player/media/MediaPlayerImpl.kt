@@ -253,8 +253,8 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
             setOnInfoListener(null)
             release()
         }
-        setPlayerState(PlayerState.STATE_STOPPED)
-        liveData?.value = PlayerStateEvent(PlayerState.STATE_STOPPED)
+        setPlayerState(PlayerState.STATE_NOT_INITIALIZED)
+        liveData?.value = PlayerStateEvent(PlayerState.STATE_NOT_INITIALIZED)
     }
 
     override fun destroy() {

@@ -41,6 +41,7 @@ class BasePlayerActivity : AppCompatActivity() {
         progress_controller.setOnCheckedChangeListener { _, isChecked ->
             player_view.displayProgress(isChecked)
         }
+        progress_controller.isChecked = true
         // sensor auto turn around
         sensor.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -62,7 +63,9 @@ class BasePlayerActivity : AppCompatActivity() {
             }
         }
         // decode mode, only ijkplayer support software decode
-        player_view.setSupportSoftwareDecode(false)
+        soft_decode.setOnCheckedChangeListener { _, isChecked ->
+            player_view.supportSoftwareDecode(isChecked)
+        }
         // config
         player_view.setRenderType(ConfigHolder.renderType)
         player_view.setPlayerType(ConfigHolder.playerType)

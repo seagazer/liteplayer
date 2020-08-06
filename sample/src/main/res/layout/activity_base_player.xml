@@ -32,14 +32,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="Show Progress" />
+                android:text="显示进度" />
 
             <CheckBox
                 android:id="@+id/sensor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="Auto Sensor" />
+                android:text="自动旋转" />
+
+            <CheckBox
+                android:id="@+id/soft_decode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="软解" />
         </LinearLayout>
 
         <HorizontalScrollView
