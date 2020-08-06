@@ -36,4 +36,10 @@ interface IPlayer : IPlayerCore {
      */
     fun setSurface(surface: Surface)
 
+    /**
+     * Set decode mode.
+     * @param softwareDecode True software decode, false mediacodec decode
+     */
+    fun supportSoftwareDecode(softwareDecode: Boolean)
+
 }

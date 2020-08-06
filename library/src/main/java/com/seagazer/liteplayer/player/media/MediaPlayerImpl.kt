@@ -126,6 +126,10 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
         player?.setSurface(surface)
     }
 
+    override fun supportSoftwareDecode(softwareDecode: Boolean) {
+        MediaLogger.w("Not support!")
+    }
+
     override fun setDataSource(source: DataSource) {
         MediaLogger.d("-->$source")
         this.dataSource = source
@@ -239,15 +243,7 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
         asyncToStart = false
         isBuffering = false
         player?.reset()
-        setPlayerState(PlayerState.STATE_STOPPED)
-        liveData?.value = PlayerStateEvent(PlayerState.STATE_STOPPED)
-    }
-
-    override fun destroy() {
-        asyncToStart = false
-        isBuffering = false
         player?.run {
-            MediaLogger.d("destroy player")
             setOnPreparedListener(null)
             setOnInfoListener(null)
             setOnErrorListener(null)
@@ -255,9 +251,17 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
             setOnVideoSizeChangedListener(null)
             setOnCompletionListener(null)
             setOnInfoListener(null)
-            reset()
             release()
         }
+        setPlayerState(PlayerState.STATE_STOPPED)
+        liveData?.value = PlayerStateEvent(PlayerState.STATE_STOPPED)
+    }
+
+    override fun destroy() {
+        MediaLogger.d("destroy player")
+        asyncToStart = false
+        isBuffering = false
+        reset()
         player = null
         setPlayerState(PlayerState.STATE_NOT_INITIALIZED)
     }

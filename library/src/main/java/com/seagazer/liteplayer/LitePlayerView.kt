@@ -1007,4 +1007,11 @@ class LitePlayerView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Set decode mode.
+     * @param softwareDecode True software decode, false mediacodec decode
+     */
+    fun setSupportSoftwareDecode(softwareDecode: Boolean) {
+        litePlayerCore.supportSoftwareDecode(softwareDecode)
+    }
 }

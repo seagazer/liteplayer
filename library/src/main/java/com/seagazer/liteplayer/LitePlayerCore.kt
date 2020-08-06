@@ -167,6 +167,10 @@ class LitePlayerCore constructor(val context: Context) : IPlayer {
         innerPlayer?.setSurface(surface)
     }
 
+    override fun supportSoftwareDecode(softwareDecode: Boolean) {
+        innerPlayer?.supportSoftwareDecode(softwareDecode)
+    }
+
     override fun getVideoWidth() = if (innerPlayer != null) innerPlayer!!.getVideoWidth() else 0
 
     override fun getVideoHeight() = if (innerPlayer != null) innerPlayer!!.getVideoHeight() else 0

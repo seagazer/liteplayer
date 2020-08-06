@@ -253,6 +253,10 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
         player.setVideoSurface(surface)
     }
 
+    override fun supportSoftwareDecode(softwareDecode: Boolean) {
+        MediaLogger.w("Not support!")
+    }
+
     override fun getVideoWidth() = videoWidth
 
     override fun getVideoHeight() = videoHeight
@@ -287,10 +291,13 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
     }
 
     override fun destroy() {
+        MediaLogger.d("destroy player")
         isPreparing = true
         isBuffering = false
         isPendingSeek = false
         setPlayerState(PlayerState.STATE_NOT_INITIALIZED)
+        player.setVideoSurface(null)
+        player.setVideoSurfaceHolder(null)
         player.removeListener(eventListener)
         player.removeVideoListener(videoListener)
         player.release()
