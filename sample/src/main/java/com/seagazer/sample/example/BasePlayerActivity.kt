@@ -1,21 +1,19 @@
 package com.seagazer.sample.example
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.AspectRatio
 import com.seagazer.liteplayer.config.PlayerType
-import com.seagazer.liteplayer.config.RenderType
 import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
 import com.seagazer.liteplayer.widget.LiteGestureController
 import com.seagazer.liteplayer.widget.LiteMediaController
 import com.seagazer.liteplayer.widget.LiteMediaTopbar
-import com.seagazer.sample.R
+import com.seagazer.sample.*
 import com.seagazer.sample.cache.VideoCacheHelper
 import com.seagazer.sample.data.DataProvider
-import com.seagazer.sample.navigationTo
-import com.seagazer.sample.toastShort
 import com.seagazer.sample.widget.ErrorOverlay
 import com.seagazer.sample.widget.LoadingOverlay
 import kotlinx.android.synthetic.main.activity_base_player.*
@@ -36,8 +34,10 @@ class BasePlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base_player)
+        showConfigInfo()
+
         // show progress
-        player_view.setProgressColor(resources.getColor(R.color.colorAccent), resources.getColor(R.color.colorPrimaryDark))
+        player_view.setProgressColor(resources.getColor(R.color.colorAccent), Color.YELLOW)
         progress_controller.setOnCheckedChangeListener { _, isChecked ->
             player_view.displayProgress(isChecked)
         }
@@ -61,31 +61,11 @@ class BasePlayerActivity : AppCompatActivity() {
                 R.id.ratio_auto -> player_view.setAspectRatio(AspectRatio.AUTO)
             }
         }
-        // player config
-        player_config.setOnCheckedChangeListener { _, checkedId ->
-            when (checkedId) {
-                R.id.player_exo -> {
-                    player_view.setPlayerType(PlayerType.TYPE_EXO_PLAYER)
-                    player_view.setDataSource(DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second))
-                    player_view.start()
-                }
-                R.id.player_media -> {
-                    player_view.setPlayerType(PlayerType.TYPE_MEDIA_PLAYER)
-                    player_view.setDataSource(DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second))
-                    player_view.start()
-                }
-            }
-        }
-        // render config
-        render_config.setOnCheckedChangeListener { _, checkedId ->
-            when (checkedId) {
-                R.id.render_surface_view -> player_view.setRenderType(RenderType.TYPE_SURFACE_VIEW)
-                R.id.render_texture_view -> player_view.setRenderType(RenderType.TYPE_TEXTURE_VIEW)
-            }
-        }
-        // default config
-        player_view.setRenderType(RenderType.TYPE_SURFACE_VIEW)
-        player_view.setPlayerType(PlayerType.TYPE_EXO_PLAYER)
+        // decode mode, only ijkplayer support software decode
+        player_view.setSupportSoftwareDecode(false)
+        // config
+        player_view.setRenderType(ConfigHolder.renderType)
+        player_view.setPlayerType(ConfigHolder.playerType)
         // prepare video
         player_view.setDataSource(DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second))
         // media controller, topbar and gesture controller
@@ -97,12 +77,20 @@ class BasePlayerActivity : AppCompatActivity() {
             supportVolume = true
         })
         // custom loading overlay
-        player_view.attachOverlay(LoadingOverlay(this).apply { show() })
+        player_view.attachOverlay(LoadingOverlay(this))
         // custom error overlay
         player_view.attachOverlay(ErrorOverlay(this))
-        player_view.setAutoHideOverlay(false)
+        player_view.setAutoHideOverlay(true)
         // add event listener
         player_view.addPlayerStateChangedListener(object : SimplePlayerStateChangedListener() {
+
+            override fun onPlaying() {
+                pause_resume.text = "pause"
+            }
+
+            override fun onPaused() {
+                pause_resume.text = "resume"
+            }
 
             override fun onCompleted() {
                 playNext()
@@ -110,14 +98,6 @@ class BasePlayerActivity : AppCompatActivity() {
 
             override fun onError(playerType: PlayerType, errorCode: Int) {
                 toastShort("播放错误: $errorCode")
-            }
-
-            override fun onLoadingStarted() {
-                toastShort("正在缓冲")
-            }
-
-            override fun onLoadingCompleted() {
-                toastShort("缓冲结束")
             }
 
         })
@@ -132,10 +112,6 @@ class BasePlayerActivity : AppCompatActivity() {
         } else {
             player_view.resume()
         }
-    }
-
-    fun stopPlay(view: View) {
-        player_view.stop()
     }
 
     fun playNext(view: View) {

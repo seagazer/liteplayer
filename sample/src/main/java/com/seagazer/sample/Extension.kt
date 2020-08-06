@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.widget.Toast
+import com.seagazer.liteplayer.config.PlayerType
+import com.seagazer.liteplayer.config.RenderType
 
 /**
  *
@@ -26,4 +28,19 @@ fun Activity.navigationTo(clazz: Class<*>) {
 
 fun Activity.actionDelay(action: () -> Unit, delay: Long) {
     Handler().postDelayed({ action() }, delay)
+}
+
+fun Activity.showConfigInfo() {
+    val playerText = when (ConfigHolder.playerType) {
+        PlayerType.TYPE_MEDIA_PLAYER -> "MediaPlayer"
+        PlayerType.TYPE_IJK_PLAYER -> "IjkPlayer"
+        PlayerType.TYPE_EXO_PLAYER -> "ExoPlayer"
+    }
+    val renderText = when (ConfigHolder.renderType) {
+        RenderType.TYPE_SURFACE_VIEW -> "SurfaceView"
+        RenderType.TYPE_TEXTURE_VIEW -> "TextureView"
+    }
+    actionDelay({
+        toastLong("当前内核:$playerText, 当前渲染:$renderText")
+    }, 1000)
 }

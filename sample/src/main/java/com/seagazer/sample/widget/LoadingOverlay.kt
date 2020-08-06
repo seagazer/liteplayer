@@ -6,12 +6,12 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
+import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.config.PlayerType
 import com.seagazer.liteplayer.helper.DpHelper
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
 import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
 import com.seagazer.liteplayer.widget.IOverlay
-import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.sample.R
 
 /**
@@ -79,4 +79,5 @@ class LoadingOverlay @JvmOverloads constructor(
 
     override fun floatWindowModeChanged(isFloatWindow: Boolean) {
     }
+
 }

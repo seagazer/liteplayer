@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/player_type"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/exo"
+            android:checked="true"
+            android:title="ExoPlayer" />
+        <item
+            android:id="@+id/ijk"
+            android:title="IjkPlayer" />
+        <item
+            android:id="@+id/media"
+            android:title="MediaPlayer" />
+    </group>
+    <group
+        android:id="@+id/render_type"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/surface"
+            android:checked="true"
+            android:title="SurfaceView" />
+        <item
+            android:id="@+id/texture"
+            android:title="TextureView" />
+    </group>
+</menu>

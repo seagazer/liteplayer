@@ -13,11 +13,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.seagazer.liteplayer.ListPlayer
 import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.liteplayer.widget.LiteGestureController
 import com.seagazer.liteplayer.widget.LiteMediaController
+import com.seagazer.sample.ConfigHolder
 import com.seagazer.sample.R
 import com.seagazer.sample.data.DataProvider
 import com.seagazer.sample.navigationTo
+import com.seagazer.sample.showConfigInfo
 import com.seagazer.sample.widget.ListCoverOverlay
+import com.seagazer.sample.widget.LoadingOverlay
 import com.seagazer.sample.widget.SimpleItemDecoration
 import kotlinx.android.synthetic.main.activity_list_player.*
 
@@ -29,33 +33,39 @@ class ListPlayerActivity : AppCompatActivity() {
     private lateinit var listPlayer: ListPlayer
     private var isAutoPlay = true
 
-    private lateinit var overlay: ListCoverOverlay
+    private lateinit var coverOverlay: ListCoverOverlay
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_player)
+        showConfigInfo()
+
         linearLayoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         recycler_view.layoutManager = linearLayoutManager
         recycler_view.addItemDecoration(SimpleItemDecoration(0, 10, 0, 10))
         val listAdapter = ListAdapter()
         recycler_view.adapter = listAdapter
-        overlay = ListCoverOverlay(this)
+        coverOverlay = ListCoverOverlay(this)
         listPlayer = ListPlayer(LitePlayerView(this)).apply {
             displayProgress(true)
             setProgressColor(resources.getColor(R.color.colorAccent), resources.getColor(R.color.colorPrimaryDark))
             attachMediaController(LiteMediaController(this@ListPlayerActivity))
-            attachOverlay(this@ListPlayerActivity.overlay)
+            attachGestureController(LiteGestureController(this@ListPlayerActivity))
+            attachOverlay(LoadingOverlay(this@ListPlayerActivity))
+            attachOverlay(this@ListPlayerActivity.coverOverlay)
+            setRenderType(ConfigHolder.renderType)
+            setPlayerType(ConfigHolder.playerType)
         }
         val videoScrollListener = object : ListPlayer.VideoListScrollListener {
 
             override fun getVideoContainer(position: Int): ViewGroup? {
                 // add different cover here, test data for example
                 if (position % 2 == 0) {
-                    overlay.setCover(R.drawable.timg)
+                    coverOverlay.setCover(R.drawable.timg)
                 } else {
-                    overlay.setCover(R.drawable.ic_launcher_background)
+                    coverOverlay.setCover(R.drawable.ic_launcher_background)
                 }
-                overlay.show()
+                coverOverlay.show()
                 val holder = recycler_view.findViewHolderForAdapterPosition(position)
                 return if (holder != null && holder is ListAdapter.VideoHolder) {
                     holder.videoContainer

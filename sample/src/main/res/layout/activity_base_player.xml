@@ -99,50 +99,6 @@
             </RadioGroup>
         </HorizontalScrollView>
 
-        <RadioGroup
-            android:id="@+id/player_config"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp">
-
-            <RadioButton
-                android:id="@+id/player_exo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="ExoPlayer" />
-
-            <RadioButton
-                android:id="@+id/player_media"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="MediaPlayer" />
-
-        </RadioGroup>
-
-        <RadioGroup
-            android:id="@+id/render_config"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp">
-
-            <RadioButton
-                android:id="@+id/render_surface_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="SurfaceView" />
-
-            <RadioButton
-                android:id="@+id/render_texture_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TextureView" />
-
-        </RadioGroup>
-
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -152,20 +108,13 @@
             android:text="next" />
 
         <Button
+            android:id="@+id/pause_resume"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:onClick="pausePlay"
-            android:text="pause_resume" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:onClick="stopPlay"
-            android:text="destroy" />
+            android:text="pause" />
 
         <Button
             android:layout_width="match_parent"

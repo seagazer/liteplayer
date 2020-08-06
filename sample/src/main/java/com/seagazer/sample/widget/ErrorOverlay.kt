@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
 import android.view.Gravity
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
 import com.seagazer.liteplayer.LitePlayerView
@@ -13,6 +12,7 @@ import com.seagazer.liteplayer.helper.DpHelper
 import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
 import com.seagazer.liteplayer.widget.IOverlay
+import com.seagazer.sample.R
 
 /**
  *
@@ -24,8 +24,11 @@ class ErrorOverlay @JvmOverloads constructor(
 ) : AppCompatTextView(context, attrs, defStyleAttr), IOverlay {
 
     init {
+        val padding = DpHelper.dp2px(context, 8f)
+        setPadding(padding, padding, padding, padding)
         textSize = DpHelper.sp2px(context, 6f).toFloat()
         setTextColor(Color.WHITE)
+        setBackgroundResource(R.drawable.bg_loading_overlay)
     }
 
     override fun attachPlayer(player: LitePlayerView) {

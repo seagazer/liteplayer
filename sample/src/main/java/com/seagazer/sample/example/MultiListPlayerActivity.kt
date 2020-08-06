@@ -13,9 +13,12 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.seagazer.liteplayer.ListPlayer
-import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.LitePlayerView
+import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.sample.ConfigHolder
 import com.seagazer.sample.R
+import com.seagazer.sample.showConfigInfo
+import com.seagazer.sample.widget.LoadingOverlay
 import com.seagazer.sample.widget.SimpleItemDecoration
 import kotlinx.android.synthetic.main.activity_multi_list_player.*
 
@@ -27,6 +30,7 @@ class MultiListPlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_multi_list_player)
+        showConfigInfo()
 
         tab_layout.setupWithViewPager(view_pager)
         view_pager.adapter = object : FragmentPagerAdapter(supportFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
@@ -79,9 +83,12 @@ class MultiListPlayerActivity : AppCompatActivity() {
                 val listAdapter = ListAdapter()
                 recyclerView.adapter = listAdapter
 
-                listPlayer = ListPlayer(LitePlayerView(context!!).apply {
+                listPlayer = ListPlayer(LitePlayerView(context!!)).apply {
                     displayProgress(true)
-                })
+                    setRenderType(ConfigHolder.renderType)
+                    setPlayerType(ConfigHolder.playerType)
+                    attachOverlay(LoadingOverlay(context!!))
+                }
                 val videoScrollListener = object : ListPlayer.VideoListScrollListener {
 
                     override fun getVideoContainer(position: Int): ViewGroup? {

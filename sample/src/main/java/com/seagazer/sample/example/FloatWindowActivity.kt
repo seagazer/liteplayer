@@ -4,11 +4,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.seagazer.liteplayer.bean.DataSource
-import com.seagazer.liteplayer.config.PlayerType
-import com.seagazer.liteplayer.config.RenderType
 import com.seagazer.liteplayer.widget.LiteGestureController
+import com.seagazer.sample.ConfigHolder
 import com.seagazer.sample.R
 import com.seagazer.sample.data.DataProvider
+import com.seagazer.sample.showConfigInfo
+import com.seagazer.sample.widget.LoadingOverlay
 import kotlinx.android.synthetic.main.activity_float_window.*
 
 /**
@@ -19,13 +20,12 @@ class FloatWindowActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_float_window)
-        // render type
-        player_view.setRenderType(RenderType.TYPE_SURFACE_VIEW)
-        // player type
-        player_view.setPlayerType(PlayerType.TYPE_EXO_PLAYER)
+        showConfigInfo()
+        // config
+        player_view.setRenderType(ConfigHolder.renderType)
+        player_view.setPlayerType(ConfigHolder.playerType)
         // prepare video
         player_view.setDataSource(DataSource(DataProvider.url2))
-        player_view.attachGestureController(LiteGestureController(this))
         player_view.start()
     }
 
