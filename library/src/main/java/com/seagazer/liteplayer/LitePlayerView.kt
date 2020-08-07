@@ -602,6 +602,8 @@ class LitePlayerView @JvmOverloads constructor(
         if (event!!.action == MotionEvent.ACTION_UP) {
             gestureController?.onGestureFinish(event)
             gestureController?.hide()
+            parent.requestDisallowInterceptTouchEvent(false)
+            MediaLogger.d("touch up, parent intercept")
         }
         return if (gestureController != null || mediaController != null && !isFloatWindowMode) {
             controllerDetector.onTouchEvent(event)
@@ -615,9 +617,6 @@ class LitePlayerView @JvmOverloads constructor(
 
             override fun onDown(e: MotionEvent?): Boolean {
                 gestureController?.onDown(e)
-                if (gestureController != null) {
-                    parent.requestDisallowInterceptTouchEvent(true)
-                }
                 return true
             }
 

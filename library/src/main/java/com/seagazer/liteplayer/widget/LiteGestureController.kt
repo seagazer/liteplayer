@@ -42,10 +42,12 @@ class LiteGestureController @JvmOverloads constructor(
     private val progress: ProgressBar
     private var moveYDistance = 0
     private var isVerticalControllerShow = false
+
     // brightness
     private var isTouchInBrightnessArea = false
     private var currentBrightness = 0f
     private var isBrightnessSetting = false
+
     // volume
     private var currentVolume = 0
     private var isTouchInVolumeArea = false
@@ -138,9 +140,13 @@ class LiteGestureController @JvmOverloads constructor(
     }
 
     override fun onDown(e: MotionEvent?) {
+        // add fade edge = 20px
         isTouchInSeekArea = e!!.x > edgeSize && e.x < (width - edgeSize) && supportSeek
-        isTouchInBrightnessArea = e.x > 0 && e.x < edgeSize && supportBrightness
-        isTouchInVolumeArea = e.x > (width - edgeSize) && e.x < width && supportVolume
+        isTouchInBrightnessArea = e.x > 20 && e.x < edgeSize && supportBrightness
+        isTouchInVolumeArea = e.x > (width - edgeSize) && e.x < width - 20 && supportVolume
+        if (isTouchInSeekArea || isTouchInBrightnessArea || isTouchInVolumeArea) {
+            parent.requestDisallowInterceptTouchEvent(true)
+        }
         MediaLogger.d("isTouchInSeekArea = $isTouchInSeekArea")
         if (isTouchInSeekArea) {
             currentPosition = player.getCurrentPosition()
@@ -197,7 +203,7 @@ class LiteGestureController @JvmOverloads constructor(
             }
         }
         // brightness or volume: vertical move
-        else if (abs(e1!!.y - e2!!.y) > abs(e1.x - e2.x)) {
+        if (!isTouchInSeekArea && abs(e1!!.y - e2!!.y) > abs(e1.x - e2.x)) {
             moveYDistance += distanceY.toInt()
             // set brightness
             if (isTouchInBrightnessArea) {
@@ -207,7 +213,6 @@ class LiteGestureController @JvmOverloads constructor(
                     val activity = context as Activity
                     val attributes = activity.window.attributes
                     var targetBrightness = currentBrightness + percent
-                    MediaLogger.d("currentBrightness=$currentBrightness, percent=$percent, targetBrightness =$targetBrightness")
                     if (targetBrightness < 0) {
                         targetBrightness = 0.01f
                     }
@@ -226,7 +231,6 @@ class LiteGestureController @JvmOverloads constructor(
                 val percent = calculateTargetPercent()
                 val disVolume: Int = (percent * maxVolume).toInt()
                 var targetVolume = currentVolume + disVolume
-                MediaLogger.d("currentVolume =$currentVolume, percent=$percent, targetVolume=$targetVolume")
                 if (targetVolume < 0) {
                     targetVolume = 0
                 }
@@ -242,6 +246,11 @@ class LiteGestureController @JvmOverloads constructor(
                 }
                 showVerticalController()
             }
+        }
+        if (isGestureSeeking || isBrightnessSetting || isVolumeSetting) {
+            parent.requestDisallowInterceptTouchEvent(true)
+        } else {
+            parent.requestDisallowInterceptTouchEvent(false)
         }
     }
 

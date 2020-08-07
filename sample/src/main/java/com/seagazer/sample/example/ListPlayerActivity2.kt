@@ -48,9 +48,12 @@ class ListPlayerActivity2 : AppCompatActivity() {
         listPlayer = ListPlayer2(LitePlayerView(this)).apply {
             displayProgress(true)
             setProgressColor(resources.getColor(R.color.colorAccent), resources.getColor(R.color.colorPrimaryDark))
-            attachMediaController(LiteMediaController(this@ListPlayerActivity2))
-            attachGestureController(LiteGestureController(this@ListPlayerActivity2))
             attachOverlay(LoadingOverlay(this@ListPlayerActivity2))
+            attachMediaController(LiteMediaController(this@ListPlayerActivity2))
+            attachGestureController(LiteGestureController(this@ListPlayerActivity2).apply {
+                supportVolume = false
+                supportBrightness = false
+            })
             attachOverlay(this@ListPlayerActivity2.coverOverlay)
             setRenderType(ConfigHolder.renderType)
             setPlayerType(ConfigHolder.playerType)
