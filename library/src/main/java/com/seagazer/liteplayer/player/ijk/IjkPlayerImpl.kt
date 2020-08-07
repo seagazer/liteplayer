@@ -170,7 +170,6 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
     override fun supportSoftwareDecode(softwareDecode: Boolean) {
         if (this.softwareDecode != softwareDecode) {
             this.softwareDecode = softwareDecode
-            player?.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", if (softwareDecode) 0L else 1L)
         }
     }
 
@@ -185,17 +184,15 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
             currentBufferedPercentage = 0
             if (player == null) {
                 player = IjkMediaPlayer()
-                // 0 cpu decode, 1 mediacodec decode
-                player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", if (softwareDecode) 0L else 1L)
-                this.surface?.run {
-                    player!!.setSurface(surface)
-                }
+                player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "soundtouch", 1)
+                player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 0)
+                player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 5)
             } else {
                 stop()
                 reset()
             }
-            // fix play delay
-            player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 0)
+            // 0 software decode, 1 mediacodec decode
+            player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", if (softwareDecode) 0L else 1L)
             player!!.setOnPreparedListener(preparedListener)
             player!!.setOnVideoSizeChangedListener(videoSizeChangedListener)
             player!!.setOnCompletionListener(completionListener)

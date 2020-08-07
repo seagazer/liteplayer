@@ -77,7 +77,7 @@ class LitePlayerView @JvmOverloads constructor(
     private var render: IRender? = null
     private var playerType: PlayerType? = null
     private var renderType: RenderType? = null
-    private var softwareDecode = false
+    private var softwareDecode = true
     var autoHideDelay = AUTO_HIDE_DELAY
 
     // display mode
@@ -796,6 +796,20 @@ class LitePlayerView @JvmOverloads constructor(
 
     override fun setDataSource(source: DataSource) {
         dataSource = source
+        // when ijkplayer change decode mode with texture view, system may get this error:
+        // 19543-19665 E/BufferQueueProducer: [SurfaceTexture-0-19543-0] connect: already connected (cur=2 req=2)
+        // 19543-19665 E/IJKMEDIA: SDL_Android_NativeWindow_display_l: ANativeWindow_lock: failed -22
+        // so we always destroy the texture and reAttach the texture
+        render?.let {
+            MediaLogger.e("change data source, reAttach surface or texture")
+            removeView(it.getRenderView())
+            addView(
+                it.getRenderView(), 0, LayoutParams(
+                    LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT,
+                    Gravity.CENTER
+                )
+            )
+        }
         litePlayerCore.setDataSource(source)
     }
 

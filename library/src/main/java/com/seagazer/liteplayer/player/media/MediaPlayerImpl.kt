@@ -149,9 +149,6 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
             player!!.setOnErrorListener(errorListener)
             player!!.setOnInfoListener(infoListener)
             player!!.setDataSource(context, Uri.parse(dataSource!!.mediaUrl))
-            this.surface?.run {
-                player!!.setSurface(surface)
-            }
             MediaLogger.d("-->prepareAsync")
             player!!.prepareAsync()
             if (currentState == PlayerState.STATE_NOT_INITIALIZED) {

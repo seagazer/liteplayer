@@ -85,6 +85,7 @@ class RenderTextureView @JvmOverloads constructor(
             value = RenderStateEvent(RenderState.STATE_SURFACE_DESTROYED)
         }
         this.liveData = null
+        surfaceReference?.get()?.release()
         surfaceReference?.clear()
     }
 

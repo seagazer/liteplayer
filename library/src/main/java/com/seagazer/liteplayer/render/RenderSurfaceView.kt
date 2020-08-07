@@ -95,6 +95,7 @@ class RenderSurfaceView @JvmOverloads constructor(
             value = RenderStateEvent(RenderState.STATE_SURFACE_DESTROYED)
         }
         this.liveData = null
+        holderReference?.get()?.surface?.release()
         holderReference?.clear()
     }
 
