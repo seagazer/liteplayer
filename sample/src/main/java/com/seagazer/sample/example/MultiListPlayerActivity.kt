@@ -17,6 +17,7 @@ import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.sample.ConfigHolder
 import com.seagazer.sample.R
+import com.seagazer.sample.data.DataProvider
 import com.seagazer.sample.showConfigInfo
 import com.seagazer.sample.widget.LoadingOverlay
 import com.seagazer.sample.widget.SimpleItemDecoration
@@ -54,18 +55,8 @@ class MultiListPlayerActivity : AppCompatActivity() {
 
     class ListFragment : Fragment() {
         private var urls = arrayListOf(
-            "https://vfx.mtime.cn/Video/2019/03/19/mp4/190319212559089721.mp4",
-            "https://vfx.mtime.cn/Video/2019/03/09/mp4/190309153658147087.mp4",
-            "https://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4",
-            "https://vfx.mtime.cn/Video/2019/03/17/mp4/190317150237409904.mp4",
-            "https://vfx.mtime.cn/Video/2019/03/14/mp4/190314223540373995.mp4",
-            "https://vfx.mtime.cn/Video/2019/03/14/mp4/190314102306987969.mp4",
-            "https://vfx.mtime.cn/Video/2019/03/13/mp4/190313094901111138.mp4",
-            "https://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4",
-            "https://vfx.mtime.cn/Video/2019/03/12/mp4/190312083533415853.mp4",
-            "https://vfx.mtime.cn/Video/2019/03/18/mp4/190318214226685784.mp4",
-            "https://vfx.mtime.cn/Video/2019/03/19/mp4/190319104618910544.mp4",
-            "https://vfx.mtime.cn/Video/2019/03/19/mp4/190319125415785691.mp4"
+            DataProvider.url1, DataProvider.url2, DataProvider.url1, DataProvider.url2,
+            DataProvider.url1, DataProvider.url2, DataProvider.url1, DataProvider.url2
         )
 
         private lateinit var listPlayer: ListPlayer
@@ -126,6 +117,7 @@ class MultiListPlayerActivity : AppCompatActivity() {
         }
 
         inner class ListAdapter : RecyclerView.Adapter<ListAdapter.VideoHolder>() {
+            var clickPosition = -1
 
             inner class VideoHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 val text: TextView = itemView.findViewById(R.id.video_index)
@@ -134,7 +126,10 @@ class MultiListPlayerActivity : AppCompatActivity() {
 
                 init {
                     itemView.setOnClickListener {
-                        listPlayer.onItemClick(adapterPosition)
+                        if (clickPosition != adapterPosition) {
+                            listPlayer.onItemClick(adapterPosition)
+                            clickPosition = adapterPosition
+                        }
                     }
                 }
             }

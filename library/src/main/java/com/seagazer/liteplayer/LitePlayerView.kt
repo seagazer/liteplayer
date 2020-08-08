@@ -199,7 +199,6 @@ class LitePlayerView @JvmOverloads constructor(
         if (context is Activity) {
             activityReference = WeakReference(context)
         }
-        MediaLogger.d("----> init PlayerCore")
         litePlayerCore = LitePlayerCore(context)
         setBackgroundColor(DEFAULT_BACKGROUND_COLOR)
         registerMediaEventObservers(context)
@@ -248,38 +247,38 @@ class LitePlayerView @JvmOverloads constructor(
         renderStateObserver.observe(context, Observer { event ->
             when (event.renderState) {
                 RenderState.STATE_SURFACE_CREATED -> {
-                    MediaLogger.d("----> surface create")
+                    MediaLogger.i("----> surface create")
                     isSurfaceCreated = true
                     tryBindSurface()
                 }
                 RenderState.STATE_SURFACE_CHANGED -> {
-                    MediaLogger.d("----> surface changed")
+                    MediaLogger.i("----> surface changed")
                 }
                 RenderState.STATE_SURFACE_DESTROYED -> {
                     isSurfaceCreated = false
-                    MediaLogger.d("----> surface destroy")
+                    MediaLogger.i("----> surface destroy")
                 }
             }
         })
         playerStateObserver.observe(context, Observer { event ->
             when (event.playerState) {
                 PlayerState.STATE_NOT_INITIALIZED -> {
-                    MediaLogger.d("----> player not init")
+                    MediaLogger.i("----> player not init")
                 }
                 PlayerState.STATE_INITIALIZED -> {
-                    MediaLogger.d("----> player init")
+                    MediaLogger.i("----> player init")
                     if (isSurfaceCreated) {
                         tryBindSurface()
                     }
                 }
                 PlayerState.STATE_PREPARED -> {
-                    MediaLogger.d("----> player prepared")
+                    MediaLogger.i("----> player prepared")
                     playerStateListeners.forEach {
                         it.onPrepared(dataSource!!)
                     }
                 }
                 PlayerState.STATE_STARTED -> {
-                    MediaLogger.d("----> player started")
+                    MediaLogger.i("----> player started")
                     isUserPaused = false
                     keepScreenOn = true
                     playerStateListeners.forEach {
@@ -291,7 +290,7 @@ class LitePlayerView @JvmOverloads constructor(
                     handler.sendEmptyMessage(MSG_PROGRESS)
                 }
                 PlayerState.STATE_PAUSED -> {
-                    MediaLogger.d("----> player paused")
+                    MediaLogger.i("----> player paused")
                     keepScreenOn = false
                     playerStateListeners.forEach {
                         it.onPaused()
@@ -300,7 +299,7 @@ class LitePlayerView @JvmOverloads constructor(
                     handler.removeMessages(MSG_PROGRESS)
                 }
                 PlayerState.STATE_STOPPED -> {
-                    MediaLogger.d("----> player stopped")
+                    MediaLogger.i("----> player stopped")
                     keepScreenOn = false
                     playerStateListeners.forEach {
                         it.onStopped()
@@ -308,7 +307,7 @@ class LitePlayerView @JvmOverloads constructor(
                     handler.removeMessages(MSG_PROGRESS)
                 }
                 PlayerState.STATE_PLAYBACK_COMPLETE -> {
-                    MediaLogger.d("----> player completed")
+                    MediaLogger.i("----> player completed")
                     keepScreenOn = false
                     playerStateListeners.forEach {
                         it.onCompleted()
@@ -316,7 +315,7 @@ class LitePlayerView @JvmOverloads constructor(
                     handler.removeMessages(MSG_PROGRESS)
                 }
                 PlayerState.STATE_ERROR -> {
-                    MediaLogger.d("----> player error")
+                    MediaLogger.i("----> player error")
                     keepScreenOn = false
                     playerStateListeners.forEach {
                         it.onError(playerType!!, event.errorCode)
@@ -324,47 +323,47 @@ class LitePlayerView @JvmOverloads constructor(
                     handler.removeMessages(MSG_PROGRESS)
                 }
                 PlayerState.STATE_VIDEO_SIZE_CHANGED -> {
-                    MediaLogger.d("---->video size changed: ${event.videoWidth} * ${event.videoHeight}，refresh surface render size")
+                    MediaLogger.i("---->video size changed: ${event.videoWidth} * ${event.videoHeight}，refresh surface render size")
                     render?.updateVideoSize(event.videoWidth, event.videoHeight)
                     playerStateListeners.forEach {
                         it.onVideoSizeChanged(event.videoWidth, event.videoHeight)
                     }
                 }
                 PlayerState.STATE_RENDERED_FIRST_FRAME -> {
-                    MediaLogger.d("----> render first frame")
+                    MediaLogger.i("----> render first frame")
                     playerStateListeners.forEach {
                         it.onRenderFirstFrame()
                     }
                 }
                 PlayerState.STATE_SURFACE_SIZE_CHANGED -> {
-                    MediaLogger.d("----> surface size changed")
+                    MediaLogger.i("----> surface size changed")
                 }
                 PlayerState.STATE_BUFFER_START -> {
-                    MediaLogger.d("----> start buffer")
+                    MediaLogger.i("----> start loading")
                     playerStateListeners.forEach {
                         it.onLoadingStarted()
                     }
                 }
                 PlayerState.STATE_BUFFER_END -> {
-                    MediaLogger.d("----> end buffer")
+                    MediaLogger.i("----> end loading")
                     playerStateListeners.forEach {
                         it.onLoadingCompleted()
                     }
                 }
                 PlayerState.STATE_SEEK_START -> {
-                    MediaLogger.d("----> start seek")
+                    MediaLogger.i("----> start seek")
                     playerStateListeners.forEach {
                         it.onSeekStarted()
                     }
                 }
                 PlayerState.STATE_SEEK_COMPLETED -> {
-                    MediaLogger.d("----> end seek")
+                    MediaLogger.i("----> end seek")
                     playerStateListeners.forEach {
                         it.onSeekCompleted()
                     }
                 }
                 PlayerState.STATE_BUFFER_UPDATE -> {
-                    MediaLogger.d("----> buffer update: ${event.bufferedPercentage}")
+                    MediaLogger.i("----> buffer update: ${event.bufferedPercentage}")
                     playerStateListeners.forEach {
                         it.onBufferUpdate(event.bufferedPercentage)
                     }
@@ -376,7 +375,7 @@ class LitePlayerView @JvmOverloads constructor(
     private fun tryBindSurface() {
         litePlayerCore.getPlayer()?.let { player ->
             render?.let { render ->
-                MediaLogger.d("----> surface bind player")
+                MediaLogger.w("----> surface bind player")
                 render.bindPlayer(player)
             }
         }
@@ -384,7 +383,6 @@ class LitePlayerView @JvmOverloads constructor(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        MediaLogger.d("attach window")
         if (androidParent == null) {
             findParent()
         }
@@ -409,17 +407,12 @@ class LitePlayerView @JvmOverloads constructor(
             p = p.parent as ViewGroup
         }
         androidParent = p
-        MediaLogger.d("android parent= $androidParent")
-        MediaLogger.d("direct parent= $directParent")
-        MediaLogger.d("directParentIndex= $childIndex")
-        MediaLogger.d("originLayoutParams= $originLayoutParams")
     }
 
     override fun onDetachedFromWindow() {
         handler.removeCallbacksAndMessages(null)// clear message queue
         currentProgress = 0// reset progress
         super.onDetachedFromWindow()
-        MediaLogger.d("detach window")
     }
 
     override fun setProgressColor(progressColor: Int, secondProgressColor: Int) {
@@ -534,7 +527,7 @@ class LitePlayerView @JvmOverloads constructor(
         mediaController?.displayModeChanged(true)
         topbar?.displayModeChanged(true)
         notifyDisplayModeChanged(true)
-        MediaLogger.d("enter fullscreen: $width * $height")
+        MediaLogger.w("enter fullscreen: $width x $height")
     }
 
     private fun notifyDisplayModeChanged(isFullScreen: Boolean) {
@@ -559,7 +552,7 @@ class LitePlayerView @JvmOverloads constructor(
         mediaController?.displayModeChanged(false)
         topbar?.displayModeChanged(false)
         notifyDisplayModeChanged(false)
-        MediaLogger.d("exit fullscreen: $width * $height")
+        MediaLogger.w("exit fullscreen: $width x $height")
     }
 
     private fun adjustFullScreen(isFullScreen: Boolean) {
@@ -602,7 +595,6 @@ class LitePlayerView @JvmOverloads constructor(
             gestureController?.onGestureFinish(event)
             gestureController?.hide()
             parent.requestDisallowInterceptTouchEvent(false)
-            MediaLogger.d("touch up, parent intercept")
         }
         return if (gestureController != null || mediaController != null && !isFloatWindowMode) {
             controllerDetector.onTouchEvent(event)
@@ -680,6 +672,7 @@ class LitePlayerView @JvmOverloads constructor(
 
     private fun unregisterLifecycle() {
         if (context is FragmentActivity) {
+            MediaLogger.d("detached, unregister lifecycle")
             (context as FragmentActivity).lifecycle.removeObserver(this)
         } else {
             MediaLogger.w("Not support lifecycle, you must handle player state when activity stop or resume by yourself!")
@@ -735,6 +728,7 @@ class LitePlayerView @JvmOverloads constructor(
         render?.release()
         removeAllViews()
         this.renderType = renderType
+        MediaLogger.w("set render: $renderType")
         render = when (renderType) {
             RenderType.TYPE_SURFACE_VIEW -> RenderSurfaceView(context).apply {
                 bindRenderMeasure(renderMeasure)
@@ -743,7 +737,6 @@ class LitePlayerView @JvmOverloads constructor(
                 bindRenderMeasure(renderMeasure)
             }
         }
-        MediaLogger.d("set render: $renderType")
         addView(
             render!!.getRenderView(), 0, LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT,
@@ -773,6 +766,7 @@ class LitePlayerView @JvmOverloads constructor(
         }
         litePlayerCore.reset()
         litePlayerCore.destroy()
+        MediaLogger.w("set player: $playerType")
         when (playerType) {
             PlayerType.TYPE_EXO_PLAYER -> {
                 litePlayerCore.setupPlayer(ExoPlayerImpl(context))
@@ -785,7 +779,6 @@ class LitePlayerView @JvmOverloads constructor(
             }
         }
         litePlayerCore.supportSoftwareDecode(softwareDecode)
-        MediaLogger.d("set player: $playerType")
         this.playerType = playerType
         registerPlayerStateObserver(playerStateObserver)
         handler.removeMessages(MSG_PROGRESS)
@@ -795,12 +788,12 @@ class LitePlayerView @JvmOverloads constructor(
 
     override fun setDataSource(source: DataSource) {
         dataSource = source
+        MediaLogger.w("setDataSource: $source")
         // when ijkplayer change decode mode with texture view, system may get this error:
         // 19543-19665 E/BufferQueueProducer: [SurfaceTexture-0-19543-0] connect: already connected (cur=2 req=2)
         // 19543-19665 E/IJKMEDIA: SDL_Android_NativeWindow_display_l: ANativeWindow_lock: failed -22
         // so we always destroy the texture and reAttach the texture
         render?.let {
-            MediaLogger.e("change data source, reAttach surface or texture")
             removeView(it.getRenderView())
             addView(
                 it.getRenderView(), 0, LayoutParams(

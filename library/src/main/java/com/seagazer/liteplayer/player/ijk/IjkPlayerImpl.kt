@@ -37,13 +37,12 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
     private var asyncToStart = false
     private var isBuffering = true
     private var softwareDecode = true
+    private var dataSourceChanged = true
 
     private val preparedListener = IMediaPlayer.OnPreparedListener {
-        MediaLogger.d("prepared")
         setPlayerState(PlayerState.STATE_PREPARED)
         liveData?.value = PlayerStateEvent(PlayerState.STATE_PREPARED)
         if (asyncToStart && player != null) {
-            MediaLogger.d("start play")
             player!!.start()
             if (startPosition > 0) {
                 player!!.seekTo(startPosition)
@@ -55,17 +54,17 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
 
     private val videoSizeChangedListener =
         IMediaPlayer.OnVideoSizeChangedListener { _, width, height, _, _ ->
-            this@IjkPlayerImpl.videoWidth = width
-            this@IjkPlayerImpl.videoHeight = height
-            MediaLogger.d("video size: $width x $height  : $currentState")
-            liveData?.value = PlayerStateEvent(PlayerState.STATE_VIDEO_SIZE_CHANGED).apply {
-                videoWidth = width
-                videoHeight = height
+            if (getVideoWidth() != width && getVideoHeight() != height) {
+                this@IjkPlayerImpl.videoWidth = width
+                this@IjkPlayerImpl.videoHeight = height
+                liveData?.value = PlayerStateEvent(PlayerState.STATE_VIDEO_SIZE_CHANGED).apply {
+                    videoWidth = width
+                    videoHeight = height
+                }
             }
         }
 
     private val completionListener = IMediaPlayer.OnCompletionListener { _ ->
-        MediaLogger.d("-> play completed: $currentState")
         setPlayerState(PlayerState.STATE_PLAYBACK_COMPLETE)
         liveData?.value = PlayerStateEvent(PlayerState.STATE_PLAYBACK_COMPLETE)
     }
@@ -74,17 +73,14 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
         when (arg1) {
             IMediaPlayer.MEDIA_INFO_VIDEO_TRACK_LAGGING -> MediaLogger.d("MEDIA_INFO_VIDEO_TRACK_LAGGING:")
             IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START -> {
-                MediaLogger.d("render first frame  : $currentState")
                 liveData?.value = PlayerStateEvent(PlayerState.STATE_RENDERED_FIRST_FRAME)
             }
             IMediaPlayer.MEDIA_INFO_BUFFERING_START -> {
                 isBuffering = true
-                MediaLogger.d("-> loading start: $currentState")
                 liveData?.value = PlayerStateEvent(PlayerState.STATE_BUFFER_START)
             }
             IMediaPlayer.MEDIA_INFO_BUFFERING_END -> {
                 isBuffering = false
-                MediaLogger.d("-> loading end: $currentState")
                 liveData?.value = PlayerStateEvent(PlayerState.STATE_BUFFER_END)
             }
             IMediaPlayer.MEDIA_INFO_NETWORK_BANDWIDTH -> {
@@ -126,7 +122,6 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
 
     private val seekCompleteListener = IMediaPlayer.OnSeekCompleteListener {
         isPendingSeek = false
-        MediaLogger.d("-> seek end: $currentState")
         liveData?.value = PlayerStateEvent(PlayerState.STATE_SEEK_COMPLETED)
     }
 
@@ -143,7 +138,6 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
         // rtmp always percent = 0 and always callback here
         if (dataSource != null && !dataSource!!.mediaUrl.startsWith("rtmp:")) {
             currentBufferedPercentage = percent
-            MediaLogger.d("loading ...: $currentState")
             liveData?.value = PlayerStateEvent(PlayerState.STATE_BUFFER_UPDATE).apply {
                 bufferedPercentage = percent
             }
@@ -175,8 +169,9 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
     }
 
     override fun setDataSource(source: DataSource) {
-        MediaLogger.d("-->$source")
         this.dataSource = source
+        videoWidth = 0
+        videoHeight = 0
         openVideo()
     }
 
@@ -224,14 +219,13 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
                     }
                 }
             }
-            MediaLogger.d("-->prepareAsync")
             player!!.prepareAsync()
             if (currentState == PlayerState.STATE_NOT_INITIALIZED) {
                 setPlayerState(PlayerState.STATE_INITIALIZED)
                 liveData?.value = PlayerStateEvent(PlayerState.STATE_INITIALIZED)
             }
         } catch (ex: Exception) {
-            MediaLogger.w("Unable to open content: $dataSource, $ex")
+            MediaLogger.e("Unable to open content: $dataSource, $ex")
             setPlayerState(PlayerState.STATE_ERROR)
             errorListener.onError(player, MediaPlayer.MEDIA_ERROR_UNKNOWN, 0)
         }
@@ -262,7 +256,6 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
     }
 
     override fun start(startPosition: Long) {
-        MediaLogger.d("-->")
         this.startPosition = startPosition
         start()
     }
@@ -271,7 +264,6 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
         asyncToStart = false
         if (isInPlaybackState()) {
             if (player != null && player!!.isPlaying) {
-                MediaLogger.d("pause play")
                 player?.pause()
                 setPlayerState(PlayerState.STATE_PAUSED)
                 liveData?.value = PlayerStateEvent(PlayerState.STATE_PAUSED)
@@ -281,7 +273,6 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
 
     override fun resume() {
         if (isInPlaybackState() && getPlayerState() == PlayerState.STATE_PAUSED) {
-            MediaLogger.d("resume play")
             player?.start()
             setPlayerState(PlayerState.STATE_STARTED)
             liveData?.value = PlayerStateEvent(PlayerState.STATE_STARTED)
@@ -295,14 +286,12 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
     }
 
     override fun seekTo(position: Long) {
-        MediaLogger.d("seek to: $position")
         isPendingSeek = true
         player?.seekTo(position)
         liveData?.value = PlayerStateEvent(PlayerState.STATE_SEEK_START)
     }
 
     override fun stop() {
-        MediaLogger.d("stop play")
         asyncToStart = false
         isBuffering = false
         player?.stop()
@@ -311,7 +300,6 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
     }
 
     override fun reset() {
-        MediaLogger.d("reset play")
         asyncToStart = false
         isBuffering = false
         player?.resetListeners()
@@ -321,7 +309,6 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
     }
 
     override fun destroy() {
-        MediaLogger.d("destroy player")
         asyncToStart = false
         isBuffering = false
         reset()

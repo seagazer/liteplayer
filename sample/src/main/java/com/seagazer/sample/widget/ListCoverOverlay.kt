@@ -4,10 +4,10 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
 import com.seagazer.liteplayer.widget.IOverlay
-import com.seagazer.liteplayer.LitePlayerView
 
 /**
  *
@@ -34,13 +34,17 @@ class ListCoverOverlay @JvmOverloads constructor(
     override fun getView() = this
 
     override fun show() {
-        MediaLogger.e("show cover")
-        alpha = 1f
+        if (!isShowing()) {
+            MediaLogger.d("show cover")
+            alpha = 1f
+        }
     }
 
     override fun hide() {
-        MediaLogger.e("hide cover")
-        animate().alpha(0f).start()
+        if (isShowing()) {
+            MediaLogger.d("hide cover")
+            animate().alpha(0f).start()
+        }
     }
 
     override fun isShowing() = alpha == 1f

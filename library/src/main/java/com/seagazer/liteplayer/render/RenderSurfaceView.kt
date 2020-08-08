@@ -29,6 +29,8 @@ class RenderSurfaceView @JvmOverloads constructor(
     private var lastVideoWidth = -1
     private var lastVideoHeight = -1
     private var shouldReLayout = false
+    private var lastWidthMeasureSpec = -1
+    private var lastHeightMeasureSpec = -1
 
     init {
         holder.addCallback(this)
@@ -36,11 +38,16 @@ class RenderSurfaceView @JvmOverloads constructor(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        if (shouldReLayout) {
+        if (shouldReLayout ||
+            (lastWidthMeasureSpec != -1 && lastWidthMeasureSpec != widthMeasureSpec ||
+                    lastHeightMeasureSpec != -1 && lastHeightMeasureSpec != heightMeasureSpec)
+        ) {
             renderMeasure?.let {
                 it.doRenderMeasure(widthMeasureSpec, heightMeasureSpec)
                 setMeasuredDimension(it.getMeasureWidth(), it.getMeasureHeight())
                 shouldReLayout = false
+                lastWidthMeasureSpec = widthMeasureSpec
+                lastHeightMeasureSpec = heightMeasureSpec
             }
         } else {
             // when different dataSource has the same video size, we should reset last measureSize again
@@ -55,7 +62,7 @@ class RenderSurfaceView @JvmOverloads constructor(
     override fun getRenderView() = this
 
     override fun updateVideoSize(videoWidth: Int, videoHeight: Int) {
-        if (lastVideoWidth != -1 && lastVideoWidth == videoWidth && lastVideoHeight != -1 && lastVideoHeight == videoHeight) {
+        if (!shouldReLayout && lastVideoWidth != -1 && lastVideoWidth == videoWidth && lastVideoHeight != -1 && lastVideoHeight == videoHeight) {
             // the same video size, not measure and layout again
             shouldReLayout = false
         } else {
@@ -134,6 +141,7 @@ class RenderSurfaceView @JvmOverloads constructor(
 
     override fun surfaceDestroyed(holder: SurfaceHolder?) {
         MediaLogger.d("surface destroy")
+        shouldReLayout = true
         liveData?.run {
             value = RenderStateEvent(RenderState.STATE_SURFACE_DESTROYED)
         }

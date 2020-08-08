@@ -147,11 +147,9 @@ class LiteGestureController @JvmOverloads constructor(
         if (isTouchInSeekArea || isTouchInBrightnessArea || isTouchInVolumeArea) {
             parent.requestDisallowInterceptTouchEvent(true)
         }
-        MediaLogger.d("isTouchInSeekArea = $isTouchInSeekArea")
         if (isTouchInSeekArea) {
             currentPosition = player.getCurrentPosition()
         }
-        MediaLogger.d("isTouchInBrightnessArea = $isTouchInBrightnessArea")
         if (isTouchInBrightnessArea) {
             currentBrightness = (context as Activity).window.attributes.screenBrightness
             if (currentBrightness < 0) {// -1 is auto brightness
@@ -159,7 +157,6 @@ class LiteGestureController @JvmOverloads constructor(
             }
             progressIcon.setImageResource(R.drawable.ic_brightness)
         }
-        MediaLogger.d("isTouchInVolumeArea = $isTouchInVolumeArea")
         if (isTouchInVolumeArea) {
             currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
             if (currentVolume == 0) {
@@ -256,10 +253,8 @@ class LiteGestureController @JvmOverloads constructor(
 
     private fun calculateTargetPosition(): Long {
         val percent = moveXDistance * 1f / width
-        MediaLogger.d("seek percent =$percent")
         // Set max seek progress for single gesture action(down->move->up) is duration/3
         val duration = -(player.getDuration() * percent / 3).toLong()
-        MediaLogger.d("seek duration =$duration")
         var targetPosition = currentPosition + duration
         if (targetPosition < 0) {
             targetPosition = 0

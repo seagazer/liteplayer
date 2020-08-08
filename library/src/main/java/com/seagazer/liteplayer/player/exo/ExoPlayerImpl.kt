@@ -53,7 +53,6 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
         override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int, pixelWidthHeightRatio: Float) {
             this@ExoPlayerImpl.videoWidth = width
             this@ExoPlayerImpl.videoHeight = height
-            MediaLogger.d("video size: $width x $height  : $currentState")
             liveData?.value = PlayerStateEvent(PlayerState.STATE_VIDEO_SIZE_CHANGED).apply {
                 videoWidth = width
                 videoHeight = height
@@ -61,12 +60,10 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
         }
 
         override fun onRenderedFirstFrame() {
-            MediaLogger.d("render first frame  : $currentState")
             liveData?.value = PlayerStateEvent(PlayerState.STATE_RENDERED_FIRST_FRAME)
         }
 
         override fun onSurfaceSizeChanged(width: Int, height: Int) {
-            MediaLogger.d("surface changed: $width x $height  : $currentState")
             liveData?.value = PlayerStateEvent(PlayerState.STATE_SURFACE_SIZE_CHANGED)
         }
     }
@@ -74,7 +71,6 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
     private val eventListener = object : Player.EventListener {
         override fun onLoadingChanged(isLoading: Boolean) {
             if (!isLoading) {
-                MediaLogger.d("loading ...: $currentState")
                 liveData?.value =
                     PlayerStateEvent(PlayerState.STATE_BUFFER_UPDATE).apply {
                         videoWidth = getVideoWidth()
@@ -89,11 +85,9 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
             if (!isPreparing) {
                 if (playWhenReady) {
                     setPlayerState(PlayerState.STATE_STARTED)
-                    MediaLogger.d("-> start: $currentState")
                     liveData?.value = PlayerStateEvent(PlayerState.STATE_STARTED)
                 } else {
                     setPlayerState(PlayerState.STATE_PAUSED)
-                    MediaLogger.d("-> pause: $currentState")
                     liveData?.value = PlayerStateEvent(PlayerState.STATE_PAUSED)
                 }
             }
@@ -103,11 +97,9 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
                     liveData?.value = PlayerStateEvent(PlayerState.STATE_PREPARED)
                     isPreparing = false
                     if (playWhenReady) {
-                        MediaLogger.d("-> start: $currentState")
                         setPlayerState(PlayerState.STATE_STARTED)
                         liveData?.value = PlayerStateEvent(PlayerState.STATE_STARTED)
                     } else {
-                        MediaLogger.d("-> prepared: $currentState")
                         setPlayerState(PlayerState.STATE_PREPARED)
                     }
                     if (startPosition > 0) {
@@ -121,7 +113,6 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
             if (isBuffering) {
                 if (playbackState == Player.STATE_READY || playbackState == Player.STATE_ENDED) {
                     isBuffering = false
-                    MediaLogger.d("-> loading end: $currentState")
                     liveData?.value = PlayerStateEvent(PlayerState.STATE_BUFFER_END)
                 }
             }
@@ -130,7 +121,6 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
             if (isPendingSeek) {
                 if (playbackState == Player.STATE_READY) {
                     isPendingSeek = false
-                    MediaLogger.d("-> seek end: $currentState")
                     liveData?.value = PlayerStateEvent(PlayerState.STATE_SEEK_COMPLETED)
                 }
             }
@@ -138,11 +128,9 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
             if (!isPreparing) {
                 if (playbackState == Player.STATE_BUFFERING) {
                     isBuffering = true
-                    MediaLogger.d("-> loading start: $currentState")
                     liveData?.value = PlayerStateEvent(PlayerState.STATE_BUFFER_START)
                 } else if (playbackState == Player.STATE_ENDED) {
                     setPlayerState(PlayerState.STATE_PLAYBACK_COMPLETE)
-                    MediaLogger.d("-> end play: $currentState")
                     liveData?.value = PlayerStateEvent(PlayerState.STATE_PLAYBACK_COMPLETE)
                 }
             }
@@ -150,7 +138,6 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
 
         @SuppressLint("SwitchIntDef")
         override fun onPlayerError(error: ExoPlaybackException) {
-            MediaLogger.e("${error.message}")
             setPlayerState(PlayerState.STATE_ERROR)
             when (error.type) {
                 ExoPlaybackException.TYPE_SOURCE -> {
@@ -243,21 +230,17 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
     }
 
     override fun pause(fromUser: Boolean) {
-        MediaLogger.d("")
         val state = getPlayerState()
         if (state != PlayerState.STATE_STOPPED && state != PlayerState.STATE_ERROR &&
             state != PlayerState.STATE_NOT_INITIALIZED && state != PlayerState.STATE_PAUSED
         ) {
             player.playWhenReady = false
-            MediaLogger.d("pause fromUser[$fromUser]: $currentState")
         }
     }
 
     override fun resume() {
-        MediaLogger.d("")
         if (isInPlaybackState() && getPlayerState() == PlayerState.STATE_PAUSED) {
             player.playWhenReady = true
-            MediaLogger.d("resume: $currentState")
         }
     }
 
@@ -309,7 +292,6 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
     }
 
     override fun destroy() {
-        MediaLogger.d("destroy player")
         isPreparing = true
         isBuffering = false
         isPendingSeek = false

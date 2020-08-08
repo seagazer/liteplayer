@@ -22,22 +22,15 @@ class RenderMeasure {
     fun doRenderMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val defaultWidth = getDefaultSize(videoWidth, widthMeasureSpec)
         val defaultHeight = getDefaultSize(videoHeight, heightMeasureSpec)
-
-        MediaLogger.d("video size： $videoWidth $videoHeight")
-        MediaLogger.d("render view default size： $defaultWidth $defaultHeight")
-
         if (videoWidth > 0 && videoHeight > 0) {
             val widthMode = MeasureSpec.getMode(widthMeasureSpec)
             val widthSpecSize = MeasureSpec.getSize(widthMeasureSpec)
             val heightMode = MeasureSpec.getMode(heightMeasureSpec)
             val heightSpecSize = MeasureSpec.getSize(heightMeasureSpec)
-            MediaLogger.d("render view measure size： $widthSpecSize $heightSpecSize")
-
             val viewRatio = heightSpecSize * 1f / widthSpecSize// 视图 高/宽比
             val videoRatio = videoHeight * 1f / videoWidth// 视频 高/宽比
-            MediaLogger.d("render aspectRatio： $viewRatio")
-            MediaLogger.d("video aspectRatio： $videoRatio")
-
+            MediaLogger.d("render view measure size： $widthSpecSize x $heightSpecSize, render aspectRatio： $viewRatio")
+            MediaLogger.d("video size： $videoWidth x $videoHeight, video aspectRatio： $videoRatio")
             if (widthMode == MeasureSpec.EXACTLY && heightMode == MeasureSpec.EXACTLY) {
                 if (aspectRatio == AspectRatio.ORIGIN || aspectRatio == AspectRatio.AUTO) {
                     // 自适应
@@ -111,7 +104,7 @@ class RenderMeasure {
             measureWidth = defaultWidth
             measureHeight = defaultHeight
         }
-        MediaLogger.d("measure result: $measureWidth $measureHeight")
+        MediaLogger.w("measure result: $measureWidth $measureHeight")
     }
 
     fun setVideoSize(width: Int, height: Int) {
