@@ -42,6 +42,13 @@ class RenderTextureView @JvmOverloads constructor(
                 setMeasuredDimension(it.getMeasureWidth(), it.getMeasureHeight())
                 shouldReLayout = false
             }
+        } else {
+            // when different dataSource has the same video size, we should reset last measureSize again
+            renderMeasure?.let {
+                if (it.getMeasureWidth() != 0 && it.getMeasureHeight() != 0) {
+                    setMeasuredDimension(it.getMeasureWidth(), it.getMeasureHeight())
+                }
+            }
         }
     }
 

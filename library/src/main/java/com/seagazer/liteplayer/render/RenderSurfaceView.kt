@@ -42,6 +42,13 @@ class RenderSurfaceView @JvmOverloads constructor(
                 setMeasuredDimension(it.getMeasureWidth(), it.getMeasureHeight())
                 shouldReLayout = false
             }
+        } else {
+            // when different dataSource has the same video size, we should reset last measureSize again
+            renderMeasure?.let {
+                if (it.getMeasureWidth() != 0 && it.getMeasureHeight() != 0) {
+                    setMeasuredDimension(it.getMeasureWidth(), it.getMeasureHeight())
+                }
+            }
         }
     }
 
@@ -60,7 +67,7 @@ class RenderSurfaceView @JvmOverloads constructor(
                 // fix the surfaceView is flash when first attach view system at a short time to requestLayout again.
                 if (firstAttach) {
                     postDelayed({
-                        MediaLogger.d("first attach, delay 500ms to update layout")
+                        MediaLogger.w("first attach, delay 500ms to update layout")
                         requestLayout()
                     }, 500)
                 } else {
