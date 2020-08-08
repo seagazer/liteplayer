@@ -9,6 +9,8 @@ import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.AspectRatio
 import com.seagazer.liteplayer.config.PlayerType
 import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
+import com.seagazer.liteplayer.player.ijk.IjkPlayerImpl
+import com.seagazer.liteplayer.player.media.MediaPlayerImpl
 import com.seagazer.liteplayer.widget.LiteGestureController
 import com.seagazer.liteplayer.widget.LiteMediaController
 import com.seagazer.liteplayer.widget.LiteMediaTopbar
@@ -53,6 +55,17 @@ class BasePlayerActivity : AppCompatActivity() {
                 player_view.setAutoSensorEnable(false)
             }
         }
+        // play speed
+        speed.setOnCheckedChangeListener { _, checkedId ->
+            if (player_view.getPlayer() is MediaPlayerImpl) {
+                toastShort("MediaPlayer不支持倍速播放")
+            }
+            when (checkedId) {
+                R.id.speed_1x -> player_view.setPlaySpeed(1f)
+                R.id.speed_1_5x -> player_view.setPlaySpeed(1.5f)
+                R.id.speed_2x -> player_view.setPlaySpeed(2f)
+            }
+        }
         // video aspect ratio
         aspect_ratio.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
@@ -67,6 +80,9 @@ class BasePlayerActivity : AppCompatActivity() {
         }
         // decode mode, only ijkplayer support software decode
         soft_decode.setOnCheckedChangeListener { _, isChecked ->
+            if (player_view.getPlayer() !is IjkPlayerImpl) {
+                toastShort("仅IjkPlayer支持软解")
+            }
             player_view.supportSoftwareDecode(isChecked)
         }
         // config

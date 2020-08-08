@@ -49,6 +49,34 @@
                 android:text="软解" />
         </LinearLayout>
 
+        <RadioGroup
+            android:id="@+id/speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <RadioButton
+                android:id="@+id/speed_1x"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="1x" />
+
+            <RadioButton
+                android:id="@+id/speed_1_5x"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1.5x" />
+
+            <RadioButton
+                android:id="@+id/speed_2x"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2x" />
+
+        </RadioGroup>
+
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

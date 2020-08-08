@@ -13,7 +13,7 @@ import com.seagazer.liteplayer.listener.PlayerStateChangedListener
 interface IOverlay {
     fun attachPlayer(player: LitePlayerView)
 
-    fun getView(): View
+    fun getView(): View?
 
     fun show()
 
