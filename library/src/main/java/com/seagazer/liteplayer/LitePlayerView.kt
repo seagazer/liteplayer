@@ -287,7 +287,6 @@ class LitePlayerView @JvmOverloads constructor(
                     }
                     maxProgress = getDuration().toInt()
                     mediaController?.onPlayerPrepared(getDataSource()!!)
-                    topbar?.onPlayerPrepared(getDataSource()!!)
                     mediaController?.onStarted()
                     handler.sendEmptyMessage(MSG_PROGRESS)
                 }
@@ -810,6 +809,10 @@ class LitePlayerView @JvmOverloads constructor(
                 )
             )
         }
+        // reset ui right now
+        currentProgress = 0
+        mediaController?.reset()
+        topbar?.onDataSourceChanged(getDataSource()!!)
         litePlayerCore.setDataSource(source)
     }
 

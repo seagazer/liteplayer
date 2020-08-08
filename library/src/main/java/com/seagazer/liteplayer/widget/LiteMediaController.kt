@@ -111,6 +111,14 @@ class LiteMediaController @JvmOverloads constructor(
         toggle.setImageResource(R.drawable.ic_play)
     }
 
+    @SuppressLint("SetTextI18n")
+    override fun reset() {
+        seekBar.progress = 0
+        seekBar.secondaryProgress = 0
+        duration = 0
+        progressTimer.text = "${TimeConverter.timeToString(0)} / ${TimeConverter.timeToString(duration)}"
+    }
+
     override fun getView() = this
 
     override fun show() {

@@ -17,4 +17,6 @@ interface IController : IOverlay {
 
     fun onPaused()
 
+    fun reset()
+
 }

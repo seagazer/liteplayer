@@ -64,7 +64,7 @@ class LiteMediaTopbar @JvmOverloads constructor(
         })
     }
 
-    override fun onPlayerPrepared(dataSource: DataSource) {
+    override fun onDataSourceChanged(dataSource: DataSource) {
         title.text = dataSource.mediaTitle
     }
 
