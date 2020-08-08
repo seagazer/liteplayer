@@ -2,6 +2,7 @@ package com.seagazer.sample.example
 
 import android.graphics.Color
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.seagazer.liteplayer.bean.DataSource
@@ -26,8 +27,10 @@ class BasePlayerActivity : AppCompatActivity() {
 
     private val urls =
         listOf(
-            Pair(VideoCacheHelper.url(DataProvider.url1), "玩具总动员"), Pair(VideoCacheHelper.url(DataProvider.url2), "New Story")
-            , Pair(DataProvider.url3, "RTMP")
+            Pair(VideoCacheHelper.url(DataProvider.url1), "玩具总动员"),
+            Pair(DataProvider.url4, "Assets"),
+            Pair("", "Raw"),
+            Pair(DataProvider.url3, "RTMP")
         )
     private var currentPlayIndex = 0
 
@@ -69,8 +72,6 @@ class BasePlayerActivity : AppCompatActivity() {
         // config
         player_view.setRenderType(ConfigHolder.renderType)
         player_view.setPlayerType(ConfigHolder.playerType)
-        // prepare video
-        player_view.setDataSource(DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second))
         // media controller, topbar and gesture controller
         player_view.attachMediaController(LiteMediaController(this))
         player_view.attachMediaTopbar(LiteMediaTopbar(this))
@@ -104,6 +105,8 @@ class BasePlayerActivity : AppCompatActivity() {
             }
 
         })
+        // prepare video
+        player_view.setDataSource(DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second))
         // start play
         player_view.start()
 
@@ -126,7 +129,17 @@ class BasePlayerActivity : AppCompatActivity() {
         if (currentPlayIndex > urls.size - 1) {
             currentPlayIndex = 0
         }
-        player_view.setDataSource(DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second))
+        val dataSource =
+            if (TextUtils.isEmpty(urls[currentPlayIndex].first)) {
+                // If raw resource play, dataSource must set a rawId
+                DataSource("", urls[currentPlayIndex].second).apply {
+                    rawId = DataProvider.url5// raw resource
+                }
+            } else {
+                // normal resource
+                DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second)
+            }
+        player_view.setDataSource(dataSource)
         player_view.start()
     }
 

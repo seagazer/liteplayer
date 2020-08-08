@@ -1,6 +1,8 @@
 package com.seagazer.liteplayer.player.media
 
+import android.content.ContentResolver
 import android.content.Context
+import android.content.res.AssetFileDescriptor
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.net.Uri
@@ -148,7 +150,23 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
             player!!.setOnBufferingUpdateListener(bufferUpdateListener)
             player!!.setOnErrorListener(errorListener)
             player!!.setOnInfoListener(infoListener)
-            player!!.setDataSource(context, Uri.parse(dataSource!!.mediaUrl))
+            if (dataSource!!.rawId > 0) {// raw resource
+                val rawUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.packageName + "/" + dataSource!!.rawId)
+                player!!.setDataSource(context, rawUri)
+            } else {
+                val mediaUrl = dataSource!!.mediaUrl
+                if (mediaUrl.startsWith("rtmp:")) {
+                    MediaLogger.e("MediaPlayer not support rtmp!")
+                }
+                if (mediaUrl.contains("android_asset")) {// assets resource
+                    val split = mediaUrl.split("/")
+                    val assetName = split[split.size - 1]
+                    val fd: AssetFileDescriptor = context.resources.assets.openFd(assetName)
+                    player!!.setDataSource(fd.fileDescriptor, fd.startOffset, fd.length)
+                } else {// normal resource
+                    player!!.setDataSource(context, Uri.parse(mediaUrl))
+                }
+            }
             MediaLogger.d("-->prepareAsync")
             player!!.prepareAsync()
             if (currentState == PlayerState.STATE_NOT_INITIALIZED) {

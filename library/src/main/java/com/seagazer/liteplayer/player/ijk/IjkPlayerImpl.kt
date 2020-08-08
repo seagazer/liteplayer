@@ -1,5 +1,6 @@
 package com.seagazer.liteplayer.player.ijk
 
+import android.content.ContentResolver
 import android.content.Context
 import android.media.AudioManager
 import android.media.MediaPlayer
@@ -187,6 +188,7 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
                 player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "soundtouch", 1)
                 player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 0)
                 player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 5)
+                player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_clear", 1)
             } else {
                 stop()
                 reset()
@@ -201,7 +203,27 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
             player!!.setOnErrorListener(errorListener)
             player!!.setOnInfoListener(infoListener)
             player!!.setAudioStreamType(AudioManager.STREAM_MUSIC)
-            player!!.setDataSource(context, Uri.parse(dataSource!!.mediaUrl))
+            val mediaUrl = dataSource!!.mediaUrl
+            val uri = Uri.parse(mediaUrl)
+            when {
+                mediaUrl.contains("android_asset") -> {//assets resource
+                    MediaLogger.e("IjkPlayer not support play assets files!")
+                }
+                dataSource!!.rawId > 0 -> {// raw resource
+                    val rawUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.packageName + "/" + dataSource!!.rawId)
+                    player!!.setDataSource(RawDataSourceProvider.create(context, rawUri))
+                }
+                else -> {
+                    when (uri.scheme) {
+                        ContentResolver.SCHEME_ANDROID_RESOURCE -> {
+                            player!!.setDataSource(RawDataSourceProvider.create(context, uri))
+                        }
+                        else -> {
+                            player!!.setDataSource(context, uri)
+                        }
+                    }
+                }
+            }
             MediaLogger.d("-->prepareAsync")
             player!!.prepareAsync()
             if (currentState == PlayerState.STATE_NOT_INITIALIZED) {

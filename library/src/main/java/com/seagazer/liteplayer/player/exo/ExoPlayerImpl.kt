@@ -13,7 +13,9 @@ import com.google.android.exoplayer2.source.dash.DashMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.util.Util
 import com.google.android.exoplayer2.video.VideoListener
@@ -194,27 +196,41 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
     override fun getPlayer() = this
 
     override fun setDataSource(source: DataSource) {
-        if (currentState == PlayerState.STATE_NOT_INITIALIZED) {
-            setPlayerState(PlayerState.STATE_INITIALIZED)
-            liveData?.value = PlayerStateEvent(PlayerState.STATE_INITIALIZED)
+        try {
+            if (currentState == PlayerState.STATE_NOT_INITIALIZED) {
+                setPlayerState(PlayerState.STATE_INITIALIZED)
+                liveData?.value = PlayerStateEvent(PlayerState.STATE_INITIALIZED)
+            }
+            val url = source.mediaUrl
+            val uri = Uri.parse(url)
+            val contentType = when {
+                url.startsWith("rtmp:") -> {
+                    TYPE_RTMP
+                }
+                else -> {
+                    Util.inferContentType(uri)
+                }
+            }
+            val mediaSource = if (source.rawId > 0) {// raw resource
+                val dataSpec = DataSpec(RawResourceDataSource.buildRawResourceUri(source.rawId))
+                val rawResourceDataSource = RawResourceDataSource(context)
+                rawResourceDataSource.open(dataSpec)
+                ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(rawResourceDataSource.uri)
+            } else {// assets or normal resource
+                when (contentType) {
+                    TYPE_RTMP -> ProgressiveMediaSource.Factory(RtmpDataSourceFactory(null)).createMediaSource(uri)
+                    C.TYPE_OTHER -> ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri)
+                    C.TYPE_DASH -> DashMediaSource.Factory(dataSourceFactory).createMediaSource(uri)
+                    C.TYPE_SS -> SsMediaSource.Factory(dataSourceFactory).createMediaSource(uri)
+                    C.TYPE_HLS -> HlsMediaSource.Factory(dataSourceFactory).createMediaSource(uri)
+                    else -> ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri)
+                }
+            }
+            player.prepare(mediaSource)
+            isPreparing = true
+        } catch (ex: Exception) {
+            MediaLogger.e(ex.message!!)
         }
-        val url = source.mediaUrl
-        val uri = Uri.parse(url)
-        val contentType = if (url.startsWith("rtmp:")) {
-            TYPE_RTMP
-        } else {
-            Util.inferContentType(uri)
-        }
-        val mediaSource = when (contentType) {
-            TYPE_RTMP -> ProgressiveMediaSource.Factory(RtmpDataSourceFactory(null)).createMediaSource(uri)
-            C.TYPE_DASH -> DashMediaSource.Factory(dataSourceFactory).createMediaSource(uri)
-            C.TYPE_SS -> SsMediaSource.Factory(dataSourceFactory).createMediaSource(uri)
-            C.TYPE_HLS -> HlsMediaSource.Factory(dataSourceFactory).createMediaSource(uri)
-            C.TYPE_OTHER -> ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri)
-            else -> ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri)
-        }
-        player.prepare(mediaSource)
-        isPreparing = true
     }
 
     override fun start() {
