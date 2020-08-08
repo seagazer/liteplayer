@@ -165,11 +165,15 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by pl
             if (msg.what == MSG_ATTACH_CONTAINER) {
                 val currentFirst: Int = msg.obj as Int
                 val container = listener.getVideoContainer(currentFirst)
-                detachVideoContainer()
-                container?.addView(playerView)
-                MediaLogger.d("attach container: $container")
                 val dataSource = listener.getVideoDataSource(currentFirst)
-                dataSource?.let {
+                if (container == null || dataSource == null) {
+                    MediaLogger.w("Attach container is null or current dataSource is null!")
+                    return
+                }
+                detachVideoContainer()
+                container.addView(playerView)
+                MediaLogger.d("attach container: $container")
+                dataSource.let {
                     playerView.setDataSource(it)
                     playerView.start()
                 }

@@ -155,11 +155,15 @@ class ListPlayer2 constructor(val playerView: LitePlayerView) : IPlayerView by p
                 val childIndex: Int = msg.arg1
                 val completedVisibleFirst: Int = msg.arg2
                 val container = listener.getVideoContainer(childIndex, completedVisibleFirst)
-                detachVideoContainer()
-                container?.addView(playerView)
-                MediaLogger.d("attach container: $container, currentFirst: $completedVisibleFirst, childIndex: $childIndex")
                 val dataSource = listener.getVideoDataSource(completedVisibleFirst)
-                dataSource?.let {
+                if (container == null || dataSource == null) {
+                    MediaLogger.w("Attach container is null or current dataSource is null!")
+                    return
+                }
+                detachVideoContainer()
+                container.addView(playerView)
+                MediaLogger.d("attach container: $container, currentFirst: $completedVisibleFirst, childIndex: $childIndex")
+                dataSource.let {
                     MediaLogger.d("start play: $it")
                     playerView.setDataSource(it)
                     playerView.start()

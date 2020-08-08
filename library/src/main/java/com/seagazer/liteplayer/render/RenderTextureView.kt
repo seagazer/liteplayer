@@ -6,10 +6,10 @@ import android.util.AttributeSet
 import android.view.Surface
 import android.view.TextureView
 import androidx.lifecycle.MutableLiveData
-import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.config.AspectRatio
 import com.seagazer.liteplayer.config.RenderState
 import com.seagazer.liteplayer.event.RenderStateEvent
+import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.player.IPlayer
 import java.lang.ref.WeakReference
 
@@ -26,34 +26,45 @@ class RenderTextureView @JvmOverloads constructor(
     private var surfaceReference: WeakReference<SurfaceTexture>? = null
     private var liveData: MutableLiveData<RenderStateEvent>? = null
     private var aspectRatio = AspectRatio.AUTO
+    private var lastVideoWidth = -1
+    private var lastVideoHeight = -1
+    private var shouldReLayout = false
 
     init {
-        MediaLogger.d("texture view init")
         surfaceTextureListener = this
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        MediaLogger.d("texture view do measure")
-        renderMeasure?.let {
-            it.doRenderMeasure(widthMeasureSpec, heightMeasureSpec)
-            setMeasuredDimension(it.getMeasureWidth(), it.getMeasureHeight())
+        if (shouldReLayout) {
+            renderMeasure?.let {
+                it.doRenderMeasure(widthMeasureSpec, heightMeasureSpec)
+                setMeasuredDimension(it.getMeasureWidth(), it.getMeasureHeight())
+                shouldReLayout = false
+            }
         }
     }
 
     override fun getRenderView() = this
 
     override fun updateVideoSize(videoWidth: Int, videoHeight: Int) {
-        MediaLogger.d("texture view update size")
-        renderMeasure?.let {
-            it.setVideoSize(videoWidth, videoHeight)
-            requestLayout()
+        if (lastVideoWidth != -1 && lastVideoWidth == videoWidth && lastVideoHeight != -1 && lastVideoHeight == videoHeight) {
+            // the same video size, not measure and layout again
+            shouldReLayout = false
+        } else {
+            shouldReLayout = true
+            lastVideoWidth = videoWidth
+            lastVideoHeight = videoHeight
+            renderMeasure?.let {
+                it.setVideoSize(videoWidth, videoHeight)
+                requestLayout()
+            }
         }
     }
 
     override fun updateAspectRatio(aspectRatio: AspectRatio) {
-        MediaLogger.d("texture view update aspect ratio")
         renderMeasure?.let {
+            shouldReLayout = true
             if (this.aspectRatio != aspectRatio) {
                 this.aspectRatio = aspectRatio
                 it.setAspectRatio(aspectRatio)

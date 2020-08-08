@@ -26,44 +26,55 @@ class RenderSurfaceView @JvmOverloads constructor(
     private var liveData: MutableLiveData<RenderStateEvent>? = null
     private var firstAttach = true
     private var aspectRatio = AspectRatio.AUTO
+    private var lastVideoWidth = -1
+    private var lastVideoHeight = -1
+    private var shouldReLayout = false
 
     init {
-        MediaLogger.d("surface view init")
         holder.addCallback(this)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        MediaLogger.d("surface view do measure")
-        renderMeasure?.let {
-            it.doRenderMeasure(widthMeasureSpec, heightMeasureSpec)
-            setMeasuredDimension(it.getMeasureWidth(), it.getMeasureHeight())
+        if (shouldReLayout) {
+            renderMeasure?.let {
+                it.doRenderMeasure(widthMeasureSpec, heightMeasureSpec)
+                setMeasuredDimension(it.getMeasureWidth(), it.getMeasureHeight())
+                shouldReLayout = false
+            }
         }
     }
 
     override fun getRenderView() = this
 
     override fun updateVideoSize(videoWidth: Int, videoHeight: Int) {
-        MediaLogger.d("surface view  update size")
-        renderMeasure?.let {
-            it.setVideoSize(videoWidth, videoHeight)
-            // fix the surfaceView is flash when first attach view system at a short time to requestLayout again.
-            if (firstAttach) {
-                postDelayed({
-                    MediaLogger.d("first attach, delay 500ms to update layout")
+        if (lastVideoWidth != -1 && lastVideoWidth == videoWidth && lastVideoHeight != -1 && lastVideoHeight == videoHeight) {
+            // the same video size, not measure and layout again
+            shouldReLayout = false
+        } else {
+            shouldReLayout = true
+            lastVideoWidth = videoWidth
+            lastVideoHeight = videoHeight
+            renderMeasure?.let {
+                it.setVideoSize(videoWidth, videoHeight)
+                // fix the surfaceView is flash when first attach view system at a short time to requestLayout again.
+                if (firstAttach) {
+                    postDelayed({
+                        MediaLogger.d("first attach, delay 500ms to update layout")
+                        requestLayout()
+                    }, 500)
+                } else {
+                    MediaLogger.d("normal attach")
                     requestLayout()
-                }, 500)
-            } else {
-                MediaLogger.d("normal attach")
-                requestLayout()
+                }
+                firstAttach = false
             }
-            firstAttach = false
         }
     }
 
     override fun updateAspectRatio(aspectRatio: AspectRatio) {
-        MediaLogger.d("surface view update aspect ratio")
         renderMeasure?.let {
+            shouldReLayout = true
             if (this.aspectRatio != aspectRatio) {
                 this.aspectRatio = aspectRatio
                 it.setAspectRatio(aspectRatio)
