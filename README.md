@@ -2,9 +2,10 @@
 <font color=#4A90CE size=5>A lite player for android by Kotlin language</font>
 <font color=#4A90CE size=5>一个完全使用Kotlin开发的简洁高效，轻量级的播放器框架</font>
 
-#### 目前v1.0.1版已支持功能：
+#### 目前v1.0.2版已支持功能：
 * <font color=#4A90CE>支持ExoPlayer解码</font>
 * <font color=#4A90CE>支持MediaPlayer解码</font>
+* <font color=#4A90CE>支持IjkPlayer解码</font>
 * <font color=#4A90CE>支持SurfaceView和TextureView渲染</font>
 * <font color=#4A90CE>支持AspectRatio画面比例模式</font>
 * <font color=#4A90CE>支持FullScreen模式</font>
@@ -18,11 +19,8 @@
 * <font color=#4A90CE>支持自定义Overlay面板</font>
 
 #### TODO计划：
-* 支持IjkPlayer解码
 * 支持Cache本地缓存
 * 支持系统PictureInPicture模式
-* 提供预置清晰度设置面板
-* 提供预置播放速率设置面板
 * 提供预置弹幕控制面板
 
 
@@ -178,24 +176,23 @@
 #### Demo展示：
 <table>
 <tr>
-<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-a27b968e174058bd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
-<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-c1eb65b099d8cc30.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
-<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-fc89b62de8f8aa38.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
+<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-b35972ffa16450c8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
+<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-4d38e9e4c65602ec.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
+<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-4bc41208d8b0607b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
 </tr>
 </table>
 <table>
 <tr>
-<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-500a2aaa6c1cd16f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
-<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-ec115d0291f51114.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
-<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-24c3a4ce486587fa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
+<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-dbe0d9ed7df090ee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
+<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-62e648076c6900c1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
+<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-9ad7d1efc4f3dc1c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
 </tr>
 </table>
 <table>
 <tr>
-<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-b02251c1eee82c6e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
-<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-08cf02a96152ed76.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
-<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-267f81cf903729e8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
-
+<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-b890137a1c2dae98.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
+<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-2d9cc61bc9e58908.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
+<td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-abd3917cb9aba55e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
 </tr>
 </table>
 
