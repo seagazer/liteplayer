@@ -44,7 +44,14 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="multiListPlay"
+            android:onClick="multiList"
+            android:text="MultiList"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="viewpagerPlay"
             android:text="ViewPager"
             android:textAllCaps="false" />
 

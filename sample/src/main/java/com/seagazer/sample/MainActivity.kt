@@ -56,14 +56,17 @@ class MainActivity : AppCompatActivity() {
         navigationTo(ListPlayerActivity2::class.java)
     }
 
-    fun multiListPlay(view: View) {
+    fun multiList(view: View) {
+        navigationTo(ListPlayerActivity3::class.java)
+    }
+
+    fun viewpagerPlay(view: View) {
         navigationTo(MultiListPlayerActivity::class.java)
     }
 
     fun floatWindow(view: View) {
         navigationTo(FloatWindowActivity::class.java)
     }
-
     fun picInPic(view: View) {}
 
 }

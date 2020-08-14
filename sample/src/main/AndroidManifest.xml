@@ -46,6 +46,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/FullScreenTheme" />
         <activity
+            android:name=".example.ListPlayerActivity3"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreenTheme" />
+        <activity
             android:name=".example.EmptyActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FullScreenTheme" />
