@@ -103,8 +103,7 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
                         setPlayerState(PlayerState.STATE_PREPARED)
                     }
                     if (startPosition > 0) {
-                        liveData?.value = PlayerStateEvent(PlayerState.STATE_SEEK_START)
-                        player.seekTo(startPosition)
+                        seekTo(startPosition)
                         startPosition = 0
                     }
                 }
@@ -271,9 +270,9 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
     override fun seekTo(position: Long) {
         if (isInPlaybackState()) {
             isPendingSeek = true
+            liveData?.value = PlayerStateEvent(PlayerState.STATE_SEEK_START)
+            player.seekTo(position)
         }
-        liveData?.value = PlayerStateEvent(PlayerState.STATE_SEEK_START)
-        player.seekTo(position)
     }
 
     override fun stop() {

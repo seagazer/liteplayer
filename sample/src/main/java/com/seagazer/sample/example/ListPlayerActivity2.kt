@@ -16,6 +16,7 @@ import com.seagazer.liteplayer.widget.LiteGestureController
 import com.seagazer.liteplayer.widget.LiteMediaController
 import com.seagazer.sample.ConfigHolder
 import com.seagazer.sample.R
+import com.seagazer.sample.cache.VideoCacheHelper
 import com.seagazer.sample.data.DataProvider
 import com.seagazer.sample.navigationTo
 import com.seagazer.sample.showConfigInfo
@@ -57,6 +58,7 @@ class ListPlayerActivity2 : AppCompatActivity() {
             attachOverlay(this@ListPlayerActivity2.coverOverlay)
             setRenderType(ConfigHolder.renderType)
             setPlayerType(ConfigHolder.playerType)
+            supportHistory = true
         }
         val videoScrollListener = object : ListPlayer2.VideoListScrollListener {
 
@@ -77,7 +79,7 @@ class ListPlayerActivity2 : AppCompatActivity() {
             }
 
             override fun getVideoDataSource(position: Int): DataSource? {
-                return DataSource(listAdapter.getItem(position))
+                return DataSource(VideoCacheHelper.url(listAdapter.getItem(position)))
             }
         }
         listPlayer.attachToListView(list_view, true, videoScrollListener)

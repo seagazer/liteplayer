@@ -49,10 +49,22 @@ class ListCoverOverlay @JvmOverloads constructor(
 
     override fun isShowing() = alpha == 1f
 
+    var actionSeek = false
+
     override fun getPlayerStateChangedListener() = object : SimplePlayerStateChangedListener() {
 
         override fun onRenderFirstFrame() {
-            hide()
+            // if not seek action, hide cover when first frame display
+            if (!actionSeek) {
+                hide()
+            }
+        }
+
+        override fun onSeekStarted() {
+            // if has seek action, hide cover after seek completed
+            if (actionSeek) {
+                hide()
+            }
         }
     }
 

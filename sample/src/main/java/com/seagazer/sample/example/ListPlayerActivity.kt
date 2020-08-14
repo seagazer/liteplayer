@@ -13,8 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.seagazer.liteplayer.ListPlayer
 import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.bean.DataSource
-import com.seagazer.liteplayer.helper.MediaLogger
-import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
 import com.seagazer.liteplayer.widget.LiteGestureController
 import com.seagazer.liteplayer.widget.LiteMediaController
 import com.seagazer.sample.ConfigHolder
@@ -37,8 +35,6 @@ class ListPlayerActivity : AppCompatActivity() {
     private var isAutoPlay = true
 
     private lateinit var coverOverlay: ListCoverOverlay
-    private val historyMap = hashMapOf<Int, Long>()
-    private var lastPlayPosition = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,25 +59,9 @@ class ListPlayerActivity : AppCompatActivity() {
             attachOverlay(this@ListPlayerActivity.coverOverlay)
             setRenderType(ConfigHolder.renderType)
             setPlayerType(ConfigHolder.playerType)
+            // support cache player history progress
+            supportHistory = true
         }
-        // example for resume play from last position
-        listPlayer.addPlayerStateChangedListener(object : SimplePlayerStateChangedListener() {
-            override fun onPrepared(dataSource: DataSource) {
-                // when prepared, seek to history position
-                historyMap[lastPlayPosition]?.let { duration ->
-                    listPlayer.seekTo(duration)
-                }
-            }
-
-            override fun onStopped() {
-                // when stopped, cache history position
-                if (lastPlayPosition != -1) {
-                    val currentPosition = listPlayer.getCurrentPosition()
-                    MediaLogger.w("[$lastPlayPosition] cache play history: $currentPosition")
-                    historyMap[lastPlayPosition] = currentPosition
-                }
-            }
-        })
         val videoScrollListener = object : ListPlayer.VideoListScrollListener {
 
             override fun getVideoContainer(position: Int): ViewGroup? {
@@ -101,7 +81,6 @@ class ListPlayerActivity : AppCompatActivity() {
             }
 
             override fun getVideoDataSource(position: Int): DataSource? {
-                lastPlayPosition = position
                 return DataSource(VideoCacheHelper.url(listAdapter.getVideoUrl(position)))
             }
         }

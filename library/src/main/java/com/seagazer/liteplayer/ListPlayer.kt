@@ -38,6 +38,14 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by pl
     private var playerType = PlayerType.TYPE_EXO_PLAYER
     private var renderType = RenderType.TYPE_SURFACE_VIEW
     private var aspectRatio = AspectRatio.AUTO
+    private val playerHistoryCache by lazy {
+        hashMapOf<Int, Long>()
+    }
+
+    /**
+     * Support auto cache last play position or not.
+     */
+    var supportHistory = false
 
     /**
      * Attach to recyclerView.
@@ -152,7 +160,12 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by pl
         val dataSource = listener.getVideoDataSource(position)
         dataSource?.let {
             playerView.setDataSource(it)
-            playerView.start()
+            if (supportHistory && playerHistoryCache[position] != null) {
+                MediaLogger.i("resume progress: [$position - ${playerHistoryCache[position]}]")
+                playerView.start(playerHistoryCache[position]!!)
+            } else {
+                playerView.start()
+            }
         }
         if (position != RecyclerView.NO_POSITION) {
             playingPosition = position
@@ -175,7 +188,13 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by pl
                 MediaLogger.d("attach container: $container")
                 dataSource.let {
                     playerView.setDataSource(it)
-                    playerView.start()
+                    val history = playerHistoryCache[currentFirst]
+                    if (supportHistory && history != null) {
+                        MediaLogger.i("resume progress: [$currentFirst - $history]")
+                        playerView.start(history)
+                    } else {
+                        playerView.start()
+                    }
                 }
             }
         }
@@ -223,6 +242,11 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by pl
         if (playerView.parent != null) {
             val parent: ViewGroup = playerView.parent as ViewGroup
             MediaLogger.d("detach container: $parent")
+            if (supportHistory) {
+                val history = playerView.getCurrentPosition()
+                playerHistoryCache[playingPosition] = history
+                MediaLogger.i("cache progress: [$playingPosition - $history]")
+            }
             playerView.stop()
             parent.removeView(playerView)
         }

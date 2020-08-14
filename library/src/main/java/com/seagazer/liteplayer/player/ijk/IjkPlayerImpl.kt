@@ -37,7 +37,6 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
     private var asyncToStart = false
     private var isBuffering = true
     private var softwareDecode = true
-    private var dataSourceChanged = true
 
     private val preparedListener = IMediaPlayer.OnPreparedListener {
         setPlayerState(PlayerState.STATE_PREPARED)
@@ -45,7 +44,8 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
         if (asyncToStart && player != null) {
             player!!.start()
             if (startPosition > 0) {
-                player!!.seekTo(startPosition)
+                seekTo(startPosition)
+                startPosition = 0
             }
             setPlayerState(PlayerState.STATE_STARTED)
             liveData?.value = PlayerStateEvent(PlayerState.STATE_STARTED)

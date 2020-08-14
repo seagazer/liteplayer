@@ -41,7 +41,8 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
         if (asyncToStart && player != null) {
             player!!.start()
             if (startPosition > 0) {
-                player!!.seekTo(startPosition.toInt())
+                seekTo(startPosition)
+                startPosition = 0
             }
             setPlayerState(PlayerState.STATE_STARTED)
             liveData?.value = PlayerStateEvent(PlayerState.STATE_STARTED)
