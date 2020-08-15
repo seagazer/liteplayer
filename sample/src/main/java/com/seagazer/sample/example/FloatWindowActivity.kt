@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.liteplayer.config.FloatSize
 import com.seagazer.liteplayer.listener.SimpleOverlayObserver
 import com.seagazer.sample.ConfigHolder
 import com.seagazer.sample.R
@@ -48,5 +49,18 @@ class FloatWindowActivity : AppCompatActivity() {
         } else {
             player_view.setFloatWindowMode(true)
         }
+    }
+
+    private var isNormal = true
+
+    fun changeSize(view: View) {
+        if (isNormal) {
+            player_view.setFloatSizeMode(FloatSize.LARGE)
+            change_size.text = "LARGE"
+        } else {
+            player_view.setFloatSizeMode(FloatSize.NORMAL)
+            change_size.text = "NORMAL"
+        }
+        isNormal = !isNormal
     }
 }

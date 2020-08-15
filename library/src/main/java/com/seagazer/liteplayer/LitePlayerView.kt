@@ -62,6 +62,8 @@ class LitePlayerView @JvmOverloads constructor(
         const val PROGRESS_STROKE_WIDTH = 6f
         const val DEFAULT_BACKGROUND_COLOR = Color.BLACK
         const val DEFAULT_PROGRESS_COLOR = 0xffD81BA2
+        const val FLOAT_SIZE_LARGE = 1.6f
+        const val FLOAT_SIZE_NORMAL = 2.2f
     }
 
     private val litePlayerCore: LitePlayerCore
@@ -134,11 +136,18 @@ class LitePlayerView @JvmOverloads constructor(
     }
     private var downX = 0f
     private var downY = 0f
+    private var floatSize = FloatSize.NORMAL
+
     private val lp by lazy {
         WindowManager.LayoutParams().apply {
             flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
             // define aspectRatio of float window is 3:2
-            val w = context.resources.displayMetrics.widthPixels / 2.2f
+            val wr = if (floatSize == FloatSize.NORMAL) {
+                FLOAT_SIZE_NORMAL
+            } else {
+                FLOAT_SIZE_LARGE
+            }
+            val w = context.resources.displayMetrics.widthPixels / wr
             val h = w / 3 * 2
             width = w.toInt()
             height = h.toInt()
@@ -150,6 +159,7 @@ class LitePlayerView @JvmOverloads constructor(
             }
         }
     }
+
     private val floatWindowContainer by lazy {
         FrameLayout(context)
     }
@@ -538,13 +548,13 @@ class LitePlayerView @JvmOverloads constructor(
         this.isFullScreen = true
         detachVideoContainer()
         androidParent?.addView(this, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
-        mediaController?.displayModeChanged(true)
-        topbar?.displayModeChanged(true)
         notifyDisplayModeChanged(true)
         MediaLogger.w("enter fullscreen: $width x $height")
     }
 
     private fun notifyDisplayModeChanged(isFullScreen: Boolean) {
+        mediaController?.displayModeChanged(isFullScreen)
+        topbar?.displayModeChanged(isFullScreen)
         customOverlays.forEach {
             it.displayModeChanged(isFullScreen)
         }
@@ -563,8 +573,6 @@ class LitePlayerView @JvmOverloads constructor(
         this.isFullScreen = false
         detachVideoContainer()
         directParent?.addView(this, childIndex, originLayoutParams)
-        mediaController?.displayModeChanged(false)
-        topbar?.displayModeChanged(false)
         notifyDisplayModeChanged(false)
         MediaLogger.w("exit fullscreen: $width x $height")
     }
@@ -596,6 +604,9 @@ class LitePlayerView @JvmOverloads constructor(
 
     private var handleTouchEvent = true
 
+    /**
+     * Set false to handle touch by super.onTouchEvent(event) so mediaController, gestureController not work anymore.
+     */
     fun handleTouchEvent(handleTouchEvent: Boolean) {
         this.handleTouchEvent = handleTouchEvent
     }
@@ -610,7 +621,7 @@ class LitePlayerView @JvmOverloads constructor(
             gestureController?.hide()
             parent.requestDisallowInterceptTouchEvent(false)
         }
-        return if (gestureController != null || mediaController != null && !isFloatWindowMode) {
+        return if ((gestureController != null || mediaController != null) && !isFloatWindowMode) {
             controllerDetector.onTouchEvent(event)
         } else {
             super.onTouchEvent(event)
@@ -1040,11 +1051,19 @@ class LitePlayerView @JvmOverloads constructor(
         }
     }
 
-    /**
-     * Set decode mode.
-     * @param softwareDecode True software decode, false mediacodec decode
-     */
-    fun supportSoftwareDecode(softwareDecode: Boolean) {
+    private fun refreshFloatWindowSize() {
+        val wr = if (floatSize == FloatSize.NORMAL) {
+            FLOAT_SIZE_NORMAL
+        } else {
+            FLOAT_SIZE_LARGE
+        }
+        val w = context.resources.displayMetrics.widthPixels / wr
+        val h = w / 3 * 2
+        lp.width = w.toInt()
+        lp.height = h.toInt()
+    }
+
+    override fun supportSoftwareDecode(softwareDecode: Boolean) {
         if (this.softwareDecode != softwareDecode) {
             this.softwareDecode = softwareDecode
             if (playerType != null) {
@@ -1052,6 +1071,13 @@ class LitePlayerView @JvmOverloads constructor(
             } else {
                 MediaLogger.w("Instance of player is null, this method may called after you setup a playerType!")
             }
+        }
+    }
+
+    override fun setFloatSizeMode(sizeMode: FloatSize) {
+        if (floatSize != sizeMode) {
+            floatSize = sizeMode
+            refreshFloatWindowSize()
         }
     }
 }

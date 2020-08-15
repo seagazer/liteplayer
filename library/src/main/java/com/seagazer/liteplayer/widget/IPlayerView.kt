@@ -3,6 +3,7 @@ package com.seagazer.liteplayer.widget
 import androidx.lifecycle.MutableLiveData
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.AspectRatio
+import com.seagazer.liteplayer.config.FloatSize
 import com.seagazer.liteplayer.config.PlayerType
 import com.seagazer.liteplayer.config.RenderType
 import com.seagazer.liteplayer.event.PlayerStateEvent
@@ -149,4 +150,15 @@ interface IPlayerView : IPlayerCore {
      */
     fun setAutoSensorEnable(enable: Boolean)
 
+    /**
+     * Set decode mode.
+     * @param softwareDecode True software decode, false mediacodec decode
+     */
+    fun supportSoftwareDecode(softwareDecode: Boolean)
+
+    /**
+     * Set float window size.
+     * @param sizeMode FloatSize.NORMAL or FloatSize.LARGE
+     */
+    fun setFloatSizeMode(sizeMode: FloatSize)
 }

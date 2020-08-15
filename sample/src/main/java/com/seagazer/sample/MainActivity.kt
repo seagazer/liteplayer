@@ -7,6 +7,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.seagazer.liteplayer.config.PlayerType
 import com.seagazer.liteplayer.config.RenderType
+import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.sample.example.*
 
 class MainActivity : AppCompatActivity() {
@@ -14,7 +15,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        // 强制打开logcat
+        MediaLogger.openLogger()
+        // 设置logcat级别为debug
+        MediaLogger.setLevel(MediaLogger.Level.DEBUG)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
