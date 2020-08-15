@@ -101,6 +101,7 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
                         liveData?.value = PlayerStateEvent(PlayerState.STATE_STARTED)
                     } else {
                         setPlayerState(PlayerState.STATE_PREPARED)
+                        liveData?.value = PlayerStateEvent(PlayerState.STATE_PREPARED)
                     }
                     if (startPosition > 0) {
                         seekTo(startPosition)

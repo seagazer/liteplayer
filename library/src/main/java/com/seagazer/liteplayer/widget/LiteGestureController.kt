@@ -14,6 +14,7 @@ import com.seagazer.liteplayer.R
 import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.helper.TimeConverter
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
+import com.seagazer.liteplayer.listener.RenderStateChangedListener
 import kotlin.math.abs
 
 /**
@@ -124,6 +125,8 @@ class LiteGestureController @JvmOverloads constructor(
     }
 
     override fun getPlayerStateChangedListener(): PlayerStateChangedListener? = null
+
+    override fun getRenderStateChangedListener(): RenderStateChangedListener? = null
 
     override fun displayModeChanged(isFullScreen: Boolean) {
     }

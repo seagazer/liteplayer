@@ -27,9 +27,9 @@ open class SimpleOverlayObserver : IOverlay {
         return false
     }
 
-    override fun getPlayerStateChangedListener(): PlayerStateChangedListener? {
-        return null
-    }
+    override fun getPlayerStateChangedListener(): PlayerStateChangedListener? = null
+
+    override fun getRenderStateChangedListener(): RenderStateChangedListener? = null
 
     override fun displayModeChanged(isFullScreen: Boolean) {
     }

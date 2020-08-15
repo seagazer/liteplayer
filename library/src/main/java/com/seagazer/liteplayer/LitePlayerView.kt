@@ -32,6 +32,7 @@ import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.helper.OrientationSensorHelper
 import com.seagazer.liteplayer.helper.SystemUiHelper
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
+import com.seagazer.liteplayer.listener.RenderStateChangedListener
 import com.seagazer.liteplayer.player.exo.ExoPlayerImpl
 import com.seagazer.liteplayer.player.ijk.IjkPlayerImpl
 import com.seagazer.liteplayer.player.media.MediaPlayerImpl
@@ -72,6 +73,7 @@ class LitePlayerView @JvmOverloads constructor(
     private val renderStateObserver = MutableLiveData<RenderStateEvent>()
     private val playerStateObserver = MutableLiveData<PlayerStateEvent>()
     private val playerStateListeners = mutableListOf<PlayerStateChangedListener>()
+    private val renderStateListeners = mutableListOf<RenderStateChangedListener>()
 
     // config
     private var render: IRender? = null
@@ -237,6 +239,9 @@ class LitePlayerView @JvmOverloads constructor(
             overlay.getPlayerStateChangedListener()?.run {
                 addPlayerStateChangedListener(this)
             }
+            overlay.getRenderStateChangedListener()?.run {
+                addRenderStateChangedListener(this)
+            }
         }
     }
 
@@ -250,13 +255,22 @@ class LitePlayerView @JvmOverloads constructor(
                     MediaLogger.i("----> surface create")
                     isSurfaceCreated = true
                     tryBindSurface()
+                    renderStateListeners.forEach {
+                        it.onSurfaceCreated()
+                    }
                 }
                 RenderState.STATE_SURFACE_CHANGED -> {
                     MediaLogger.i("----> surface changed")
+                    renderStateListeners.forEach {
+                        it.onSurfaceChanged()
+                    }
                 }
                 RenderState.STATE_SURFACE_DESTROYED -> {
                     isSurfaceCreated = false
                     MediaLogger.i("----> surface destroy")
+                    renderStateListeners.forEach {
+                        it.onSurfaceDestroy()
+                    }
                 }
             }
         })
@@ -720,6 +734,12 @@ class LitePlayerView @JvmOverloads constructor(
         }
     }
 
+    override fun addRenderStateChangedListener(listener: RenderStateChangedListener) {
+        if (renderStateListeners.indexOf(listener) == -1) {
+            renderStateListeners.add(listener)
+        }
+    }
+
     override fun setRenderType(renderType: RenderType) {
         // release last render if changed render
         if (this.renderType == renderType) {
@@ -785,6 +805,8 @@ class LitePlayerView @JvmOverloads constructor(
     }
 
     override fun getPlayer() = litePlayerCore.getPlayer()
+
+    override fun getRender(): IRender? = render
 
     override fun setDataSource(source: DataSource) {
         dataSource = source

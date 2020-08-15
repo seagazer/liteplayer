@@ -19,6 +19,7 @@ import com.seagazer.liteplayer.R
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.helper.DpHelper
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
+import com.seagazer.liteplayer.listener.RenderStateChangedListener
 
 /**
  * Top bar overlay for lite player to display media info.
@@ -86,6 +87,8 @@ class LiteMediaTopbar @JvmOverloads constructor(
     override fun isShowing() = visibility == View.VISIBLE
 
     override fun getPlayerStateChangedListener(): PlayerStateChangedListener? = null
+
+    override fun getRenderStateChangedListener(): RenderStateChangedListener? = null
 
     override fun displayModeChanged(isFullScreen: Boolean) {
     }

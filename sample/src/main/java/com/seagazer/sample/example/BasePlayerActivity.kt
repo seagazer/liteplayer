@@ -8,9 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.AspectRatio
 import com.seagazer.liteplayer.config.PlayerType
+import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
+import com.seagazer.liteplayer.listener.SimpleRenderStateChangedListener
 import com.seagazer.liteplayer.player.ijk.IjkPlayerImpl
 import com.seagazer.liteplayer.player.media.MediaPlayerImpl
+import com.seagazer.liteplayer.render.RenderTextureView
 import com.seagazer.liteplayer.widget.LiteGestureController
 import com.seagazer.liteplayer.widget.LiteMediaController
 import com.seagazer.liteplayer.widget.LiteMediaTopbar
@@ -121,11 +124,23 @@ class BasePlayerActivity : AppCompatActivity() {
             }
 
         })
+        // add render listener
+        player_view.addRenderStateChangedListener(object : SimpleRenderStateChangedListener() {
+            override fun onSurfaceCreated() {
+                MediaLogger.d("surface创建")
+            }
+        })
         // prepare video
         player_view.setDataSource(DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second))
         // start play
         player_view.start()
-
+        // get render
+        val render = player_view.getRender()
+        if (render is RenderTextureView) {
+            val renderView = render.getRenderView()
+            // to do something with this render view, like get capture of surface texture for cover
+            val cover = renderView.bitmap
+        }
     }
 
     fun pausePlay(view: View) {

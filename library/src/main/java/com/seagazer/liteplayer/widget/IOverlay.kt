@@ -3,6 +3,7 @@ package com.seagazer.liteplayer.widget
 import android.view.View
 import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
+import com.seagazer.liteplayer.listener.RenderStateChangedListener
 
 /**
  * Base action for overlay cover like controller and topbar.
@@ -22,6 +23,8 @@ interface IOverlay {
     fun isShowing(): Boolean
 
     fun getPlayerStateChangedListener(): PlayerStateChangedListener?
+
+    fun getRenderStateChangedListener(): RenderStateChangedListener?
 
     fun displayModeChanged(isFullScreen: Boolean)
 

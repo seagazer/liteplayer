@@ -8,8 +8,10 @@ import com.seagazer.liteplayer.config.RenderType
 import com.seagazer.liteplayer.event.PlayerStateEvent
 import com.seagazer.liteplayer.event.RenderStateEvent
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
+import com.seagazer.liteplayer.listener.RenderStateChangedListener
 import com.seagazer.liteplayer.player.IPlayer
 import com.seagazer.liteplayer.player.IPlayerCore
+import com.seagazer.liteplayer.render.IRender
 
 /**
  *
@@ -35,6 +37,12 @@ interface IPlayerView : IPlayerCore {
     fun addPlayerStateChangedListener(listener: PlayerStateChangedListener)
 
     /**
+     * Add a listener to listen the state changed of render.
+     * @param listener The listener to listen render state.
+     */
+    fun addRenderStateChangedListener(listener: RenderStateChangedListener)
+
+    /**
      * Set a type to display the picture of video.
      * @param renderType TYPE_SURFACE_VIEW or TYPE_TEXTURE_VIEW
      */
@@ -57,6 +65,12 @@ interface IPlayerView : IPlayerCore {
      * @return The instance of player core.
      */
     fun getPlayer(): IPlayer?
+
+    /**
+     * Get a render instance.
+     * @return The instance of render.
+     */
+    fun getRender(): IRender?
 
     /**
      * Attach an overlay to control the player.

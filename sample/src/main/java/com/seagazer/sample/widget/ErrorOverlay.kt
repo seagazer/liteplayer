@@ -10,6 +10,7 @@ import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.config.PlayerType
 import com.seagazer.liteplayer.helper.DpHelper
 import com.seagazer.liteplayer.helper.MediaLogger
+import com.seagazer.liteplayer.listener.RenderStateChangedListener
 import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
 import com.seagazer.liteplayer.widget.IOverlay
 import com.seagazer.sample.R
@@ -67,6 +68,8 @@ class ErrorOverlay @JvmOverloads constructor(
             hide()
         }
     }
+
+    override fun getRenderStateChangedListener(): RenderStateChangedListener? = null
 
     override fun displayModeChanged(isFullScreen: Boolean) {
     }

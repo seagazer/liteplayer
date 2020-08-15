@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.helper.MediaLogger
+import com.seagazer.liteplayer.listener.RenderStateChangedListener
 import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
 import com.seagazer.liteplayer.widget.IOverlay
 
@@ -49,24 +50,15 @@ class ListCoverOverlay @JvmOverloads constructor(
 
     override fun isShowing() = alpha == 1f
 
-    var actionSeek = false
-
     override fun getPlayerStateChangedListener() = object : SimplePlayerStateChangedListener() {
 
         override fun onRenderFirstFrame() {
-            // if not seek action, hide cover when first frame display
-            if (!actionSeek) {
-                hide()
-            }
+            postDelayed({ hide() }, 500)
         }
 
-        override fun onSeekStarted() {
-            // if has seek action, hide cover after seek completed
-            if (actionSeek) {
-                hide()
-            }
-        }
     }
+
+    override fun getRenderStateChangedListener(): RenderStateChangedListener? = null
 
     override fun displayModeChanged(isFullScreen: Boolean) {
     }
