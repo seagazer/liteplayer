@@ -38,9 +38,11 @@ class ListPlayer2 constructor(val playerView: LitePlayerView) : IPlayerView by p
     private var playerType = PlayerType.TYPE_EXO_PLAYER
     private var renderType = RenderType.TYPE_SURFACE_VIEW
     private var aspectRatio = AspectRatio.AUTO
+    private var isScrollChanged = false
     private val playerHistoryCache by lazy {
         hashMapOf<Int, Long>()
     }
+
     /**
      * Support auto cache last play position or not.
      */
@@ -185,6 +187,8 @@ class ListPlayer2 constructor(val playerView: LitePlayerView) : IPlayerView by p
                     } else {
                         playerView.start()
                     }
+                    playingPosition = completedVisibleFirst
+                    isScrollChanged = false
                 }
             }
         }
@@ -203,6 +207,7 @@ class ListPlayer2 constructor(val playerView: LitePlayerView) : IPlayerView by p
             }
             // 当前第一个不等于上次播放的index，先释放，滑动停止再开始播放
             if (playingPosition != firstPosition) {
+                isScrollChanged = true
                 detachVideoContainer()
             }
         }
@@ -220,8 +225,8 @@ class ListPlayer2 constructor(val playerView: LitePlayerView) : IPlayerView by p
                 if (firstChild.top < 0) {
                     firstPosition += 1
                 }
-                if (playingPosition != firstPosition) {
-                    MediaLogger.d("position: playing=$playingPosition, first=$firstPosition")
+                MediaLogger.d("position: playing=$playingPosition, first=$firstPosition, hasScrollChanged=$isScrollChanged")
+                if (playingPosition != firstPosition || isScrollChanged) {
                     attachHandler.removeMessages(MSG_ATTACH_CONTAINER)
                     val message = attachHandler.obtainMessage(MSG_ATTACH_CONTAINER)
                     var childIndex = 0
@@ -231,7 +236,6 @@ class ListPlayer2 constructor(val playerView: LitePlayerView) : IPlayerView by p
                     message.arg1 = childIndex
                     message.arg2 = firstPosition
                     attachHandler.sendMessageDelayed(message, ATTACH_DELAY)
-                    playingPosition = firstPosition
                 }
             }
         }
