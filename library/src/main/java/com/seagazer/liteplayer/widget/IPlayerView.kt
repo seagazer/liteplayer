@@ -10,6 +10,7 @@ import com.seagazer.liteplayer.event.PlayerStateEvent
 import com.seagazer.liteplayer.event.RenderStateEvent
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
 import com.seagazer.liteplayer.listener.RenderStateChangedListener
+import com.seagazer.liteplayer.pip.IFloatWindow
 import com.seagazer.liteplayer.player.IPlayer
 import com.seagazer.liteplayer.player.IPlayerCore
 import com.seagazer.liteplayer.render.IRender
@@ -100,6 +101,13 @@ interface IPlayerView : IPlayerCore {
      * @param overlay IOverlay to be attached.
      */
     fun attachOverlay(overlay: IOverlay)
+
+    /**
+     * Attach a float window to handle float window display mode.
+     *
+     * @param floatWindow FloatWindow to be attached.
+     */
+    fun attachFloatWindow(floatWindow: IFloatWindow)
 
     /**
      * Get current playing data source.

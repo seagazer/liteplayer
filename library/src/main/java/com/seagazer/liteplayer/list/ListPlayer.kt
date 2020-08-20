@@ -1,4 +1,4 @@
-package com.seagazer.liteplayer
+package com.seagazer.liteplayer.list
 
 import android.annotation.SuppressLint
 import android.os.Handler
@@ -11,6 +11,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.AspectRatio
 import com.seagazer.liteplayer.config.PlayerType
@@ -211,7 +212,9 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by pl
                     // 当前第一个不等于上次播放的index，播放当前第一个
                     if (playingPosition != currentFirst) {
                         attachHandler.removeMessages(MSG_ATTACH_CONTAINER)
-                        attachHandler.sendMessageDelayed(attachHandler.obtainMessage(MSG_ATTACH_CONTAINER, currentFirst), ATTACH_DELAY)
+                        attachHandler.sendMessageDelayed(attachHandler.obtainMessage(MSG_ATTACH_CONTAINER, currentFirst),
+                            ATTACH_DELAY
+                        )
                     }
                 }
                 if (currentFirst != RecyclerView.NO_POSITION) {

@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.seagazer.liteplayer.ListPlayer
+import com.seagazer.liteplayer.list.ListPlayer
 import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.widget.LiteGestureController

@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.FloatSize
 import com.seagazer.liteplayer.listener.SimpleOverlayObserver
+import com.seagazer.liteplayer.pip.LiteFloatWindow
 import com.seagazer.sample.ConfigHolder
 import com.seagazer.sample.R
 import com.seagazer.sample.data.DataProvider
@@ -38,6 +39,8 @@ class FloatWindowActivity : AppCompatActivity() {
             }
 
         })
+        // attach a float window, you can custom your floatWindow implement IFloatWindow.
+        player_view.attachFloatWindow(LiteFloatWindow(this, player_view))
         // prepare video
         player_view.setDataSource(DataSource(DataProvider.url2))
         player_view.start()

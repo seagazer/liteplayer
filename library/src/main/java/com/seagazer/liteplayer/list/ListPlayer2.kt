@@ -1,4 +1,4 @@
-package com.seagazer.liteplayer
+package com.seagazer.liteplayer.list
 
 import android.annotation.SuppressLint
 import android.os.Handler
@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.AspectRatio
 import com.seagazer.liteplayer.config.PlayerType
@@ -235,7 +236,9 @@ class ListPlayer2 constructor(val playerView: LitePlayerView) : IPlayerView by p
                     }
                     message.arg1 = childIndex
                     message.arg2 = firstPosition
-                    attachHandler.sendMessageDelayed(message, ATTACH_DELAY)
+                    attachHandler.sendMessageDelayed(message,
+                        ATTACH_DELAY
+                    )
                 }
             }
         }

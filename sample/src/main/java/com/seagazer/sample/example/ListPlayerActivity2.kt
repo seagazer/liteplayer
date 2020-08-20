@@ -9,7 +9,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.seagazer.liteplayer.ListPlayer2
+import com.seagazer.liteplayer.list.ListPlayer2
 import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.widget.LiteGestureController

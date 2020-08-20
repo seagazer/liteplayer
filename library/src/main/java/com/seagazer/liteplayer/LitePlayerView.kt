@@ -23,11 +23,11 @@ import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.*
 import com.seagazer.liteplayer.event.PlayerStateEvent
 import com.seagazer.liteplayer.event.RenderStateEvent
-import com.seagazer.liteplayer.helper.FloatWindowHelper
 import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.helper.OrientationSensorHelper
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
 import com.seagazer.liteplayer.listener.RenderStateChangedListener
+import com.seagazer.liteplayer.pip.IFloatWindow
 import com.seagazer.liteplayer.player.exo.ExoPlayerImpl
 import com.seagazer.liteplayer.player.ijk.IjkPlayerImpl
 import com.seagazer.liteplayer.player.media.MediaPlayerImpl
@@ -57,8 +57,6 @@ class LitePlayerView @JvmOverloads constructor(
         const val PROGRESS_STROKE_WIDTH = 6f
         const val DEFAULT_BACKGROUND_COLOR = Color.BLACK
         const val DEFAULT_PROGRESS_COLOR = 0xffD81BA2
-        const val FLOAT_SIZE_LARGE = 1.6f
-        const val FLOAT_SIZE_NORMAL = 2.2f
     }
 
     private val litePlayerCore: LitePlayerCore
@@ -124,7 +122,7 @@ class LitePlayerView @JvmOverloads constructor(
     }
 
     // float window
-    private val floatWindowHelper: FloatWindowHelper
+    private var floatWindow: IFloatWindow? = null
     private var isActivityBackground = false
 
     // message event handler
@@ -174,7 +172,6 @@ class LitePlayerView @JvmOverloads constructor(
             activityReference = WeakReference(context)
         }
         litePlayerCore = LitePlayerCore(context)
-        floatWindowHelper = FloatWindowHelper(context, this)
         setBackgroundColor(DEFAULT_BACKGROUND_COLOR)
         registerMediaEventObservers(context)
         registerLifecycle()
@@ -204,6 +201,10 @@ class LitePlayerView @JvmOverloads constructor(
     override fun attachOverlay(overlay: IOverlay) {
         this.customOverlays.add(overlay)
         addOverlayInner(overlay)
+    }
+
+    override fun attachFloatWindow(floatWindow: IFloatWindow) {
+        this.floatWindow = floatWindow
     }
 
     private fun addOverlayInner(overlay: IOverlay) {
@@ -584,7 +585,7 @@ class LitePlayerView @JvmOverloads constructor(
             gestureController?.hide()
             parent.requestDisallowInterceptTouchEvent(false)
         }
-        return if ((gestureController != null || mediaController != null) && !floatWindowHelper.isFloatWindowMode) {
+        return if ((gestureController != null || mediaController != null) && !isFloatWindow()) {
             controllerDetector.onTouchEvent(event)
         } else {
             super.onTouchEvent(event)
@@ -678,7 +679,7 @@ class LitePlayerView @JvmOverloads constructor(
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private fun onActivityStop() {
         isActivityBackground = true
-        if (!floatWindowHelper.isFloatWindowMode && (!isUserPaused || isPlaying())) {
+        if (!isFloatWindow() && (!isUserPaused || isPlaying())) {
             pause(false)
         }
     }
@@ -688,7 +689,7 @@ class LitePlayerView @JvmOverloads constructor(
         activityReference?.run {
             clear()
         }
-        floatWindowHelper.detachFromFloatWindow()
+        floatWindow?.detachFromFloatWindow()
         stop()
         destroy()
         unregisterLifecycle()
@@ -893,7 +894,7 @@ class LitePlayerView @JvmOverloads constructor(
     }
 
     override fun setFloatWindowMode(isFloatWindow: Boolean) {
-        if (floatWindowHelper.isFloatWindowMode != isFloatWindow) {
+        if (floatWindow?.isFloatWindow() != isFloatWindow) {
             if (isFloatWindow) {
                 // check overlay permission
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -910,22 +911,26 @@ class LitePlayerView @JvmOverloads constructor(
         }
     }
 
-    override fun isFloatWindow() = floatWindowHelper.isFloatWindowMode
+    override fun isFloatWindow() = if (floatWindow == null) false else floatWindow!!.isFloatWindow()
 
     private fun enterFloatWindow() {
-        notifyFloatWindowModeChanged(true)
-        detachVideoContainer()
-        floatWindowHelper.enterFloatWindow()
+        floatWindow?.let {
+            notifyFloatWindowModeChanged(true)
+            detachVideoContainer()
+            it.enterFloatWindow()
+        }
     }
 
     private fun exitFloatWindow() {
-        notifyFloatWindowModeChanged(false)
-        detachVideoContainer()
-        floatWindowHelper.exitFloatWindow()
-        directParent?.addView(this)
-        // if current activity is background running when close float window, we pause the player and resume play when activity resume.
-        if (isActivityBackground) {
-            pause(false)
+        floatWindow?.let {
+            notifyFloatWindowModeChanged(false)
+            detachVideoContainer()
+            it.exitFloatWindow()
+            directParent?.addView(this)
+            // if current activity is background running when close float window, we pause the player and resume play when activity resume.
+            if (isActivityBackground) {
+                pause(false)
+            }
         }
     }
 
@@ -939,7 +944,7 @@ class LitePlayerView @JvmOverloads constructor(
     }
 
     override fun setFloatSizeMode(sizeMode: FloatSize) {
-        floatWindowHelper.refreshFloatWindowSize(sizeMode)
+        floatWindow?.refreshFloatWindowSize(sizeMode)
     }
 
     override fun supportSoftwareDecode(softwareDecode: Boolean) {

@@ -1,4 +1,4 @@
-package com.seagazer.liteplayer.helper
+package com.seagazer.liteplayer.pip
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
@@ -15,6 +15,8 @@ import android.widget.ImageView
 import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.R
 import com.seagazer.liteplayer.config.FloatSize
+import com.seagazer.liteplayer.helper.DpHelper
+import com.seagazer.liteplayer.helper.SystemUiHelper
 
 /**
  * Helper to show float window.
@@ -22,7 +24,12 @@ import com.seagazer.liteplayer.config.FloatSize
  * Author: Seagazer
  * Date: 2020/8/20
  */
-class FloatWindowHelper(val context: Context, val litePlayerView: LitePlayerView) {
+class LiteFloatWindow(val context: Context, val litePlayerView: LitePlayerView) : IFloatWindow {
+    companion object {
+        const val FLOAT_SIZE_LARGE = 1.6f
+        const val FLOAT_SIZE_NORMAL = 2.2f
+    }
+
     private var statusBarHeight = -1
     private val windowManager by lazy {
         context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -30,16 +37,16 @@ class FloatWindowHelper(val context: Context, val litePlayerView: LitePlayerView
     private var downX = 0f
     private var downY = 0f
     private var floatSize = FloatSize.NORMAL
-    var isFloatWindowMode = false
+    private var isFloatWindowMode = false
 
     private val floatWindowLp by lazy {
         WindowManager.LayoutParams().apply {
             flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
             // define aspectRatio of float window is 3:2
             val wr = if (floatSize == FloatSize.NORMAL) {
-                LitePlayerView.FLOAT_SIZE_NORMAL
+                FLOAT_SIZE_NORMAL
             } else {
-                LitePlayerView.FLOAT_SIZE_LARGE
+                FLOAT_SIZE_LARGE
             }
             val w = context.resources.displayMetrics.widthPixels / wr
             val h = w / 3 * 2
@@ -58,10 +65,8 @@ class FloatWindowHelper(val context: Context, val litePlayerView: LitePlayerView
         FrameLayout(context)
     }
 
-    fun isFloatWindow() = isFloatWindowMode
-
     @SuppressLint("ClickableViewAccessibility")
-    fun enterFloatWindow() {
+    override fun enterFloatWindow() {
         // lazy get status bar height
         if (statusBarHeight == -1) {
             statusBarHeight = SystemUiHelper.getStatusBarHeight(context)
@@ -87,7 +92,11 @@ class FloatWindowHelper(val context: Context, val litePlayerView: LitePlayerView
             }
         }, FrameLayout.LayoutParams(bound, bound).apply {
             gravity = Gravity.END
-            setMargins(0, DpHelper.dp2px(context, 2f), DpHelper.dp2px(context, 2f), 0)
+            setMargins(
+                0,
+                DpHelper.dp2px(context, 2f),
+                DpHelper.dp2px(context, 2f), 0
+            )
         })
         AnimatorSet().apply {
             playTogether(
@@ -105,7 +114,7 @@ class FloatWindowHelper(val context: Context, val litePlayerView: LitePlayerView
         }
     }
 
-    fun exitFloatWindow() {
+    override fun exitFloatWindow() {
         detachFromFloatWindow()
         isFloatWindowMode = false
     }
@@ -138,7 +147,7 @@ class FloatWindowHelper(val context: Context, val litePlayerView: LitePlayerView
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    fun detachFromFloatWindow() {
+    override fun detachFromFloatWindow() {
         if (isFloatWindowMode) {
             windowManager.removeViewImmediate(floatWindowContainer)
             floatWindowContainer.removeAllViews()
@@ -146,18 +155,22 @@ class FloatWindowHelper(val context: Context, val litePlayerView: LitePlayerView
         }
     }
 
-    fun refreshFloatWindowSize(sizeMode: FloatSize) {
+    override fun refreshFloatWindowSize(sizeMode: FloatSize) {
         if (floatSize != sizeMode) {
             floatSize = sizeMode
             val wr = if (floatSize == FloatSize.NORMAL) {
-                LitePlayerView.FLOAT_SIZE_NORMAL
+                FLOAT_SIZE_NORMAL
             } else {
-                LitePlayerView.FLOAT_SIZE_LARGE
+                FLOAT_SIZE_LARGE
             }
             val w = context.resources.displayMetrics.widthPixels / wr
             val h = w / 3 * 2
             floatWindowLp.width = w.toInt()
             floatWindowLp.height = h.toInt()
         }
+    }
+
+    override fun isFloatWindow(): Boolean {
+        return isFloatWindowMode
     }
 }
