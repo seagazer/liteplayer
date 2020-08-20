@@ -1,7 +1,5 @@
 package com.seagazer.liteplayer
 
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -18,19 +16,16 @@ import android.os.Message
 import android.provider.Settings
 import android.util.AttributeSet
 import android.view.*
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.FrameLayout
-import android.widget.ImageView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.*
 import com.seagazer.liteplayer.event.PlayerStateEvent
 import com.seagazer.liteplayer.event.RenderStateEvent
-import com.seagazer.liteplayer.helper.DpHelper
+import com.seagazer.liteplayer.helper.FloatWindowHelper
 import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.helper.OrientationSensorHelper
-import com.seagazer.liteplayer.helper.SystemUiHelper
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
 import com.seagazer.liteplayer.listener.RenderStateChangedListener
 import com.seagazer.liteplayer.player.exo.ExoPlayerImpl
@@ -129,40 +124,7 @@ class LitePlayerView @JvmOverloads constructor(
     }
 
     // float window
-    private var statusBarHeight = -1
-    private var isFloatWindowMode = false
-    private val windowManager by lazy {
-        context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-    }
-    private var downX = 0f
-    private var downY = 0f
-    private var floatSize = FloatSize.NORMAL
-
-    private val lp by lazy {
-        WindowManager.LayoutParams().apply {
-            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-            // define aspectRatio of float window is 3:2
-            val wr = if (floatSize == FloatSize.NORMAL) {
-                FLOAT_SIZE_NORMAL
-            } else {
-                FLOAT_SIZE_LARGE
-            }
-            val w = context.resources.displayMetrics.widthPixels / wr
-            val h = w / 3 * 2
-            width = w.toInt()
-            height = h.toInt()
-            gravity = Gravity.START or Gravity.TOP
-            type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-            } else {
-                WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
-            }
-        }
-    }
-
-    private val floatWindowContainer by lazy {
-        FrameLayout(context)
-    }
+    private val floatWindowHelper: FloatWindowHelper
     private var isActivityBackground = false
 
     // message event handler
@@ -212,6 +174,7 @@ class LitePlayerView @JvmOverloads constructor(
             activityReference = WeakReference(context)
         }
         litePlayerCore = LitePlayerCore(context)
+        floatWindowHelper = FloatWindowHelper(context, this)
         setBackgroundColor(DEFAULT_BACKGROUND_COLOR)
         registerMediaEventObservers(context)
         registerLifecycle()
@@ -621,7 +584,7 @@ class LitePlayerView @JvmOverloads constructor(
             gestureController?.hide()
             parent.requestDisallowInterceptTouchEvent(false)
         }
-        return if ((gestureController != null || mediaController != null) && !isFloatWindowMode) {
+        return if ((gestureController != null || mediaController != null) && !floatWindowHelper.isFloatWindowMode) {
             controllerDetector.onTouchEvent(event)
         } else {
             super.onTouchEvent(event)
@@ -715,7 +678,7 @@ class LitePlayerView @JvmOverloads constructor(
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private fun onActivityStop() {
         isActivityBackground = true
-        if (!isFloatWindowMode && (!isUserPaused || isPlaying())) {
+        if (!floatWindowHelper.isFloatWindowMode && (!isUserPaused || isPlaying())) {
             pause(false)
         }
     }
@@ -725,7 +688,7 @@ class LitePlayerView @JvmOverloads constructor(
         activityReference?.run {
             clear()
         }
-        detachFromFloatWindow()
+        floatWindowHelper.detachFromFloatWindow()
         stop()
         destroy()
         unregisterLifecycle()
@@ -930,7 +893,7 @@ class LitePlayerView @JvmOverloads constructor(
     }
 
     override fun setFloatWindowMode(isFloatWindow: Boolean) {
-        if (this.isFloatWindowMode != isFloatWindow) {
+        if (floatWindowHelper.isFloatWindowMode != isFloatWindow) {
             if (isFloatWindow) {
                 // check overlay permission
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -947,86 +910,19 @@ class LitePlayerView @JvmOverloads constructor(
         }
     }
 
-    override fun isFloatWindow() = isFloatWindowMode
+    override fun isFloatWindow() = floatWindowHelper.isFloatWindowMode
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun enterFloatWindow() {
-        // lazy get status bar height
-        if (statusBarHeight == -1) {
-            statusBarHeight = SystemUiHelper.getStatusBarHeight(context)
-            if (statusBarHeight <= 0) {
-                statusBarHeight = DpHelper.dp2px(context, 25f)
-            }
-        }
-        isFloatWindowMode = true
-        // hide all inner overlay
         notifyFloatWindowModeChanged(true)
         detachVideoContainer()
-        windowManager.addView(floatWindowContainer, lp)
-        floatWindowContainer.layoutParams.width = lp.width
-        floatWindowContainer.layoutParams.height = lp.height
-        floatWindowContainer.addView(this, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
-        // add an exit button after the floatWindowContainer attach to window
-        val bound = DpHelper.dp2px(context, 20f)
-        floatWindowContainer.addView(ImageView(context).apply {
-            setImageResource(R.drawable.ic_close)
-            scaleType = ImageView.ScaleType.CENTER_INSIDE
-            setOnClickListener {
-                setFloatWindowMode(false)
-            }
-        }, LayoutParams(bound, bound).apply {
-            gravity = Gravity.END
-            setMargins(0, DpHelper.dp2px(context, 2f), DpHelper.dp2px(context, 2f), 0)
-        })
-        AnimatorSet().apply {
-            playTogether(
-                ObjectAnimator.ofFloat(floatWindowContainer, "scaleX", 0f, 1f),
-                ObjectAnimator.ofFloat(floatWindowContainer, "scaleY", 0f, 1f),
-                ObjectAnimator.ofFloat(floatWindowContainer, "alpha", 0f, 1f)
-            )
-            duration = 300
-            interpolator = AccelerateDecelerateInterpolator()
-            start()
-        }
-        // float window touch event
-        floatWindowContainer.setOnTouchListener { _, event ->
-            floatWindowGesture.onTouchEvent(event)
-        }
-    }
-
-    private val floatWindowGesture by lazy {
-        GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-
-            override fun onDown(e: MotionEvent?): Boolean {
-                downX = e!!.x
-                downY = e.y + statusBarHeight
-                return true
-            }
-
-            override fun onDoubleTap(e: MotionEvent?): Boolean {
-                if (this@LitePlayerView.isPlaying()) {
-                    this@LitePlayerView.pause(true)
-                } else {
-                    this@LitePlayerView.resume()
-                }
-                return true
-            }
-
-            override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
-                lp.x = (e2!!.rawX - downX).toInt()
-                lp.y = (e2.rawY - downY).toInt()
-                windowManager.updateViewLayout(floatWindowContainer, lp)
-                return true
-            }
-        })
+        floatWindowHelper.enterFloatWindow()
     }
 
     private fun exitFloatWindow() {
         notifyFloatWindowModeChanged(false)
-        detachFromFloatWindow()
         detachVideoContainer()
+        floatWindowHelper.exitFloatWindow()
         directParent?.addView(this)
-        isFloatWindowMode = false
         // if current activity is background running when close float window, we pause the player and resume play when activity resume.
         if (isActivityBackground) {
             pause(false)
@@ -1042,25 +938,8 @@ class LitePlayerView @JvmOverloads constructor(
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    private fun detachFromFloatWindow() {
-        if (isFloatWindowMode) {
-            windowManager.removeViewImmediate(floatWindowContainer)
-            floatWindowContainer.removeAllViews()
-            floatWindowContainer.setOnTouchListener(null)
-        }
-    }
-
-    private fun refreshFloatWindowSize() {
-        val wr = if (floatSize == FloatSize.NORMAL) {
-            FLOAT_SIZE_NORMAL
-        } else {
-            FLOAT_SIZE_LARGE
-        }
-        val w = context.resources.displayMetrics.widthPixels / wr
-        val h = w / 3 * 2
-        lp.width = w.toInt()
-        lp.height = h.toInt()
+    override fun setFloatSizeMode(sizeMode: FloatSize) {
+        floatWindowHelper.refreshFloatWindowSize(sizeMode)
     }
 
     override fun supportSoftwareDecode(softwareDecode: Boolean) {
@@ -1074,10 +953,4 @@ class LitePlayerView @JvmOverloads constructor(
         }
     }
 
-    override fun setFloatSizeMode(sizeMode: FloatSize) {
-        if (floatSize != sizeMode) {
-            floatSize = sizeMode
-            refreshFloatWindowSize()
-        }
-    }
 }
