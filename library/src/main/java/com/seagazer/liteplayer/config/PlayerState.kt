@@ -7,6 +7,7 @@ package com.seagazer.liteplayer.config
  * Date: 2020/6/20
  */
 enum class PlayerState {
+    /* Begin: state for player */
     STATE_NOT_INITIALIZED,
     STATE_INITIALIZED,
     STATE_PREPARED,
@@ -15,6 +16,7 @@ enum class PlayerState {
     STATE_STOPPED,
     STATE_PLAYBACK_COMPLETE,
     STATE_ERROR,
+    /* End: state for player */
 
     STATE_BUFFER_UPDATE,
     STATE_BUFFER_START,

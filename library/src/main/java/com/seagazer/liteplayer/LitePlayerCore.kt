@@ -171,6 +171,9 @@ class LitePlayerCore constructor(val context: Context) : IPlayer {
         innerPlayer?.supportSoftwareDecode(softwareDecode)
     }
 
+    override fun notifyPlayStateChanged(newState: PlayerState) {
+    }
+
     override fun getVideoWidth() = if (innerPlayer != null) innerPlayer!!.getVideoWidth() else 0
 
     override fun getVideoHeight() = if (innerPlayer != null) innerPlayer!!.getVideoHeight() else 0

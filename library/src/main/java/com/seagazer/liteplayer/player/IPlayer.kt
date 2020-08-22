@@ -3,6 +3,7 @@ package com.seagazer.liteplayer.player
 import android.view.Surface
 import android.view.SurfaceHolder
 import androidx.lifecycle.MutableLiveData
+import com.seagazer.liteplayer.config.PlayerState
 import com.seagazer.liteplayer.event.PlayerStateEvent
 
 /**
@@ -41,5 +42,11 @@ interface IPlayer : IPlayerCore {
      * @param softwareDecode True software decode, false mediacodec decode
      */
     fun supportSoftwareDecode(softwareDecode: Boolean)
+
+    /**
+     * Notify the observers that current player state changed.
+     * @param newState New state of player.
+     */
+    fun notifyPlayStateChanged(newState: PlayerState)
 
 }

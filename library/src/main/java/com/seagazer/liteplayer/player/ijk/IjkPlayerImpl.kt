@@ -39,16 +39,14 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
     private var softwareDecode = true
 
     private val preparedListener = IMediaPlayer.OnPreparedListener {
-        setPlayerState(PlayerState.STATE_PREPARED)
-        liveData?.value = PlayerStateEvent(PlayerState.STATE_PREPARED)
+        notifyPlayStateChanged(PlayerState.STATE_PREPARED)
         if (asyncToStart && player != null) {
             player!!.start()
             if (startPosition > 0) {
                 seekTo(startPosition)
                 startPosition = 0
             }
-            setPlayerState(PlayerState.STATE_STARTED)
-            liveData?.value = PlayerStateEvent(PlayerState.STATE_STARTED)
+            notifyPlayStateChanged(PlayerState.STATE_STARTED)
         }
     }
 
@@ -65,8 +63,7 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
         }
 
     private val completionListener = IMediaPlayer.OnCompletionListener { _ ->
-        setPlayerState(PlayerState.STATE_PLAYBACK_COMPLETE)
-        liveData?.value = PlayerStateEvent(PlayerState.STATE_PLAYBACK_COMPLETE)
+        notifyPlayStateChanged(PlayerState.STATE_PLAYBACK_COMPLETE)
     }
 
     private val infoListener = IMediaPlayer.OnInfoListener { _, arg1, _ ->
@@ -168,6 +165,11 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
         }
     }
 
+    override fun notifyPlayStateChanged(newState: PlayerState) {
+        setPlayerState(newState)
+        liveData?.value = PlayerStateEvent(newState)
+    }
+
     override fun setDataSource(source: DataSource) {
         this.dataSource = source
         videoWidth = 0
@@ -222,12 +224,10 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
             }
             player!!.prepareAsync()
             if (currentState == PlayerState.STATE_NOT_INITIALIZED) {
-                setPlayerState(PlayerState.STATE_INITIALIZED)
-                liveData?.value = PlayerStateEvent(PlayerState.STATE_INITIALIZED)
+                notifyPlayStateChanged(PlayerState.STATE_INITIALIZED)
             }
         } catch (ex: Exception) {
             MediaLogger.e("Unable to open content: $dataSource, $ex")
-            setPlayerState(PlayerState.STATE_ERROR)
             errorListener.onError(player, MediaPlayer.MEDIA_ERROR_UNKNOWN, 0)
         }
     }
@@ -252,8 +252,7 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
                     if (startPosition > 0) {
                         seekTo(startPosition)
                     }
-                    setPlayerState(PlayerState.STATE_STARTED)
-                    liveData?.value = PlayerStateEvent(PlayerState.STATE_STARTED)
+                    notifyPlayStateChanged(PlayerState.STATE_STARTED)
                 }
             } else {
                 asyncToStart = true
@@ -266,8 +265,7 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
         if (isInPlaybackState()) {
             if (player != null && player!!.isPlaying) {
                 player?.pause()
-                setPlayerState(PlayerState.STATE_PAUSED)
-                liveData?.value = PlayerStateEvent(PlayerState.STATE_PAUSED)
+                notifyPlayStateChanged(PlayerState.STATE_PAUSED)
             }
         }
     }
@@ -275,8 +273,7 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
     override fun resume() {
         if (isInPlaybackState() && getPlayerState() == PlayerState.STATE_PAUSED) {
             player?.start()
-            setPlayerState(PlayerState.STATE_STARTED)
-            liveData?.value = PlayerStateEvent(PlayerState.STATE_STARTED)
+            notifyPlayStateChanged(PlayerState.STATE_STARTED)
         }
     }
 
@@ -296,8 +293,7 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
         asyncToStart = false
         isBuffering = false
         player?.stop()
-        setPlayerState(PlayerState.STATE_STOPPED)
-        liveData?.value = PlayerStateEvent(PlayerState.STATE_STOPPED)
+        notifyPlayStateChanged(PlayerState.STATE_STOPPED)
     }
 
     override fun reset() {
@@ -305,8 +301,7 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
         isBuffering = false
         player?.resetListeners()
         player?.reset()
-        setPlayerState(PlayerState.STATE_NOT_INITIALIZED)
-        liveData?.value = PlayerStateEvent(PlayerState.STATE_NOT_INITIALIZED)
+        notifyPlayStateChanged(PlayerState.STATE_NOT_INITIALIZED)
     }
 
     override fun destroy() {

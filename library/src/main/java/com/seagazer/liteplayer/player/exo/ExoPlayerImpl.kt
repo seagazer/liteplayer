@@ -83,11 +83,9 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
             // 已经开始播放，两种状态：播放，暂停
             if (!isPreparing) {
                 if (playWhenReady) {
-                    setPlayerState(PlayerState.STATE_STARTED)
-                    liveData?.value = PlayerStateEvent(PlayerState.STATE_STARTED)
+                    notifyPlayStateChanged(PlayerState.STATE_STARTED)
                 } else {
-                    setPlayerState(PlayerState.STATE_PAUSED)
-                    liveData?.value = PlayerStateEvent(PlayerState.STATE_PAUSED)
+                    notifyPlayStateChanged(PlayerState.STATE_PAUSED)
                 }
             }
             // setDataSource初始化，第一次启播状态：播放，准备好了但是未播放
@@ -96,11 +94,9 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
                     liveData?.value = PlayerStateEvent(PlayerState.STATE_PREPARED)
                     isPreparing = false
                     if (playWhenReady) {
-                        setPlayerState(PlayerState.STATE_STARTED)
-                        liveData?.value = PlayerStateEvent(PlayerState.STATE_STARTED)
+                        notifyPlayStateChanged(PlayerState.STATE_STARTED)
                     } else {
-                        setPlayerState(PlayerState.STATE_PREPARED)
-                        liveData?.value = PlayerStateEvent(PlayerState.STATE_PREPARED)
+                        notifyPlayStateChanged(PlayerState.STATE_PREPARED)
                     }
                     if (startPosition > 0) {
                         seekTo(startPosition)
@@ -129,8 +125,7 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
                     isBuffering = true
                     liveData?.value = PlayerStateEvent(PlayerState.STATE_BUFFER_START)
                 } else if (playbackState == Player.STATE_ENDED) {
-                    setPlayerState(PlayerState.STATE_PLAYBACK_COMPLETE)
-                    liveData?.value = PlayerStateEvent(PlayerState.STATE_PLAYBACK_COMPLETE)
+                    notifyPlayStateChanged(PlayerState.STATE_PLAYBACK_COMPLETE)
                 }
             }
         }
@@ -185,8 +180,7 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
         try {
             stop()
             if (currentState == PlayerState.STATE_NOT_INITIALIZED) {
-                setPlayerState(PlayerState.STATE_INITIALIZED)
-                liveData?.value = PlayerStateEvent(PlayerState.STATE_INITIALIZED)
+                notifyPlayStateChanged(PlayerState.STATE_INITIALIZED)
             }
             val url = source.mediaUrl
             val uri = Uri.parse(url)
@@ -256,6 +250,11 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
         MediaLogger.w("Not support!")
     }
 
+    override fun notifyPlayStateChanged(newState: PlayerState) {
+        setPlayerState(newState)
+        liveData?.value = PlayerStateEvent(newState)
+    }
+
     override fun getVideoWidth() = videoWidth
 
     override fun getVideoHeight() = videoHeight
@@ -280,15 +279,13 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
         isPreparing = true
         isBuffering = false
         isPendingSeek = false
-        setPlayerState(PlayerState.STATE_STOPPED)
-        liveData?.value = PlayerStateEvent(PlayerState.STATE_STOPPED)
+        notifyPlayStateChanged(PlayerState.STATE_STOPPED)
         player.stop(true)
     }
 
     override fun reset() {
         // not support reset, just mark state not init
-        setPlayerState(PlayerState.STATE_NOT_INITIALIZED)
-        liveData?.value = PlayerStateEvent(PlayerState.STATE_NOT_INITIALIZED)
+        notifyPlayStateChanged(PlayerState.STATE_NOT_INITIALIZED)
     }
 
     override fun destroy() {

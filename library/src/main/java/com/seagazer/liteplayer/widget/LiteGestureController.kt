@@ -295,7 +295,7 @@ class LiteGestureController @JvmOverloads constructor(
         }
         if (isVolumeSetting) {
             moveYDistance = 0
-            isBrightnessSetting = false
+            isVolumeSetting = false
         }
     }
 
