@@ -232,6 +232,11 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
     }
 
     override fun start() {
+        start(0)
+    }
+
+    override fun start(startPosition: Long) {
+        this.startPosition = startPosition
         // first setup player type will get audio focus, so will call this method before setDataSource
         if (this.dataSource == null) {
             MediaLogger.w("DataSource not found, can not start player")
@@ -253,11 +258,6 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
                 asyncToStart = true
             }
         }
-    }
-
-    override fun start(startPosition: Long) {
-        this.startPosition = startPosition
-        start()
     }
 
     override fun pause(fromUser: Boolean) {

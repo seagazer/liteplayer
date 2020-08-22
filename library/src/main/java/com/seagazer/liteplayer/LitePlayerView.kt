@@ -134,10 +134,12 @@ class LitePlayerView @JvmOverloads constructor(
                     currentProgress = getCurrentPosition().toInt()
                     val secondProgress = getBufferedPercentage().coerceAtMost(100) * 1.0f / 100 * getDuration()
                     mediaController?.onProgressChanged(currentProgress, secondProgress.toInt())
-                    sendEmptyMessageDelayed(
-                        MSG_PROGRESS,
-                        PROGRESS_DELAY
-                    )
+                    val state = getPlayerState()
+                    if (state != PlayerState.STATE_PLAYBACK_COMPLETE && state != PlayerState.STATE_STOPPED
+                        && state != PlayerState.STATE_PAUSED && state != PlayerState.STATE_ERROR
+                    ) {
+                        sendEmptyMessageDelayed(MSG_PROGRESS, PROGRESS_DELAY)
+                    }
                     if (currentProgress > 0 && maxProgress > 0) {
                         invalidate()
                     }
@@ -284,7 +286,6 @@ class LitePlayerView @JvmOverloads constructor(
                         it.onPaused()
                     }
                     mediaController?.onPaused()
-                    handler.removeMessages(MSG_PROGRESS)
                 }
                 PlayerState.STATE_STOPPED -> {
                     MediaLogger.i("----> player stopped")
@@ -292,7 +293,6 @@ class LitePlayerView @JvmOverloads constructor(
                     playerStateListeners.forEach {
                         it.onStopped()
                     }
-                    handler.removeMessages(MSG_PROGRESS)
                 }
                 PlayerState.STATE_PLAYBACK_COMPLETE -> {
                     MediaLogger.i("----> player completed")
@@ -300,7 +300,12 @@ class LitePlayerView @JvmOverloads constructor(
                     playerStateListeners.forEach {
                         it.onCompleted()
                     }
-                    handler.removeMessages(MSG_PROGRESS)
+                    if (repeat) {
+                        getDataSource()?.let { dataSource ->
+                            setDataSource(dataSource)
+                            start()
+                        }
+                    }
                 }
                 PlayerState.STATE_ERROR -> {
                     MediaLogger.i("----> player error")
@@ -308,7 +313,6 @@ class LitePlayerView @JvmOverloads constructor(
                     playerStateListeners.forEach {
                         it.onError(playerType!!, event.errorCode)
                     }
-                    handler.removeMessages(MSG_PROGRESS)
                 }
                 PlayerState.STATE_VIDEO_SIZE_CHANGED -> {
                     MediaLogger.i("---->video size changed: ${event.videoWidth} * ${event.videoHeight}，refresh surface render size")

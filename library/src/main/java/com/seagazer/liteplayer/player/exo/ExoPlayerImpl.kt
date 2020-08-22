@@ -184,6 +184,7 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
 
     override fun setDataSource(source: DataSource) {
         try {
+            stop()
             if (currentState == PlayerState.STATE_NOT_INITIALIZED) {
                 setPlayerState(PlayerState.STATE_INITIALIZED)
                 liveData?.value = PlayerStateEvent(PlayerState.STATE_INITIALIZED)
@@ -221,12 +222,12 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
     }
 
     override fun start() {
-        player.playWhenReady = true
+        start(0)
     }
 
     override fun start(startPosition: Long) {
         this.startPosition = startPosition
-        start()
+        player.playWhenReady = true
     }
 
     override fun pause(fromUser: Boolean) {
