@@ -63,6 +63,7 @@ class LitePlayerView @JvmOverloads constructor(
     private var activityReference: WeakReference<Activity>? = null
     private var dataSource: DataSource? = null
     private var isUserPaused = false
+    private var repeat = false
 
     // event observer
     private val renderStateObserver = MutableLiveData<RenderStateEvent>()
@@ -949,6 +950,10 @@ class LitePlayerView @JvmOverloads constructor(
 
     override fun setFloatSizeMode(sizeMode: FloatSize) {
         floatWindow?.refreshFloatWindowSize(sizeMode)
+    }
+
+    override fun setRepeatMode(repeat: Boolean) {
+        this.repeat = repeat
     }
 
     override fun supportSoftwareDecode(softwareDecode: Boolean) {

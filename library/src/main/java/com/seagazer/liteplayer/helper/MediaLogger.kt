@@ -28,6 +28,10 @@ class MediaLogger {
             level = l
         }
 
+        fun isOpenLogger(): Boolean {
+            return DEBUG || openLogger
+        }
+
         fun d(msg: String) {
             if ((DEBUG || openLogger) && level <= Level.DEBUG) {
                 val stackTrace = Thread.currentThread().stackTrace

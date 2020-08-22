@@ -169,4 +169,11 @@ interface IPlayerView : IPlayerCore {
      * @param sizeMode FloatSize.NORMAL or FloatSize.LARGE
      */
     fun setFloatSizeMode(sizeMode: FloatSize)
+
+    /**
+     * Set repeat play when completed or not.
+     * @param repeat True replay after completed, false stop after completed.
+     */
+    fun setRepeatMode(repeat: Boolean)
+
 }

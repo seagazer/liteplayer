@@ -180,6 +180,7 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
             currentBufferedPercentage = 0
             if (player == null) {
                 player = IjkMediaPlayer()
+                player!!.setLogEnabled(MediaLogger.isOpenLogger())
                 player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "soundtouch", 1)
                 player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 0)
                 player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 5)

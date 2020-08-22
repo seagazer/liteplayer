@@ -19,7 +19,6 @@ import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.util.Util
 import com.google.android.exoplayer2.video.VideoListener
-import com.seagazer.liteplayer.BuildConfig
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.PlayerState
 import com.seagazer.liteplayer.event.PlayerStateEvent
@@ -162,7 +161,7 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
             .build()
         player.addVideoListener(videoListener)
         player.addListener(eventListener)
-        if (BuildConfig.DEBUG) {
+        if (MediaLogger.isOpenLogger()) {
             player.addAnalyticsListener(EventLogger(DefaultTrackSelector(appContext)))
         }
         dataSourceFactory = DefaultDataSourceFactory(appContext, Util.getUserAgent(appContext, appContext.packageName))
