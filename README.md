@@ -2,7 +2,7 @@
 <font color=#4A90CE size=5>A lite player for android by Kotlin language</font>
 <font color=#4A90CE size=5>一个完全使用Kotlin开发的简洁高效，轻量级的播放器框架</font>
 
-#### 目前v1.0.2版已支持功能：
+#### 目前版本已支持功能：
 * <font color=#4A90CE>支持ExoPlayer解码</font>
 * <font color=#4A90CE>支持MediaPlayer解码</font>
 * <font color=#4A90CE>支持IjkPlayer解码</font>
@@ -28,7 +28,7 @@
 #### v1版本模块设计：
 <img src="https://upload-images.jianshu.io/upload_images/4420407-43ebcad07f04fe94.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="820" height="500"/>
 
-
+最新版本：[![](https://www.jitpack.io/v/seagazer/liteplayer.svg)](https://www.jitpack.io/#seagazer/liteplayer)
 #### 基本使用方法：
 1. 添加依赖和相关配置：
 ```java
@@ -52,7 +52,7 @@
     // 3.项目中添加远程依赖:
     dependencies {
             // 依赖LitePlayer库
-            implementation 'com.github.seagazer:liteplayer:1.0.1'
+            implementation 'com.github.seagazer:liteplayer:最新版本'
             // 项目部分api使用需要依赖livedata
             implementation 'androidx.lifecycle:lifecycle-livedata:2.2.0'
             implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
@@ -78,6 +78,8 @@
     litePlayerView.setAutoSensorEnable(true)
     // 设置播放器内核：模式定义在PlayerType中
     litePlayerView.setPlayerType(PlayerType.TYPE_EXO_PLAYER)
+    // 设置软解(仅Ijk内核支持,Ijk默认软解)
+    litePlayerView.supportSoftwareDecode(true)
     // 设置渲染方式：模式定义在RenderType中
     litePlayerView.setRenderType(RenderType.TYPE_SURFACE_VIEW)
     // 设置是否全屏模式
@@ -86,6 +88,8 @@
     litePlayerView.isFullScreen()
     // 设置是否悬浮窗模式
     litePlayerView.setFloatWindowMode(true)
+    // 设置悬浮窗大小(FloatSize.NORMAL, FloatSize.LARGE)
+    litePlayerView.setFloatSizeMode(FloatSize.LARGE)
     // 判断当前是否悬浮窗模式
     litePlayerView.isFloatWindow()
     // 设置比例模式：模式定义在AspectRatio中
@@ -100,32 +104,68 @@
         supportBrightness = true
         supportVolume = true
     })
+    // 添加LiteFloatWindow处理悬浮窗播放(可继承IFloatWindow自定义悬浮窗)
+    litePlayerView.attachFloatWindow(LiteFloatWindow(context, litePlayerView))
     // 添加自定义面板(Loading等)
     litePlayerView.attachOverlay(LoadingOverlay(context))
-    // 设置是否自动隐藏ITopbar和IController面板(IGesture面板会在操作后自动隐藏，自定义overlay需自己控制显示隐藏时机)
+    // 添加一个监听面板(非View，可用于监听悬浮窗模式，全屏模式，自动感应模式状态变更)
+    litePlayerView.attachOverlay(object : SimpleOverlayObserver() {
+            override fun floatWindowModeChanged(isFloatWindow: Boolean) {
+                super.floatWindowModeChanged(isFloatWindow)
+            }
+
+            override fun autoSensorModeChanged(isAutoSensor: Boolean) {
+                super.autoSensorModeChanged(isAutoSensor)
+            }
+
+            override fun displayModeChanged(isFullScreen: Boolean) {
+                super.displayModeChanged(isFullScreen)
+            }
+    })
+    // 设置是否自动隐藏ITopbar和IController面板(IGesture面板会在操作后自动隐藏，自定义overlay需自己根据player或render状态控制显示隐藏时机)
     litePlayerView.setAutoHideOverlay(false)
     // 设置媒体播放资源
     litePlayerView.setDataSource(DataSource(url))
     // 设置播放速率
     litePlayerView.setPlaySpeed(1.5f)
+    // 设置音量(音量范围自己通过AudioManager获取，每个设备和系统不一样)
+    litePlayerView.setVolume(5)
+    // 设置播放结束后是否自动重放
+    litePlayerView.setRepeatMode(true)
     // 设置监听播放器状态
     litePlayerView.addPlayerStateChangedListener(PlayerStateChangedListener())
+    // 设置监听Surface状态
+    litePlayerView.addRenderStateChangedListener(RenderStateChangedListener())
     // 开始播放
     litePlayerView.start()
+    // 开始播放(从position开始，相当于start + seek操作)
+    litePlayerView.start(position)
+    // 跳至position位置
+    litePlayerView.seekTo(position)
     // 暂停(是否用户主动暂停)[例如Activity移入后台，框架内部会标记为非用户暂停，页面状态恢复时会自动开启播放]
     litePlayerView.pause(true)
-    // 恢复播放
+    // 恢复播放(当框架监听生命周期状态自动暂停时会在合适时机自动恢复播放)
     litePlayerView.resume()
-    // 停止播放：在支持Lifecycle环境下无需主动调用，框架内部会自动调用
+    // 停止播放：在支持Lifecycle的Activity环境下无需主动调用，框架内部会自动调用
     litePlayerView.stop()
-    // 销毁释放播放器：在支持Lifecycle环境下无需主动调用，框架内部会自动调用
+    // 销毁释放播放器：在支持Lifecycle的Activity环境下无需主动调用，框架内部会自动调用
     litePlayerView.destroy()
+    // 获取IPlayer实例(ExoPlayerImpl, IjkPlayerImpl, MediaPlayerImpl, 可能为null)
+    litePlayerView.getPlayer()
+    // 获取IRender实例(RednerSurfaceView, RenderTextureView, 可能为null)
+    litePlayerView.getRender()
+
+<MediaLogger.kt>
+    // 强制打开logcat(默认debug打开，release关闭)
+    MediaLogger.openLogger()
+    // 设置logcat级别为info(默认debug)
+    MediaLogger.setLevel(MediaLogger.Level.INFO)
 ```
 
-3. `ListPlayer`支持以极简的方式接入`RecyclerView`列表播放，框架设计使用代理模式，因此上述`LitePlayerView`的所有`API`都适用于`ListPlayer`：
+3. `ListPlayer`支持以极简的方式接入`RecyclerView`列表播放，框架设计使用代理模式，因此上述`LitePlayerView`的所有`API`都适用于`ListPlayer`
+* 注意：`IPlayer`是在`attachToRecyclerView`中初始化，涉及Player的方法，例如`pause，setPlaySpeed`必须在`attachToRecyclerView`之后调用：
 ```kotlin
 <ListPlayer.kt>
-
     // 默认构造需传入一个LitePlayerView实例
     val listPlayer = ListPlayer(LitePlayerView(context))
     // 定义列表滑动回调
@@ -144,12 +184,14 @@
     listPlayer.setAutoPlayMode(true)
     // 非自动播放时，点击item播放调用方法
     listPlayer.onItemClick(adapterPosition)
+    // 设置自动缓存每个position对应视频的播放进度(默认false)
+    listPlayer.supportHistory = true
 ```
 
-4. `ListPlayer2`支持以极简的方式接入`ListView`列表播放，框架设计使用代理模式，因此上述`LitePlayerView`的所有`API`都适用于`ListPlayer2`：
+4. `ListPlayer2`支持以极简的方式接入`ListView`列表播放，框架设计使用代理模式，因此上述`LitePlayerView`的所有`API`都适用于`ListPlayer2`
+* 注意：`IPlayer`是在`attachToListView`中初始化，涉及Player的方法，例如`pause，setPlaySpeed`必须在`attachToRecyclerView`之后调用：
 ```kotlin
 <ListPlayer2.kt>
-
     // 默认构造需传入一个LitePlayerView实例
     val listPlayer2 = ListPlayer2(LitePlayerView(context))
     // 定义列表滑动回调
@@ -170,6 +212,8 @@
     listPlayer2.setAutoPlayMode(true)
     // 非自动播放时，点击item播放调用方法
     listPlayer2.onItemClick(adapterPosition)
+    // 设置自动缓存每个position对应视频的播放进度(默认false)
+    listPlayer.supportHistory = true
 ```
 ##### 更多具体使用方式和场景可参考项目中的`sample`工程
 
