@@ -1,5 +1,6 @@
 package com.seagazer.liteplayer.pip
 
+import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.config.FloatSize
 
 /**
@@ -18,6 +19,11 @@ interface IFloatWindow {
      * Close float window.
      */
     fun exitFloatWindow()
+
+    /**
+     * Callback when this floatWindow attach to LitePlayerView.
+     */
+    fun attachPlayer(litePlayerView: LitePlayerView)
 
     /**
      * Detach player view from float window container.

@@ -163,7 +163,8 @@ class BasePlayerActivity : AppCompatActivity() {
         val dataSource =
             if (TextUtils.isEmpty(urls[currentPlayIndex].first)) {
                 // If raw resource play, dataSource must set a rawId
-                DataSource("", urls[currentPlayIndex].second).apply {
+                DataSource().apply {
+                    mediaTitle = urls[currentPlayIndex].second
                     rawId = DataProvider.url5// raw resource
                 }
             } else {

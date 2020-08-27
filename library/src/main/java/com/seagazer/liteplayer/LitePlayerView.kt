@@ -19,7 +19,7 @@ import android.view.*
 import android.widget.FrameLayout
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
-import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.liteplayer.bean.IDataSource
 import com.seagazer.liteplayer.config.*
 import com.seagazer.liteplayer.event.PlayerStateEvent
 import com.seagazer.liteplayer.event.RenderStateEvent
@@ -61,7 +61,7 @@ class LitePlayerView @JvmOverloads constructor(
 
     private val litePlayerCore: LitePlayerCore
     private var activityReference: WeakReference<Activity>? = null
-    private var dataSource: DataSource? = null
+    private var dataSource: IDataSource? = null
     private var isUserPaused = false
     private var repeat = false
 
@@ -208,6 +208,7 @@ class LitePlayerView @JvmOverloads constructor(
 
     override fun attachFloatWindow(floatWindow: IFloatWindow) {
         this.floatWindow = floatWindow
+        this.floatWindow!!.attachPlayer(this)
     }
 
     private fun addOverlayInner(overlay: IOverlay) {
@@ -788,7 +789,7 @@ class LitePlayerView @JvmOverloads constructor(
 
     override fun getRender(): IRender? = render
 
-    override fun setDataSource(source: DataSource) {
+    override fun setDataSource(source: IDataSource) {
         dataSource = source
         MediaLogger.w("setDataSource: $source")
         // when ijkplayer change decode mode with texture view, system may get this error:

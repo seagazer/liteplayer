@@ -1,6 +1,6 @@
 package com.seagazer.liteplayer.widget
 
-import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.liteplayer.bean.IDataSource
 
 /**
  *
@@ -9,6 +9,6 @@ import com.seagazer.liteplayer.bean.DataSource
  */
 interface ITopbar : IOverlay {
 
-    fun onDataSourceChanged(dataSource: DataSource)
+    fun onDataSourceChanged(dataSource: IDataSource)
 
 }

@@ -1,6 +1,6 @@
 package com.seagazer.liteplayer.player
 
-import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.liteplayer.bean.IDataSource
 import com.seagazer.liteplayer.config.PlayerState
 
 /**
@@ -9,7 +9,7 @@ import com.seagazer.liteplayer.config.PlayerState
  * Date: 2020/6/29
  */
 interface IPlayerCore {
-    fun setDataSource(source: DataSource)
+    fun setDataSource(source: IDataSource)
     fun start()
     fun start(startPosition: Long)
     fun pause(fromUser: Boolean)

@@ -24,12 +24,12 @@ import com.seagazer.liteplayer.helper.SystemUiHelper
  * Author: Seagazer
  * Date: 2020/8/20
  */
-class LiteFloatWindow(val context: Context, val litePlayerView: LitePlayerView) : IFloatWindow {
+class LiteFloatWindow(val context: Context) : IFloatWindow {
     companion object {
         const val FLOAT_SIZE_LARGE = 1.6f
         const val FLOAT_SIZE_NORMAL = 2.2f
     }
-
+    private lateinit var litePlayerView: LitePlayerView
     private var statusBarHeight = -1
     private val windowManager by lazy {
         context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -117,6 +117,10 @@ class LiteFloatWindow(val context: Context, val litePlayerView: LitePlayerView) 
     override fun exitFloatWindow() {
         detachFromFloatWindow()
         isFloatWindowMode = false
+    }
+
+    override fun attachPlayer(litePlayerView: LitePlayerView) {
+        this.litePlayerView = litePlayerView
     }
 
     private val floatWindowGesture by lazy {

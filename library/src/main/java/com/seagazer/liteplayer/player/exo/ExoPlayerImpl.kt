@@ -19,7 +19,7 @@ import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.util.Util
 import com.google.android.exoplayer2.video.VideoListener
-import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.liteplayer.bean.IDataSource
 import com.seagazer.liteplayer.config.PlayerState
 import com.seagazer.liteplayer.event.PlayerStateEvent
 import com.seagazer.liteplayer.helper.MediaLogger
@@ -176,7 +176,7 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
 
     override fun getPlayer() = this
 
-    override fun setDataSource(source: DataSource) {
+    override fun setDataSource(source: IDataSource) {
         try {
             stop()
             if (currentState == PlayerState.STATE_NOT_INITIALIZED) {

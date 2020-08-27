@@ -7,9 +7,11 @@ package com.seagazer.liteplayer.bean
  * Date: 2020/6/19
  */
 data class DataSource(
-    val mediaUrl: String, val mediaTitle: String = "",
-    val mediaAuthor: String = "", val mediaPoster: String = "",
-    val mediaDesc: String = ""
-) {
-    var rawId: Int = -1
-}
+    override var mediaUrl: String = "",
+    override var mediaTitle: String = "",
+    override var mediaAuthor: String = "",
+    override var mediaPoster: String = "",
+    override var mediaDesc: String = "",
+    override var rawId: Int = -1
+) : IDataSource
+

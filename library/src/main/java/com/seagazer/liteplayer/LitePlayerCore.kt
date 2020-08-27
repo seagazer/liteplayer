@@ -8,7 +8,7 @@ import android.os.Build
 import android.view.Surface
 import android.view.SurfaceHolder
 import androidx.lifecycle.MutableLiveData
-import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.liteplayer.bean.IDataSource
 import com.seagazer.liteplayer.config.PlayerState
 import com.seagazer.liteplayer.event.PlayerStateEvent
 import com.seagazer.liteplayer.helper.MediaLogger
@@ -119,7 +119,7 @@ class LitePlayerCore constructor(val context: Context) : IPlayer {
 
     override fun getPlayer() = innerPlayer
 
-    override fun setDataSource(source: DataSource) {
+    override fun setDataSource(source: IDataSource) {
         innerPlayer?.setDataSource(source)
     }
 

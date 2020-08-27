@@ -9,6 +9,7 @@ import android.view.Surface
 import android.view.SurfaceHolder
 import androidx.lifecycle.MutableLiveData
 import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.liteplayer.bean.IDataSource
 import com.seagazer.liteplayer.config.PlayerState
 import com.seagazer.liteplayer.event.PlayerStateEvent
 import com.seagazer.liteplayer.helper.MediaLogger
@@ -32,7 +33,7 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
     private var isPendingSeek = false
     private var liveData: MutableLiveData<PlayerStateEvent>? = null
     private var startPosition = 0L
-    private var dataSource: DataSource? = null
+    private var dataSource: IDataSource? = null
     private var surface: Surface? = null
     private var asyncToStart = false
     private var isBuffering = true
@@ -170,7 +171,7 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
         liveData?.value = PlayerStateEvent(newState)
     }
 
-    override fun setDataSource(source: DataSource) {
+    override fun setDataSource(source: IDataSource) {
         this.dataSource = source
         videoWidth = 0
         videoHeight = 0

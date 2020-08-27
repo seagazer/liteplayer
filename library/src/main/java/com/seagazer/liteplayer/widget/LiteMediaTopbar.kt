@@ -16,7 +16,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.R
-import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.liteplayer.bean.IDataSource
 import com.seagazer.liteplayer.helper.DpHelper
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
 import com.seagazer.liteplayer.listener.RenderStateChangedListener
@@ -65,7 +65,7 @@ class LiteMediaTopbar @JvmOverloads constructor(
         })
     }
 
-    override fun onDataSourceChanged(dataSource: DataSource) {
+    override fun onDataSourceChanged(dataSource: IDataSource) {
         title.text = dataSource.mediaTitle
     }
 

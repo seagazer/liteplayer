@@ -16,7 +16,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.R
-import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.liteplayer.bean.IDataSource
 import com.seagazer.liteplayer.helper.DpHelper
 import com.seagazer.liteplayer.helper.TimeConverter
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
@@ -91,7 +91,7 @@ class LiteMediaController @JvmOverloads constructor(
         })
     }
 
-    override fun onPlayerPrepared(dataSource: DataSource) {
+    override fun onPlayerPrepared(dataSource: IDataSource) {
         duration = player.getDuration()
         seekBar.max = duration.toInt()
     }

@@ -40,7 +40,7 @@ class FloatWindowActivity : AppCompatActivity() {
 
         })
         // attach a float window, you can custom your floatWindow implement IFloatWindow.
-        player_view.attachFloatWindow(LiteFloatWindow(this, player_view))
+        player_view.attachFloatWindow(LiteFloatWindow(this))
         // prepare video
         player_view.setDataSource(DataSource(DataProvider.url2))
         player_view.start()

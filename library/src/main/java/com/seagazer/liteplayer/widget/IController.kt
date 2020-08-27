@@ -1,6 +1,6 @@
 package com.seagazer.liteplayer.widget
 
-import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.liteplayer.bean.IDataSource
 
 /**
  *
@@ -9,7 +9,7 @@ import com.seagazer.liteplayer.bean.DataSource
  */
 interface IController : IOverlay {
 
-    fun onPlayerPrepared(dataSource: DataSource)
+    fun onPlayerPrepared(dataSource: IDataSource)
 
     fun onProgressChanged(progress: Int, secondProgress: Int)
 

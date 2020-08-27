@@ -1,6 +1,6 @@
 package com.seagazer.liteplayer.listener
 
-import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.liteplayer.bean.IDataSource
 import com.seagazer.liteplayer.config.PlayerType
 
 /**
@@ -9,7 +9,7 @@ import com.seagazer.liteplayer.config.PlayerType
  * Date: 2020/6/28
  */
 open class SimplePlayerStateChangedListener : PlayerStateChangedListener {
-    override fun onPrepared(dataSource: DataSource) {
+    override fun onPrepared(dataSource: IDataSource) {
     }
 
     override fun onPlaying() {
