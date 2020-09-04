@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.seagazer.liteplayer.list.ListPlayer2
 import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.liteplayer.helper.MediaLogger
+import com.seagazer.liteplayer.list.ListItemChangedListener
 import com.seagazer.liteplayer.widget.LiteGestureController
 import com.seagazer.liteplayer.widget.LiteMediaController
 import com.seagazer.sample.ConfigHolder
@@ -59,6 +61,15 @@ class ListPlayerActivity2 : AppCompatActivity() {
             setRenderType(ConfigHolder.renderType)
             setPlayerType(ConfigHolder.playerType)
             supportHistory = true
+            listItemChangedListener = object : ListItemChangedListener {
+                override fun onDetachItemView(oldPosition: Int) {
+                    MediaLogger.e("detach item: $oldPosition")
+                }
+
+                override fun onAttachItemView(newPosition: Int) {
+                    MediaLogger.e("attach item: $newPosition")
+                }
+            }
         }
         val videoScrollListener = object : ListPlayer2.VideoListScrollListener {
 

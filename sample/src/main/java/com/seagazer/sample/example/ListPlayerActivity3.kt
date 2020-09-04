@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.seagazer.liteplayer.list.ListPlayer
 import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.liteplayer.helper.MediaLogger
+import com.seagazer.liteplayer.list.ListItemChangedListener
 import com.seagazer.liteplayer.widget.LiteGestureController
 import com.seagazer.liteplayer.widget.LiteMediaController
 import com.seagazer.multitype.MultiTypeAdapter
@@ -59,6 +61,15 @@ class ListPlayerActivity3 : AppCompatActivity() {
             setPlayerType(ConfigHolder.playerType)
             // support cache player history progress
             supportHistory = true
+            listItemChangedListener = object : ListItemChangedListener {
+                override fun onDetachItemView(oldPosition: Int) {
+                    MediaLogger.e("detach item: $oldPosition")
+                }
+
+                override fun onAttachItemView(newPosition: Int) {
+                    MediaLogger.e("attach item: $newPosition")
+                }
+            }
         }
         val videoScrollListener = object : ListPlayer.VideoListScrollListener {
 
