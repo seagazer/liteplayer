@@ -96,7 +96,7 @@ class ListPlayer2 constructor(val playerView: LitePlayerView) : IPlayerView by p
                     return
                 }
                 container.addView(playerView)
-                MediaLogger.d("attach container: $container")
+                //MediaLogger.d("attach container: $container")
                 listItemChangedListener?.onAttachItemView(0)
                 dataSource.let {
                     MediaLogger.d("start play: $it")
@@ -152,7 +152,7 @@ class ListPlayer2 constructor(val playerView: LitePlayerView) : IPlayerView by p
         if (childIndex < 0) {
             childIndex = 0
         }
-        MediaLogger.d("aaa click=$position, first=$firstVisiblePosition")
+        //MediaLogger.d("aaa click=$position, first=$firstVisiblePosition")
         val container = listener.getVideoContainer(childIndex, position)
         val dataSource = listener.getVideoDataSource(position)
         if (container == null || dataSource == null) {
@@ -161,7 +161,7 @@ class ListPlayer2 constructor(val playerView: LitePlayerView) : IPlayerView by p
         }
         container.addView(playerView)
         listItemChangedListener?.onAttachItemView(childIndex)
-        MediaLogger.d("attach container: $container")
+        //MediaLogger.d("attach container: $container")
         dataSource.let {
             playerView.setDataSource(it)
             if (supportHistory && playerHistoryCache[position] != null) {
@@ -190,7 +190,7 @@ class ListPlayer2 constructor(val playerView: LitePlayerView) : IPlayerView by p
                 detachVideoContainer()
                 container.addView(playerView)
                 listItemChangedListener?.onAttachItemView(childIndex)
-                MediaLogger.d("attach container: $container, currentFirst: $completedVisibleFirst, childIndex: $childIndex")
+                //MediaLogger.d("attach container: $container, currentFirst: $completedVisibleFirst, childIndex: $childIndex")
                 dataSource.let {
                     MediaLogger.d("start play: $it")
                     playerView.setDataSource(it)
@@ -232,14 +232,14 @@ class ListPlayer2 constructor(val playerView: LitePlayerView) : IPlayerView by p
                 val firstChild = view!!.getChildAt(0)
                 val firstVisibleItem = view.firstVisiblePosition
                 var firstPosition = firstVisibleItem
-                MediaLogger.d("firstChild=>$firstChild}")
+                //MediaLogger.d("firstChild=>$firstChild}")
                 if (firstChild == null) {
                     return
                 }
                 if (firstChild.top < 0) {
                     firstPosition += 1
                 }
-                MediaLogger.d("position: playing=$playingPosition, first=$firstPosition, hasScrollChanged=$isScrollChanged")
+                //MediaLogger.d("position: playing=$playingPosition, first=$firstPosition, hasScrollChanged=$isScrollChanged")
                 if (playingPosition != firstPosition || isScrollChanged) {
                     attachHandler.removeMessages(MSG_ATTACH_CONTAINER)
                     val message = attachHandler.obtainMessage(MSG_ATTACH_CONTAINER)
@@ -273,11 +273,11 @@ class ListPlayer2 constructor(val playerView: LitePlayerView) : IPlayerView by p
     private fun detachVideoContainer() {
         if (playerView.parent != null) {
             val parent: ViewGroup = playerView.parent as ViewGroup
-            MediaLogger.d("detach container: $parent")
+            //MediaLogger.d("detach container: $parent")
             if (supportHistory) {
                 val history = playerView.getCurrentPosition()
                 playerHistoryCache[playingPosition] = history
-                MediaLogger.i("cache progress: [$playingPosition - $history]")
+                //MediaLogger.i("cache progress: [$playingPosition - $history]")
             }
             playerView.stop()
             var itemView = parent

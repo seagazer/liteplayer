@@ -43,6 +43,7 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by pl
         hashMapOf<Int, Long>()
     }
     var listItemChangedListener: ListItemChangedListener? = null
+    var isPlayableWhenScrollIdle = true
 
     /**
      * Support auto cache last play position or not.
@@ -108,7 +109,7 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by pl
                 }
                 container.addView(playerView)
                 listItemChangedListener?.onAttachItemView(playingPosition)
-                MediaLogger.d("attach container: $container")
+                //MediaLogger.d("attach container: $container")
                 dataSource.let {
                     playerView.setDataSource(it)
                     playerView.start()
@@ -169,7 +170,7 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by pl
         }
         container.addView(playerView)
         listItemChangedListener?.onAttachItemView(position)
-        MediaLogger.d("attach container: $container")
+        //MediaLogger.d("attach container: $container")
         dataSource.let {
             playerView.setDataSource(it)
             if (supportHistory && playerHistoryCache[position] != null) {
@@ -199,7 +200,7 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by pl
                 detachVideoContainer()
                 container.addView(playerView)
                 listItemChangedListener?.onAttachItemView(currentFirst)
-                MediaLogger.d("attach container: $container")
+                //MediaLogger.d("attach container: $container")
                 dataSource.let {
                     playerView.setDataSource(it)
                     val history = playerHistoryCache[currentFirst]
@@ -219,20 +220,39 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by pl
             layoutManager?.let { lm ->
                 val currentFirst = lm.findFirstCompletelyVisibleItemPosition()
                 if (currentFirst != RecyclerView.NO_POSITION && playingPosition != currentFirst) {
-                    MediaLogger.d("detach container")
+                    //MediaLogger.d("detach container")
                     detachVideoContainer()
-                    MediaLogger.d("position: playing=$playingPosition, first=$currentFirst")
+                    //MediaLogger.d("position: playing=$playingPosition, first=$currentFirst")
                     // 当前第一个不等于上次播放的index，播放当前第一个
-                    if (playingPosition != currentFirst) {
+                    if (playingPosition != currentFirst && !isPlayableWhenScrollIdle) {
+                        attachHandler.removeMessages(MSG_ATTACH_CONTAINER)
+                        attachHandler.sendMessageDelayed(
+                            attachHandler.obtainMessage(MSG_ATTACH_CONTAINER, currentFirst),
+                            ATTACH_DELAY
+                        )
+                        if (currentFirst != RecyclerView.NO_POSITION) {
+                            playingPosition = currentFirst
+                        }
+                    }
+                }
+            }
+        }
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            if (isPlayableWhenScrollIdle && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                layoutManager?.let { lm ->
+                    val currentFirst = lm.findFirstCompletelyVisibleItemPosition()
+                    // 当前第一个不等于上次播放的index，播放当前第一个
+                    if (playingPosition != currentFirst && isPlayableWhenScrollIdle) {
                         attachHandler.removeMessages(MSG_ATTACH_CONTAINER)
                         attachHandler.sendMessageDelayed(
                             attachHandler.obtainMessage(MSG_ATTACH_CONTAINER, currentFirst),
                             ATTACH_DELAY
                         )
                     }
-                }
-                if (currentFirst != RecyclerView.NO_POSITION) {
-                    playingPosition = currentFirst
+                    if (currentFirst != RecyclerView.NO_POSITION) {
+                        playingPosition = currentFirst
+                    }
                 }
             }
         }
@@ -247,8 +267,8 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by pl
                     currentFirst != currentLast &&
                     (playingPosition < currentFirst || playingPosition > currentLast)
                 ) {
-                    MediaLogger.d("position: playing=$playingPosition, first=$currentFirst,last=$currentLast")
-                    MediaLogger.d("detach container")
+                    //MediaLogger.d("position: playing=$playingPosition, first=$currentFirst,last=$currentLast")
+                    //MediaLogger.d("detach container")
                     detachVideoContainer()
                 }
             }
@@ -258,7 +278,7 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by pl
     private fun detachVideoContainer() {
         if (playerView.parent != null) {
             val parent: ViewGroup = playerView.parent as ViewGroup
-            MediaLogger.d("detach container: $parent")
+            //MediaLogger.d("detach container: $parent")
             if (supportHistory) {
                 val history = playerView.getCurrentPosition()
                 playerHistoryCache[playingPosition] = history
