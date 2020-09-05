@@ -10,11 +10,11 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.seagazer.liteplayer.list.ListPlayer
 import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.list.ListItemChangedListener
+import com.seagazer.liteplayer.list.ListPlayer
 import com.seagazer.liteplayer.widget.LiteGestureController
 import com.seagazer.liteplayer.widget.LiteMediaController
 import com.seagazer.sample.ConfigHolder
@@ -23,7 +23,6 @@ import com.seagazer.sample.cache.VideoCacheHelper
 import com.seagazer.sample.data.DataProvider
 import com.seagazer.sample.navigationTo
 import com.seagazer.sample.showConfigInfo
-import com.seagazer.sample.widget.ListCoverOverlay
 import com.seagazer.sample.widget.LoadingOverlay
 import com.seagazer.sample.widget.SimpleItemDecoration
 import kotlinx.android.synthetic.main.activity_list_player.*
@@ -35,8 +34,7 @@ class ListPlayerActivity : AppCompatActivity() {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var listPlayer: ListPlayer
     private var isAutoPlay = true
-
-    private lateinit var coverOverlay: ListCoverOverlay
+    private var lastPlayerHolder: ListAdapter.VideoHolder? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +46,6 @@ class ListPlayerActivity : AppCompatActivity() {
         recycler_view.addItemDecoration(SimpleItemDecoration(0, 10, 0, 10))
         val listAdapter = ListAdapter()
         recycler_view.adapter = listAdapter
-        coverOverlay = ListCoverOverlay(this)
         listPlayer = ListPlayer(LitePlayerView(this)).apply {
             displayProgress(true)
             setProgressColor(resources.getColor(R.color.colorAccent), resources.getColor(R.color.colorPrimaryDark))
@@ -58,37 +55,38 @@ class ListPlayerActivity : AppCompatActivity() {
                 supportVolume = false
                 supportBrightness = false
             })
-            attachOverlay(this@ListPlayerActivity.coverOverlay)
             setRenderType(ConfigHolder.renderType)
             setPlayerType(ConfigHolder.playerType)
             // support cache player history progress
             supportHistory = true
-            listItemChangedListener = object :ListItemChangedListener{
+            // sample to show and hide video cover
+            // onDetachItemView always call before onAttachItemView
+            listItemChangedListener = object : ListItemChangedListener {
                 override fun onDetachItemView(oldPosition: Int) {
                     MediaLogger.e("detach item: $oldPosition")
+                    lastPlayerHolder?.let {
+                        it.videoPoster.visibility = View.VISIBLE
+                    }
                 }
 
                 override fun onAttachItemView(newPosition: Int) {
                     MediaLogger.e("attach item: $newPosition")
+                    lastPlayerHolder?.let {
+                        it.videoPoster.visibility = View.INVISIBLE
+                    }
                 }
             }
         }
         val videoScrollListener = object : ListPlayer.VideoListScrollListener {
 
             override fun getVideoContainer(position: Int): ViewGroup? {
-                // add different cover here, test data for example
-                if (position % 2 == 0) {
-                    coverOverlay.setCover(R.drawable.timg)
-                } else {
-                    coverOverlay.setCover(R.drawable.ic_launcher_background)
+                recycler_view.findViewHolderForAdapterPosition(position)?.let {
+                    if (it is ListAdapter.VideoHolder) {
+                        lastPlayerHolder = it
+                        return it.videoContainer
+                    }
                 }
-                coverOverlay.show()
-                val holder = recycler_view.findViewHolderForAdapterPosition(position)
-                return if (holder != null && holder is ListAdapter.VideoHolder) {
-                    holder.videoContainer
-                } else {
-                    null
-                }
+                return null
             }
 
             override fun getVideoDataSource(position: Int): DataSource? {
@@ -122,8 +120,8 @@ class ListPlayerActivity : AppCompatActivity() {
     inner class ListAdapter : RecyclerView.Adapter<ListAdapter.VideoHolder>() {
 
         inner class VideoHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val text: TextView = itemView.findViewById(R.id.video_index)
-            val image: ImageView = itemView.findViewById(R.id.video_poster)
+            val videoTitle: TextView = itemView.findViewById(R.id.video_index)
+            val videoPoster: ImageView = itemView.findViewById(R.id.video_poster)
             val videoContainer: FrameLayout = itemView.findViewById(R.id.video_container)
 
             init {
@@ -151,8 +149,8 @@ class ListPlayerActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: VideoHolder, position: Int) {
             holder.run {
-                image.setBackgroundResource(R.drawable.timg)
-                text.text = position.toString()
+                videoPoster.setBackgroundResource(R.drawable.timg)
+                videoTitle.text = position.toString()
             }
 
         }

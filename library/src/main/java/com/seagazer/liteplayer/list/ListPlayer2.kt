@@ -280,13 +280,8 @@ class ListPlayer2 constructor(val playerView: LitePlayerView) : IPlayerView by p
                 //MediaLogger.i("cache progress: [$playingPosition - $history]")
             }
             playerView.stop()
-            var itemView = parent
-            while (itemView.parent !is ListView) {
-                itemView = itemView.parent as ViewGroup
-            }
-            val childIndex = (itemView.parent as ListView).indexOfChild(itemView)
             parent.removeView(playerView)
-            listItemChangedListener?.onDetachItemView(childIndex)
+            listItemChangedListener?.onDetachItemView(0)
         }
     }
 
