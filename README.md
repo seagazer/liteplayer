@@ -168,6 +168,7 @@
 <ListPlayer.kt>
     // 默认构造需传入一个LitePlayerView实例
     val listPlayer = ListPlayer(LitePlayerView(context))
+    listPlayer.isPlayableWhenScrollIdle.isPlayableWhenScrollIdle = false// 设置是否滑动停止状态播放(默认true)
     // 定义列表滑动回调
     val videoScrollListener = object : ListPlayer.VideoListScrollListener {
             override fun getVideoContainer(position: Int): ViewGroup? {
@@ -189,7 +190,7 @@
 ```
 
 4. `ListPlayer2`支持以极简的方式接入`ListView`列表播放，框架设计使用代理模式，因此上述`LitePlayerView`的所有`API`都适用于`ListPlayer2`
-* 注意：`IPlayer`是在`attachToListView`中初始化，涉及Player的方法，例如`pause，setPlaySpeed`必须在`attachToRecyclerView`之后调用：
+* 注意：`IPlayer`是在`attachToListView`中初始化，涉及Player的方法，例如`pause，setPlaySpeed`必须在`attachToListView`之后调用：
 ```kotlin
 <ListPlayer2.kt>
     // 默认构造需传入一个LitePlayerView实例
