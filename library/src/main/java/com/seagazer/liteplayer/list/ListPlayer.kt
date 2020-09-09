@@ -241,7 +241,7 @@ class ListPlayer constructor(val playerView: LitePlayerView) : IPlayerView by pl
                 layoutManager?.let { lm ->
                     val currentFirst = lm.findFirstCompletelyVisibleItemPosition()
                     // 当前第一个不等于上次播放的index，播放当前第一个
-                    if ((playingPosition != currentFirst && isPlayableWhenScrollIdle) || isScrollChanged) {
+                    if (currentFirst != RecyclerView.NO_POSITION && (playingPosition != currentFirst || isScrollChanged)) {
                         attachHandler.removeMessages(MSG_ATTACH_CONTAINER)
                         attachHandler.sendMessageDelayed(
                             attachHandler.obtainMessage(MSG_ATTACH_CONTAINER, currentFirst),
