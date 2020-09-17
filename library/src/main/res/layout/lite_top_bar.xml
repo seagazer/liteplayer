@@ -3,8 +3,8 @@
 
     <ImageView
         android:id="@+id/lite_top_bar_back"
-        android:layout_width="32dp"
-        android:layout_height="wrap_content"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:src="@drawable/ic_arrow_back" />
 
     <TextView
@@ -12,9 +12,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
+        android:ellipsize="end"
         android:gravity="center"
         android:maxLines="1"
-        android:textColor="#ffffff"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textColor="@color/lite_text"
         android:textSize="16sp" />
 
 </merge>

@@ -229,6 +229,7 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
             state != PlayerState.STATE_NOT_INITIALIZED && state != PlayerState.STATE_PAUSED
         ) {
             player.playWhenReady = false
+            isPreparing = true
         }
     }
 

@@ -4,8 +4,8 @@
 
     <ImageView
         android:id="@+id/lite_controller_toggle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:src="@drawable/ic_play"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_chainStyle="packed"
@@ -15,10 +15,11 @@
 
     <SeekBar
         android:id="@+id/lite_controller_seek_bar"
+        style="@style/Widget.AppCompat.SeekBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/lite_controller_toggle"
         app:layout_constraintRight_toLeftOf="@+id/lite_controller_progress_timer"
@@ -29,8 +30,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:textColor="#ffffff"
-        android:textSize="12sp"
+        android:textColor="@color/lite_text"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/lite_controller_seek_bar"
         app:layout_constraintRight_toLeftOf="@+id/lite_controller_aspect_ratio"
@@ -38,8 +39,8 @@
 
     <ImageView
         android:id="@+id/lite_controller_aspect_ratio"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_marginStart="8dp"
         android:src="@drawable/ic_full_screen"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="lite_text">#D9FFFFFF</color>
+    <color name="lite_icon">#D9FFFFFF</color>
+    <color name="lite_bg">#8C000000</color>
+    <color name="lite_bg_alpha">#00FFFFFF</color>
+</resources>

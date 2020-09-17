@@ -8,7 +8,7 @@
         android:layout_gravity="center"
         android:background="@drawable/bg_gesture_overlay"
         android:padding="8dp"
-        android:textColor="#ffffff"
+        android:textColor="@color/lite_text"
         android:textSize="16sp"
         android:visibility="invisible" />
 
@@ -21,13 +21,13 @@
         android:background="@drawable/bg_gesture_overlay"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="8dp"
+        android:padding="10dp"
         android:visibility="invisible">
 
         <ImageView
             android:id="@+id/lite_gesture_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="25dp"
+            android:layout_height="25dp" />
 
         <ProgressBar
             android:id="@+id/lite_gesture_progress"
