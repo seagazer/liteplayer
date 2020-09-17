@@ -26,6 +26,7 @@ import com.seagazer.liteplayer.event.RenderStateEvent
 import com.seagazer.liteplayer.helper.MediaLogger
 import com.seagazer.liteplayer.helper.OrientationSensorHelper
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
+import com.seagazer.liteplayer.listener.PlayerViewModeChangedListener
 import com.seagazer.liteplayer.listener.RenderStateChangedListener
 import com.seagazer.liteplayer.pip.IFloatWindow
 import com.seagazer.liteplayer.player.exo.ExoPlayerImpl
@@ -70,6 +71,7 @@ class LitePlayerView @JvmOverloads constructor(
     private val playerStateObserver = MutableLiveData<PlayerStateEvent>()
     private val playerStateListeners = mutableListOf<PlayerStateChangedListener>()
     private val renderStateListeners = mutableListOf<RenderStateChangedListener>()
+    private val modeChangedListeners = mutableListOf<PlayerViewModeChangedListener>()
 
     // config
     private var render: IRender? = null
@@ -467,6 +469,9 @@ class LitePlayerView @JvmOverloads constructor(
         customOverlays.forEach {
             it.autoSensorModeChanged(isAutoSensor)
         }
+        modeChangedListeners.forEach {
+            it.onAutoSensorModeChanged(isAutoSensor)
+        }
     }
 
     private val sensorListener: OrientationEventListener by lazy {
@@ -527,6 +532,9 @@ class LitePlayerView @JvmOverloads constructor(
         topbar?.displayModeChanged(isFullScreen)
         customOverlays.forEach {
             it.displayModeChanged(isFullScreen)
+        }
+        modeChangedListeners.forEach {
+            it.onFullScreenModeChanged(isFullScreen)
         }
     }
 
@@ -718,6 +726,12 @@ class LitePlayerView @JvmOverloads constructor(
     override fun addRenderStateChangedListener(listener: RenderStateChangedListener) {
         if (renderStateListeners.indexOf(listener) == -1) {
             renderStateListeners.add(listener)
+        }
+    }
+
+    override fun addPlayerViewModeChangedListener(listener: PlayerViewModeChangedListener) {
+        if (modeChangedListeners.indexOf(listener) == -1) {
+            modeChangedListeners.add(listener)
         }
     }
 
@@ -940,12 +954,15 @@ class LitePlayerView @JvmOverloads constructor(
         }
     }
 
-    private fun notifyFloatWindowModeChanged(floatWindow: Boolean) {
-        mediaController?.floatWindowModeChanged(floatWindow)
-        gestureController?.floatWindowModeChanged(floatWindow)
-        topbar?.floatWindowModeChanged(floatWindow)
+    private fun notifyFloatWindowModeChanged(isFloatWindow: Boolean) {
+        mediaController?.floatWindowModeChanged(isFloatWindow)
+        gestureController?.floatWindowModeChanged(isFloatWindow)
+        topbar?.floatWindowModeChanged(isFloatWindow)
         customOverlays.forEach {
-            it.floatWindowModeChanged(floatWindow)
+            it.floatWindowModeChanged(isFloatWindow)
+        }
+        modeChangedListeners.forEach {
+            it.onFloatWindowModeChanged(isFloatWindow)
         }
     }
 

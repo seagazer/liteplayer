@@ -9,6 +9,7 @@ import com.seagazer.liteplayer.widget.IOverlay
  * Author: Seagazer
  * Date: 2020/8/8
  */
+@Deprecated("Use PlayerViewModeChangedListener to observe fullscreen, floatWindow and autoSensor state instead")
 open class SimpleOverlayObserver : IOverlay {
     override fun attachPlayer(player: LitePlayerView) {
     }

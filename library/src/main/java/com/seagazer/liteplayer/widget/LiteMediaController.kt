@@ -41,8 +41,10 @@ class LiteMediaController @JvmOverloads constructor(
 
     init {
         setBackgroundResource(R.drawable.bg_lite_controller)
-        setPadding(DpHelper.dp2px(context, 8f), DpHelper.dp2px(context, 8f), DpHelper.dp2px(context, 8f), DpHelper.dp2px(context, 8f))
-
+        setPadding(
+            DpHelper.dp2px(context, 10f), DpHelper.dp2px(context, 8f),
+            DpHelper.dp2px(context, 10f), DpHelper.dp2px(context, 8f)
+        )
         LayoutInflater.from(context).inflate(R.layout.lite_controller, this, true)
         toggle = findViewById(R.id.lite_controller_toggle)
         fullScreen = findViewById(R.id.lite_controller_aspect_ratio)
@@ -79,6 +81,17 @@ class LiteMediaController @JvmOverloads constructor(
                 player.setFullScreenMode(true)
             }
         }
+    }
+
+    fun setIconSize(width: Int, height: Int) {
+        toggle.layoutParams.width = width
+        toggle.layoutParams.height = width
+        fullScreen.layoutParams.width = width
+        fullScreen.layoutParams.height = width
+    }
+
+    fun setProgressTextSize(textSize: Float) {
+        progressTimer.textSize = textSize
     }
 
     override fun attachPlayer(player: LitePlayerView) {

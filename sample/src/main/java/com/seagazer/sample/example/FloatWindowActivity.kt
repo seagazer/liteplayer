@@ -6,6 +6,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.FloatSize
+import com.seagazer.liteplayer.listener.PlayerViewModeChangedListener
 import com.seagazer.liteplayer.listener.SimpleOverlayObserver
 import com.seagazer.liteplayer.pip.LiteFloatWindow
 import com.seagazer.sample.ConfigHolder

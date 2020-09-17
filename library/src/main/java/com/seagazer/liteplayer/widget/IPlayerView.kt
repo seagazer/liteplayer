@@ -9,6 +9,7 @@ import com.seagazer.liteplayer.config.RenderType
 import com.seagazer.liteplayer.event.PlayerStateEvent
 import com.seagazer.liteplayer.event.RenderStateEvent
 import com.seagazer.liteplayer.listener.PlayerStateChangedListener
+import com.seagazer.liteplayer.listener.PlayerViewModeChangedListener
 import com.seagazer.liteplayer.listener.RenderStateChangedListener
 import com.seagazer.liteplayer.pip.IFloatWindow
 import com.seagazer.liteplayer.player.IPlayer
@@ -43,6 +44,12 @@ interface IPlayerView : IPlayerCore {
      * @param listener The listener to listen render state.
      */
     fun addRenderStateChangedListener(listener: RenderStateChangedListener)
+
+    /**
+     * Add a listener to listen the fullscreen, autoSensor and floatWindow mode changed of render.
+     * @param listener The listener to listen this mode state changed.
+     */
+    fun addPlayerViewModeChangedListener(listener: PlayerViewModeChangedListener)
 
     /**
      * Set a type to display the picture of video.

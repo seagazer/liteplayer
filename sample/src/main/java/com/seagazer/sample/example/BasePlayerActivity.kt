@@ -9,6 +9,7 @@ import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.config.AspectRatio
 import com.seagazer.liteplayer.config.PlayerType
 import com.seagazer.liteplayer.helper.MediaLogger
+import com.seagazer.liteplayer.listener.PlayerViewModeChangedListener
 import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
 import com.seagazer.liteplayer.listener.SimpleRenderStateChangedListener
 import com.seagazer.liteplayer.player.ijk.IjkPlayerImpl
@@ -129,6 +130,21 @@ class BasePlayerActivity : AppCompatActivity() {
             override fun onSurfaceCreated() {
                 MediaLogger.d("surface创建")
             }
+        })
+        // new way to observe fullscreen, floatWindow and autoSensor changed
+        player_view.addPlayerViewModeChangedListener(object : PlayerViewModeChangedListener {
+            override fun onFullScreenModeChanged(isFullScreen: Boolean) {
+                // do something when fullscreen changed
+            }
+
+            override fun onFloatWindowModeChanged(isFloatWindow: Boolean) {
+                // do something when floatWindow changed
+            }
+
+            override fun onAutoSensorModeChanged(isAutoSensor: Boolean) {
+                // do something when auto sensor changed
+            }
+
         })
         // prepare video
         player_view.setDataSource(DataSource(urls[currentPlayIndex].first, urls[currentPlayIndex].second))

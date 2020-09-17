@@ -32,19 +32,22 @@ class LiteMediaTopbar @JvmOverloads constructor(
 ) : LinearLayout(context, attrs, defStyleAttr), ITopbar {
 
     private lateinit var player: LitePlayerView
-    private var back: ImageView
+    private var backspace: ImageView
     private var title: TextView
 
     init {
         orientation = HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
         setBackgroundResource(R.drawable.bg_lite_top_bar)
-        setPadding(DpHelper.dp2px(context, 8f), DpHelper.dp2px(context, 8f), DpHelper.dp2px(context, 8f), DpHelper.dp2px(context, 8f))
+        setPadding(
+            DpHelper.dp2px(context, 10f), DpHelper.dp2px(context, 8f),
+            DpHelper.dp2px(context, 10f), DpHelper.dp2px(context, 8f)
+        )
 
         LayoutInflater.from(context).inflate(R.layout.lite_top_bar, this, true)
-        back = findViewById(R.id.lite_top_bar_back)
+        backspace = findViewById(R.id.lite_top_bar_back)
         title = findViewById(R.id.lite_top_bar_title)
-        back.setOnClickListener {
+        backspace.setOnClickListener {
             if (player.isFullScreen()) {
                 player.setFullScreenMode(false)
             } else {
@@ -52,6 +55,14 @@ class LiteMediaTopbar @JvmOverloads constructor(
                     context.onBackPressed()
                 }
             }
+        }
+    }
+
+    fun setBackspaceEnable(backspace: Boolean) {
+        if (backspace) {
+            this.backspace.visibility = View.VISIBLE
+        } else {
+            this.backspace.visibility = View.INVISIBLE
         }
     }
 
