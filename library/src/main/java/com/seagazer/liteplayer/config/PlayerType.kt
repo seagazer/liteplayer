@@ -9,5 +9,6 @@ package com.seagazer.liteplayer.config
 enum class PlayerType {
     TYPE_EXO_PLAYER,
     TYPE_IJK_PLAYER,
-    TYPE_MEDIA_PLAYER
+    TYPE_MEDIA_PLAYER,
+    TYPE_CUSTOM_PLAYER
 }

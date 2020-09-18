@@ -70,6 +70,13 @@ interface IPlayerView : IPlayerCore {
     fun setPlayerType(playerType: PlayerType)
 
     /**
+     * Set custom player logic implement IPlayer by yourself.
+     * The playerType is TYPE_CUSTOM_PLAYER.
+     * @param iPlayer The custom player
+     */
+    fun setCustomPlayer(iPlayer: IPlayer)
+
+    /**
      * Get a player core instance.
      * @return The instance of player core.
      */

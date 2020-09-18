@@ -29,6 +29,7 @@ import com.seagazer.liteplayer.listener.PlayerStateChangedListener
 import com.seagazer.liteplayer.listener.PlayerViewModeChangedListener
 import com.seagazer.liteplayer.listener.RenderStateChangedListener
 import com.seagazer.liteplayer.pip.IFloatWindow
+import com.seagazer.liteplayer.player.IPlayer
 import com.seagazer.liteplayer.player.exo.ExoPlayerImpl
 import com.seagazer.liteplayer.player.ijk.IjkPlayerImpl
 import com.seagazer.liteplayer.player.media.MediaPlayerImpl
@@ -795,6 +796,20 @@ class LitePlayerView @JvmOverloads constructor(
         }
         litePlayerCore.supportSoftwareDecode(softwareDecode)
         this.playerType = playerType
+        registerPlayerStateObserver(playerStateObserver)
+        handler.removeMessages(MSG_PROGRESS)
+    }
+
+    override fun setCustomPlayer(iPlayer: IPlayer) {
+        if (this.playerType == playerType && litePlayerCore.getPlayer() == iPlayer) {
+            return
+        }
+        litePlayerCore.reset()
+        litePlayerCore.destroy()
+        MediaLogger.w("set player: TYPE_CUSTOM_PLAYER")
+        litePlayerCore.setupPlayer(iPlayer)
+        litePlayerCore.supportSoftwareDecode(softwareDecode)
+        this.playerType = PlayerType.TYPE_CUSTOM_PLAYER
         registerPlayerStateObserver(playerStateObserver)
         handler.removeMessages(MSG_PROGRESS)
     }

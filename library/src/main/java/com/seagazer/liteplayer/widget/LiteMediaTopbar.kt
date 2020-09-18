@@ -34,6 +34,11 @@ class LiteMediaTopbar @JvmOverloads constructor(
     private lateinit var player: LitePlayerView
     private var backspace: ImageView
     private var title: TextView
+    private var iconWidthSize = 0
+    private var iconWidthSizeMax = 0
+    private var iconHeightSize = 0
+    private var iconHeightSizeMax = 0
+    private val zoomSize = 1.15f
 
     init {
         orientation = HORIZONTAL
@@ -102,6 +107,31 @@ class LiteMediaTopbar @JvmOverloads constructor(
     override fun getRenderStateChangedListener(): RenderStateChangedListener? = null
 
     override fun displayModeChanged(isFullScreen: Boolean) {
+        if (iconWidthSize == 0 || iconHeightSize == 0) {
+            initIconSize()
+        }
+        if (isFullScreen) {
+            zoomInIcon()
+        } else {
+            zoomOutIcon()
+        }
+    }
+
+    private fun initIconSize() {
+        iconWidthSize = backspace.layoutParams.width
+        iconHeightSize = backspace.layoutParams.height
+        iconWidthSizeMax = (iconWidthSize * zoomSize).toInt()
+        iconHeightSizeMax = (iconHeightSize * zoomSize).toInt()
+    }
+
+    private fun zoomOutIcon() {
+        backspace.layoutParams.width = iconWidthSize
+        backspace.layoutParams.height = iconHeightSize
+    }
+
+    private fun zoomInIcon() {
+        backspace.layoutParams.width = iconWidthSizeMax
+        backspace.layoutParams.height = iconHeightSizeMax
     }
 
     override fun autoSensorModeChanged(isAutoSensor: Boolean) {

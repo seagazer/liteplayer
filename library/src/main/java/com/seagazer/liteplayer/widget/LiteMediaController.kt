@@ -38,6 +38,11 @@ class LiteMediaController @JvmOverloads constructor(
     private var progressTimer: TextView
     private lateinit var player: LitePlayerView
     private var duration = 0L
+    private var iconWidthSize = 0
+    private var iconWidthSizeMax = 0
+    private var iconHeightSize = 0
+    private var iconHeightSizeMax = 0
+    private val zoomSize = 1.15f
 
     init {
         setBackgroundResource(R.drawable.bg_lite_controller)
@@ -83,13 +88,20 @@ class LiteMediaController @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Change toggle and fullscreen icon size.
+     */
     fun setIconSize(width: Int, height: Int) {
         toggle.layoutParams.width = width
-        toggle.layoutParams.height = width
+        toggle.layoutParams.height = height
         fullScreen.layoutParams.width = width
-        fullScreen.layoutParams.height = width
+        fullScreen.layoutParams.height = height
+        initIconSize()
     }
 
+    /**
+     * Change progress text size.
+     */
     fun setProgressTextSize(textSize: Float) {
         progressTimer.textSize = textSize
     }
@@ -155,11 +167,37 @@ class LiteMediaController @JvmOverloads constructor(
     override fun getRenderStateChangedListener(): RenderStateChangedListener? = null
 
     override fun displayModeChanged(isFullScreen: Boolean) {
+        if (iconWidthSize == 0 || iconHeightSize == 0) {
+            initIconSize()
+        }
         if (isFullScreen) {
             fullScreen.setImageResource(R.drawable.ic_normal_screen)
+            zoomInIcon()
         } else {
             fullScreen.setImageResource(R.drawable.ic_full_screen)
+            zoomOutIcon()
         }
+    }
+
+    private fun initIconSize() {
+        iconWidthSize = toggle.layoutParams.width
+        iconHeightSize = toggle.layoutParams.height
+        iconWidthSizeMax = (iconWidthSize * zoomSize).toInt()
+        iconHeightSizeMax = (iconHeightSize * zoomSize).toInt()
+    }
+
+    private fun zoomOutIcon() {
+        toggle.layoutParams.width = iconWidthSize
+        toggle.layoutParams.height = iconHeightSize
+        fullScreen.layoutParams.width = iconWidthSize
+        fullScreen.layoutParams.height = iconHeightSize
+    }
+
+    private fun zoomInIcon() {
+        toggle.layoutParams.width = iconWidthSizeMax
+        toggle.layoutParams.height = iconHeightSizeMax
+        fullScreen.layoutParams.width = iconWidthSizeMax
+        fullScreen.layoutParams.height = iconHeightSizeMax
     }
 
     override fun autoSensorModeChanged(isAutoSensor: Boolean) {
