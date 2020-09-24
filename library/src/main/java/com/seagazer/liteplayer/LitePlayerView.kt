@@ -600,7 +600,9 @@ class LitePlayerView @JvmOverloads constructor(
             gestureController?.hide()
             parent.requestDisallowInterceptTouchEvent(false)
         }
-        return if ((gestureController != null || mediaController != null) && !isFloatWindow()) {
+        return if ((gestureController != null || mediaController != null
+                    || topbar != null) && !isFloatWindow()
+        ) {
             controllerDetector.onTouchEvent(event)
         } else {
             super.onTouchEvent(event)
@@ -793,6 +795,9 @@ class LitePlayerView @JvmOverloads constructor(
             PlayerType.TYPE_MEDIA_PLAYER -> {
                 litePlayerCore.setupPlayer(MediaPlayerImpl(context))
             }
+            PlayerType.TYPE_CUSTOM_PLAYER -> {
+                throw RuntimeException("You should call setCustomPlayer(iPlayer: IPlayer) instead, this method not support TYPE_CUSTOM_PLAYER!")
+            }
         }
         litePlayerCore.supportSoftwareDecode(softwareDecode)
         this.playerType = playerType
@@ -806,7 +811,7 @@ class LitePlayerView @JvmOverloads constructor(
         }
         litePlayerCore.reset()
         litePlayerCore.destroy()
-        MediaLogger.w("set player: TYPE_CUSTOM_PLAYER")
+        MediaLogger.w("setup player from user: TYPE_CUSTOM_PLAYER")
         litePlayerCore.setupPlayer(iPlayer)
         litePlayerCore.supportSoftwareDecode(softwareDecode)
         this.playerType = PlayerType.TYPE_CUSTOM_PLAYER

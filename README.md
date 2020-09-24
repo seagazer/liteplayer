@@ -78,6 +78,8 @@
     litePlayerView.setAutoSensorEnable(true)
     // 设置播放器内核：模式定义在PlayerType中
     litePlayerView.setPlayerType(PlayerType.TYPE_EXO_PLAYER)
+    // 设置自定义的播放器内核(Type自动设置为TYPE_CUSTOM_PLAYER)
+    litePlayerView.setCustomPlayer(CustomPlayer())
     // 设置软解(仅Ijk内核支持,Ijk默认软解)
     litePlayerView.supportSoftwareDecode(true)
     // 设置渲染方式：模式定义在RenderType中
