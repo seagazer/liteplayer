@@ -35,6 +35,7 @@ fun Activity.showConfigInfo() {
         PlayerType.TYPE_MEDIA_PLAYER -> "MediaPlayer"
         PlayerType.TYPE_IJK_PLAYER -> "IjkPlayer"
         PlayerType.TYPE_EXO_PLAYER -> "ExoPlayer"
+        else -> "CustomPlayer"
     }
     val renderText = when (ConfigHolder.renderType) {
         RenderType.TYPE_SURFACE_VIEW -> "SurfaceView"
