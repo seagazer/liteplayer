@@ -127,6 +127,9 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
         liveData?.value = PlayerStateEvent(newState)
     }
 
+    override fun setAutoPausedWhenAudioFocusLoss(autoPaused: Boolean) {
+    }
+
     override fun setDataSource(source: IDataSource) {
         this.dataSource = source
         openVideo()

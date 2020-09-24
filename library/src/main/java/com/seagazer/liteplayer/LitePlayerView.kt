@@ -172,6 +172,145 @@ class LitePlayerView @JvmOverloads constructor(
         }
     }
 
+    private val playerStateEventObserver = Observer<PlayerStateEvent> { event ->
+        when (event.playerState) {
+            PlayerState.STATE_NOT_INITIALIZED -> {
+                MediaLogger.i("----> player not init")
+            }
+            PlayerState.STATE_INITIALIZED -> {
+                MediaLogger.i("----> player init")
+                if (isSurfaceCreated) {
+                    tryBindSurface()
+                }
+            }
+            PlayerState.STATE_PREPARED -> {
+                MediaLogger.i("----> player prepared")
+                playerStateListeners.forEach {
+                    it.onPrepared(dataSource!!)
+                }
+            }
+            PlayerState.STATE_STARTED -> {
+                MediaLogger.i("----> player started")
+                isUserPaused = false
+                keepScreenOn = true
+                playerStateListeners.forEach {
+                    it.onPlaying()
+                }
+                maxProgress = getDuration().toInt()
+                mediaController?.onPlayerPrepared(getDataSource()!!)
+                mediaController?.onStarted()
+                handler.sendEmptyMessage(MSG_PROGRESS)
+            }
+            PlayerState.STATE_PAUSED -> {
+                MediaLogger.i("----> player paused")
+                keepScreenOn = false
+                playerStateListeners.forEach {
+                    it.onPaused()
+                }
+                mediaController?.onPaused()
+            }
+            PlayerState.STATE_STOPPED -> {
+                MediaLogger.i("----> player stopped")
+                keepScreenOn = false
+                playerStateListeners.forEach {
+                    it.onStopped()
+                }
+            }
+            PlayerState.STATE_PLAYBACK_COMPLETE -> {
+                MediaLogger.i("----> player completed")
+                keepScreenOn = false
+                playerStateListeners.forEach {
+                    it.onCompleted()
+                }
+                if (repeat) {
+                    getDataSource()?.let { dataSource ->
+                        setDataSource(dataSource)
+                        start()
+                    }
+                }
+            }
+            PlayerState.STATE_ERROR -> {
+                MediaLogger.i("----> player error")
+                keepScreenOn = false
+                playerStateListeners.forEach {
+                    it.onError(playerType!!, event.errorCode)
+                }
+            }
+            PlayerState.STATE_VIDEO_SIZE_CHANGED -> {
+                MediaLogger.i("---->video size changed: ${event.videoWidth} * ${event.videoHeight}，refresh surface render size")
+                render?.updateVideoSize(event.videoWidth, event.videoHeight)
+                playerStateListeners.forEach {
+                    it.onVideoSizeChanged(event.videoWidth, event.videoHeight)
+                }
+            }
+            PlayerState.STATE_RENDERED_FIRST_FRAME -> {
+                MediaLogger.i("----> render first frame")
+                playerStateListeners.forEach {
+                    it.onRenderFirstFrame()
+                }
+            }
+            PlayerState.STATE_SURFACE_SIZE_CHANGED -> {
+                MediaLogger.i("----> surface size changed")
+            }
+            PlayerState.STATE_BUFFER_START -> {
+                MediaLogger.i("----> start loading")
+                playerStateListeners.forEach {
+                    it.onLoadingStarted()
+                }
+            }
+            PlayerState.STATE_BUFFER_END -> {
+                MediaLogger.i("----> end loading")
+                playerStateListeners.forEach {
+                    it.onLoadingCompleted()
+                }
+            }
+            PlayerState.STATE_SEEK_START -> {
+                MediaLogger.i("----> start seek")
+                playerStateListeners.forEach {
+                    it.onSeekStarted()
+                }
+            }
+            PlayerState.STATE_SEEK_COMPLETED -> {
+                MediaLogger.i("----> end seek")
+                playerStateListeners.forEach {
+                    it.onSeekCompleted()
+                }
+            }
+            PlayerState.STATE_BUFFER_UPDATE -> {
+                MediaLogger.i("----> buffer update: ${event.bufferedPercentage}")
+                playerStateListeners.forEach {
+                    it.onBufferUpdate(event.bufferedPercentage)
+                }
+            }
+        }
+    }
+
+    private val renderStateEventObserver = Observer<RenderStateEvent> { event ->
+        when (event.renderState) {
+            RenderState.STATE_SURFACE_CREATED -> {
+                MediaLogger.i("----> surface create")
+                isSurfaceCreated = true
+                tryBindSurface()
+                renderStateListeners.forEach {
+                    it.onSurfaceCreated()
+                }
+            }
+            RenderState.STATE_SURFACE_CHANGED -> {
+                MediaLogger.i("----> surface changed")
+                renderStateListeners.forEach {
+                    it.onSurfaceChanged()
+                }
+            }
+            RenderState.STATE_SURFACE_DESTROYED -> {
+                isSurfaceCreated = false
+                MediaLogger.i("----> surface destroy")
+                renderStateListeners.forEach {
+                    it.onSurfaceDestroy()
+                }
+            }
+        }
+    }
+
     init {
         MediaLogger.d("----> init")
         if (context is Activity) {
@@ -230,143 +369,23 @@ class LitePlayerView @JvmOverloads constructor(
         if (context !is FragmentActivity) {
             throw IllegalStateException("The current activity must be sub class of FragmentActivity!")
         }
-        renderStateObserver.observe(context, Observer { event ->
-            when (event.renderState) {
-                RenderState.STATE_SURFACE_CREATED -> {
-                    MediaLogger.i("----> surface create")
-                    isSurfaceCreated = true
-                    tryBindSurface()
-                    renderStateListeners.forEach {
-                        it.onSurfaceCreated()
-                    }
-                }
-                RenderState.STATE_SURFACE_CHANGED -> {
-                    MediaLogger.i("----> surface changed")
-                    renderStateListeners.forEach {
-                        it.onSurfaceChanged()
-                    }
-                }
-                RenderState.STATE_SURFACE_DESTROYED -> {
-                    isSurfaceCreated = false
-                    MediaLogger.i("----> surface destroy")
-                    renderStateListeners.forEach {
-                        it.onSurfaceDestroy()
-                    }
-                }
-            }
-        })
-        playerStateObserver.observe(context, Observer { event ->
-            when (event.playerState) {
-                PlayerState.STATE_NOT_INITIALIZED -> {
-                    MediaLogger.i("----> player not init")
-                }
-                PlayerState.STATE_INITIALIZED -> {
-                    MediaLogger.i("----> player init")
-                    if (isSurfaceCreated) {
-                        tryBindSurface()
-                    }
-                }
-                PlayerState.STATE_PREPARED -> {
-                    MediaLogger.i("----> player prepared")
-                    playerStateListeners.forEach {
-                        it.onPrepared(dataSource!!)
-                    }
-                }
-                PlayerState.STATE_STARTED -> {
-                    MediaLogger.i("----> player started")
-                    isUserPaused = false
-                    keepScreenOn = true
-                    playerStateListeners.forEach {
-                        it.onPlaying()
-                    }
-                    maxProgress = getDuration().toInt()
-                    mediaController?.onPlayerPrepared(getDataSource()!!)
-                    mediaController?.onStarted()
-                    handler.sendEmptyMessage(MSG_PROGRESS)
-                }
-                PlayerState.STATE_PAUSED -> {
-                    MediaLogger.i("----> player paused")
-                    keepScreenOn = false
-                    playerStateListeners.forEach {
-                        it.onPaused()
-                    }
-                    mediaController?.onPaused()
-                }
-                PlayerState.STATE_STOPPED -> {
-                    MediaLogger.i("----> player stopped")
-                    keepScreenOn = false
-                    playerStateListeners.forEach {
-                        it.onStopped()
-                    }
-                }
-                PlayerState.STATE_PLAYBACK_COMPLETE -> {
-                    MediaLogger.i("----> player completed")
-                    keepScreenOn = false
-                    playerStateListeners.forEach {
-                        it.onCompleted()
-                    }
-                    if (repeat) {
-                        getDataSource()?.let { dataSource ->
-                            setDataSource(dataSource)
-                            start()
-                        }
-                    }
-                }
-                PlayerState.STATE_ERROR -> {
-                    MediaLogger.i("----> player error")
-                    keepScreenOn = false
-                    playerStateListeners.forEach {
-                        it.onError(playerType!!, event.errorCode)
-                    }
-                }
-                PlayerState.STATE_VIDEO_SIZE_CHANGED -> {
-                    MediaLogger.i("---->video size changed: ${event.videoWidth} * ${event.videoHeight}，refresh surface render size")
-                    render?.updateVideoSize(event.videoWidth, event.videoHeight)
-                    playerStateListeners.forEach {
-                        it.onVideoSizeChanged(event.videoWidth, event.videoHeight)
-                    }
-                }
-                PlayerState.STATE_RENDERED_FIRST_FRAME -> {
-                    MediaLogger.i("----> render first frame")
-                    playerStateListeners.forEach {
-                        it.onRenderFirstFrame()
-                    }
-                }
-                PlayerState.STATE_SURFACE_SIZE_CHANGED -> {
-                    MediaLogger.i("----> surface size changed")
-                }
-                PlayerState.STATE_BUFFER_START -> {
-                    MediaLogger.i("----> start loading")
-                    playerStateListeners.forEach {
-                        it.onLoadingStarted()
-                    }
-                }
-                PlayerState.STATE_BUFFER_END -> {
-                    MediaLogger.i("----> end loading")
-                    playerStateListeners.forEach {
-                        it.onLoadingCompleted()
-                    }
-                }
-                PlayerState.STATE_SEEK_START -> {
-                    MediaLogger.i("----> start seek")
-                    playerStateListeners.forEach {
-                        it.onSeekStarted()
-                    }
-                }
-                PlayerState.STATE_SEEK_COMPLETED -> {
-                    MediaLogger.i("----> end seek")
-                    playerStateListeners.forEach {
-                        it.onSeekCompleted()
-                    }
-                }
-                PlayerState.STATE_BUFFER_UPDATE -> {
-                    MediaLogger.i("----> buffer update: ${event.bufferedPercentage}")
-                    playerStateListeners.forEach {
-                        it.onBufferUpdate(event.bufferedPercentage)
-                    }
-                }
-            }
-        })
+        renderStateObserver.observe(context, renderStateEventObserver)
+        playerStateObserver.observe(context, playerStateEventObserver)
+    }
+
+    override fun setEventObserveForever(observeForever: Boolean) {
+        if (context !is FragmentActivity) {
+            throw IllegalStateException("The current activity must be sub class of FragmentActivity!")
+        }
+        renderStateObserver.removeObserver(renderStateEventObserver)
+        playerStateObserver.removeObserver(playerStateEventObserver)
+        if (observeForever) {
+            renderStateObserver.observeForever(renderStateEventObserver)
+            playerStateObserver.observeForever(playerStateEventObserver)
+        } else {
+            renderStateObserver.observe(context as FragmentActivity, renderStateEventObserver)
+            playerStateObserver.observe(context as FragmentActivity, playerStateEventObserver)
+        }
     }
 
     private fun tryBindSurface() {
@@ -910,6 +929,10 @@ class LitePlayerView @JvmOverloads constructor(
     }
 
     override fun getPlayerState() = litePlayerCore.getPlayerState()
+
+    override fun setAutoPausedWhenAudioFocusLoss(autoPaused: Boolean) {
+        litePlayerCore.setAutoPausedWhenAudioFocusLoss(autoPaused)
+    }
 
     override fun getDataSource() = dataSource
 

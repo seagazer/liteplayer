@@ -34,6 +34,13 @@ interface IPlayerView : IPlayerCore {
     fun registerRenderStateObserver(liveData: MutableLiveData<RenderStateEvent>)
 
     /**
+     * Set observe the event of player and render always or not, default is false.
+     * Set true so you can get the events when activity is in background like play in floatWindow mode.
+     * @param observeForever True observe the event always. More info from {LiveData.observeForever()}
+     */
+    fun setEventObserveForever(observeForever: Boolean)
+
+    /**
      * Add a listener to listen the state changed of player.
      * @param listener The listener to listen player state.
      */
@@ -189,5 +196,11 @@ interface IPlayerView : IPlayerCore {
      * @param repeat True replay after completed, false stop after completed.
      */
     fun setRepeatMode(repeat: Boolean)
+
+    /**
+     * Set auto pause play when audio focus loss or not, default is true.
+     * @param autoPaused True auto pause when audio focus loss, false otherwise.
+     */
+    fun setAutoPausedWhenAudioFocusLoss(autoPaused: Boolean)
 
 }

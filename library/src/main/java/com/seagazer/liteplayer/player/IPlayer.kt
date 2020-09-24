@@ -49,4 +49,9 @@ interface IPlayer : IPlayerCore {
      */
     fun notifyPlayStateChanged(newState: PlayerState)
 
+    /**
+     * Set auto pause play when audio focus loss or not, default is true.
+     * @param autoPaused True auto pause when audio focus loss, false otherwise.
+     */
+    fun setAutoPausedWhenAudioFocusLoss(autoPaused: Boolean)
 }

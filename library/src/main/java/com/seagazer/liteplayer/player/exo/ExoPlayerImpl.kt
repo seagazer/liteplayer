@@ -256,6 +256,9 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
         liveData?.value = PlayerStateEvent(newState)
     }
 
+    override fun setAutoPausedWhenAudioFocusLoss(autoPaused: Boolean) {
+    }
+
     override fun getVideoWidth() = videoWidth
 
     override fun getVideoHeight() = videoHeight

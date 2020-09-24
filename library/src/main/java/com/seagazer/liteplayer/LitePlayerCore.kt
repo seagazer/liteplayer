@@ -30,6 +30,7 @@ class LitePlayerCore constructor(val context: Context) : IPlayer {
     private var audioAttributes: AudioAttributes
     private var audioFocusRequest: AudioFocusRequest? = null
     private var shouldPlayWhenReady = false
+    private var pauseWhenAudioFocusLoss = true
 
     init {
         audioManager = appContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -63,12 +64,16 @@ class LitePlayerCore constructor(val context: Context) : IPlayer {
                 }
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
-                shouldPlayWhenReady = getPlayerState() == PlayerState.STATE_STARTED
-                pause(false)
+                if (pauseWhenAudioFocusLoss) {
+                    shouldPlayWhenReady = getPlayerState() == PlayerState.STATE_STARTED
+                    pause(false)
+                }
             }
             AudioManager.AUDIOFOCUS_LOSS -> {
-                abandonAudioFocus()
-                pause(false)
+                if (pauseWhenAudioFocusLoss) {
+                    abandonAudioFocus()
+                    pause(false)
+                }
             }
         }
     }
@@ -172,6 +177,10 @@ class LitePlayerCore constructor(val context: Context) : IPlayer {
     }
 
     override fun notifyPlayStateChanged(newState: PlayerState) {
+    }
+
+    override fun setAutoPausedWhenAudioFocusLoss(autoPaused: Boolean) {
+        pauseWhenAudioFocusLoss = autoPaused
     }
 
     override fun getVideoWidth() = if (innerPlayer != null) innerPlayer!!.getVideoWidth() else 0
