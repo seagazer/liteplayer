@@ -213,7 +213,7 @@ class MediaPlayerImpl constructor(val context: Context) : IPlayer {
     }
 
     override fun resume() {
-        if (isInPlaybackState() && getPlayerState() == PlayerState.STATE_PAUSED) {
+        if (isInPlaybackState() && getPlayerState() == PlayerState.STATE_PAUSED || getPlayerState() == PlayerState.STATE_PREPARED) {
             player?.start()
             notifyPlayStateChanged(PlayerState.STATE_STARTED)
         }

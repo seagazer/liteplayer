@@ -8,7 +8,6 @@ import android.net.Uri
 import android.view.Surface
 import android.view.SurfaceHolder
 import androidx.lifecycle.MutableLiveData
-import com.seagazer.liteplayer.bean.DataSource
 import com.seagazer.liteplayer.bean.IDataSource
 import com.seagazer.liteplayer.config.PlayerState
 import com.seagazer.liteplayer.event.PlayerStateEvent
@@ -275,7 +274,7 @@ class IjkPlayerImpl constructor(val context: Context) : IPlayer {
     }
 
     override fun resume() {
-        if (isInPlaybackState() && getPlayerState() == PlayerState.STATE_PAUSED) {
+        if (isInPlaybackState() && getPlayerState() == PlayerState.STATE_PAUSED || getPlayerState() == PlayerState.STATE_PREPARED) {
             player?.start()
             notifyPlayStateChanged(PlayerState.STATE_STARTED)
         }

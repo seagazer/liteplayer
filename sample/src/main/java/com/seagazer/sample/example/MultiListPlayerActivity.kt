@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.seagazer.liteplayer.list.ListPlayer
 import com.seagazer.liteplayer.LitePlayerView
 import com.seagazer.liteplayer.bean.DataSource
+import com.seagazer.liteplayer.helper.MediaLogger
+import com.seagazer.liteplayer.listener.SimplePlayerStateChangedListener
 import com.seagazer.sample.ConfigHolder
 import com.seagazer.sample.R
 import com.seagazer.sample.data.DataProvider
@@ -62,6 +64,7 @@ class MultiListPlayerActivity : AppCompatActivity() {
         private lateinit var listPlayer: ListPlayer
         private lateinit var recyclerView: RecyclerView
         private var rootView: View? = null
+        private var isFragmentPause = false
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
             if (rootView == null) {
@@ -79,6 +82,13 @@ class MultiListPlayerActivity : AppCompatActivity() {
                     setRenderType(ConfigHolder.renderType)
                     setPlayerType(ConfigHolder.playerType)
                     attachOverlay(LoadingOverlay(context!!))
+                    addPlayerStateChangedListener(object : SimplePlayerStateChangedListener() {
+                        override fun onPlaying() {
+                            if (isFragmentPause) {
+                                listPlayer.pause(true)
+                            }
+                        }
+                    })
                 }
                 val videoScrollListener = object : ListPlayer.VideoListScrollListener {
 
@@ -102,12 +112,14 @@ class MultiListPlayerActivity : AppCompatActivity() {
 
         override fun onResume() {
             super.onResume()
+            isFragmentPause = false
             listPlayer.resume()
         }
 
-        override fun onStop() {
-            super.onStop()
+        override fun onPause() {
+            isFragmentPause = true
             listPlayer.pause(true)
+            super.onPause()
         }
 
         override fun onDestroyView() {

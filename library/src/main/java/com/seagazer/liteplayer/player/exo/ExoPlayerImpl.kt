@@ -230,11 +230,12 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
         ) {
             player.playWhenReady = false
             isPreparing = true
+            notifyPlayStateChanged(PlayerState.STATE_PAUSED)
         }
     }
 
     override fun resume() {
-        if (isInPlaybackState() && getPlayerState() == PlayerState.STATE_PAUSED) {
+        if (isInPlaybackState() && getPlayerState() == PlayerState.STATE_PAUSED || getPlayerState() == PlayerState.STATE_PREPARED) {
             player.playWhenReady = true
         }
     }
