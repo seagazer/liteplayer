@@ -76,6 +76,7 @@ class LitePlayerView @JvmOverloads constructor(
 
     // config
     private var render: IRender? = null
+    private var customRender: IRender? = null
     private var playerType: PlayerType? = null
     private var renderType: RenderType? = null
     private var softwareDecode = true
@@ -773,6 +774,12 @@ class LitePlayerView @JvmOverloads constructor(
             RenderType.TYPE_TEXTURE_VIEW -> RenderTextureView(context).apply {
                 bindRenderMeasure(renderMeasure)
             }
+            RenderType.TYPE_CUSTOM_VIEW -> {
+                if (customRender == null) {
+                    throw RuntimeException("You should call setCustomRender(iRender: IRender) first!")
+                }
+                customRender!!
+            }
         }
         addView(
             render!!.getRenderView(), 0, LayoutParams(
@@ -787,6 +794,14 @@ class LitePlayerView @JvmOverloads constructor(
             addOverlayInner(it)
         }
         registerRenderStateObserver(renderStateObserver)
+    }
+
+    override fun setCustomRender(iRender: IRender) {
+        if (iRender.getRenderView() !is SurfaceView && iRender.getRenderView() !is TextureView) {
+            throw RuntimeException("Your custom render view must be subclass of SurfaceView or TextureView!")
+        }
+        customRender = iRender
+        setRenderType(RenderType.TYPE_CUSTOM_VIEW)
     }
 
     override fun setAspectRatio(aspectRatio: AspectRatio) {

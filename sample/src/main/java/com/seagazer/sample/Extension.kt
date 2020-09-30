@@ -40,6 +40,7 @@ fun Activity.showConfigInfo() {
     val renderText = when (ConfigHolder.renderType) {
         RenderType.TYPE_SURFACE_VIEW -> "SurfaceView"
         RenderType.TYPE_TEXTURE_VIEW -> "TextureView"
+        else -> "CustomView"
     }
     actionDelay({
         toastLong("当前内核:$playerText, 当前渲染:$renderText")

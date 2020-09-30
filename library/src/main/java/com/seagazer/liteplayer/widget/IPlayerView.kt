@@ -65,6 +65,14 @@ interface IPlayerView : IPlayerCore {
     fun setRenderType(renderType: RenderType)
 
     /**
+     * Set custom render view to play video.
+     * You should handle the video size measure(We provide RenderMeasure to do this easily), and notify the surface state event to player by yourself.
+     * You can get a sample like RenderTextureView or RenderSurfaceView from this library.
+     * @param iRender The render view implement IRender to display video picture.
+     */
+    fun setCustomRender(iRender: IRender)
+
+    /**
      * Set the aspectRatio to display the picture of video.
      * @param aspectRatio  AUTO, ORIGIN, FILL, STRETCH, W_16_9, W_4_3, W_21_9
      */

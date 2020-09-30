@@ -8,5 +8,6 @@ package com.seagazer.liteplayer.config
  */
 enum class RenderType {
     TYPE_SURFACE_VIEW,
-    TYPE_TEXTURE_VIEW
+    TYPE_TEXTURE_VIEW,
+    TYPE_CUSTOM_VIEW
 }
