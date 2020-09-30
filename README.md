@@ -84,6 +84,8 @@
     litePlayerView.supportSoftwareDecode(true)
     // 设置渲染方式：模式定义在RenderType中
     litePlayerView.setRenderType(RenderType.TYPE_SURFACE_VIEW)
+    // 设置自定义渲染视图(必须是SurfaceView或者TextureView子类)
+    litePlayerView.setCustomRender(CustomIRender(context))
     // 设置是否全屏模式
     litePlayerView.setFullScreenMode(true)
     // 判断当前是否全屏模式
@@ -138,6 +140,10 @@
     litePlayerView.addPlayerStateChangedListener(PlayerStateChangedListener())
     // 设置监听Surface状态
     litePlayerView.addRenderStateChangedListener(RenderStateChangedListener())
+    // 设置任何场景都接收player和render状态变更事件(默认false，页面处于可见的生命周期时才接收事件，悬浮窗播放需设置true否则后台播放接收不到事件)
+    litePlayerView.setEventObserveForever(true)
+    // 设置当音频焦点被抢占时是否自动停止播放(默认true)
+    litePlayerView.setAutoPausedWhenAudioFocusLoss(false)
     // 开始播放
     litePlayerView.start()
     // 开始播放(从position开始，相当于start + seek操作)
