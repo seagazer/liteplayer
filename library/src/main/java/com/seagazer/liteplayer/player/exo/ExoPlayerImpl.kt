@@ -178,7 +178,9 @@ class ExoPlayerImpl constructor(val context: Context) : IPlayer {
 
     override fun setDataSource(source: IDataSource) {
         try {
-            stop()
+            isBuffering = false
+            isPendingSeek = false
+            player.stop(true)
             if (currentState == PlayerState.STATE_NOT_INITIALIZED) {
                 notifyPlayStateChanged(PlayerState.STATE_INITIALIZED)
             }
