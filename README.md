@@ -19,9 +19,9 @@
 * <font color=#4A90CE>支持自定义Overlay面板</font>
 
 #### TODO计划：
-* 支持Cache本地缓存
 * 支持系统PictureInPicture模式
-* 提供预置弹幕控制面板
+* 提供预置弹幕控制面板(使用Bilibili弹幕库实现，本库不再集成)
+* 支持Cache本地缓存(可使用VideoCache库进行视频地址的本地代理实现，本库不再集成)
 
 
 
@@ -52,10 +52,10 @@
     // 3.项目中添加远程依赖:
     dependencies {
             // 依赖LitePlayer库
-            implementation 'com.github.seagazer:liteplayer:最新版本'
-            // 项目部分api使用需要依赖livedata
-            implementation 'androidx.lifecycle:lifecycle-livedata:2.2.0'
-            implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+            implementation 'com.github.seagazer:liteplayer:latestVersion'
+            // 项目自动播放暂停及资源释放功能，需要依赖livedata
+            implementation 'androidx.lifecycle:lifecycle-livedata:latestVersion'
+            implementation 'androidx.lifecycle:lifecycle-extensions:latestVersion'
 	}
 
     // 4.存在全屏切换场景时，manifest中对应的Activity需要配置`configChanges`属性，并且使用NoActionBar主题:
@@ -85,7 +85,7 @@
     // 设置渲染方式：模式定义在RenderType中
     litePlayerView.setRenderType(RenderType.TYPE_SURFACE_VIEW)
     // 设置自定义渲染视图(必须是SurfaceView或者TextureView子类)
-    litePlayerView.setCustomRender(CustomIRender(context))
+    litePlayerView.setCustomRender(CustomRender(context))
     // 设置是否全屏模式
     litePlayerView.setFullScreenMode(true)
     // 判断当前是否全屏模式
@@ -176,7 +176,7 @@
 <ListPlayer.kt>
     // 默认构造需传入一个LitePlayerView实例
     val listPlayer = ListPlayer(LitePlayerView(context))
-    listPlayer.isPlayableWhenScrollIdle.isPlayableWhenScrollIdle = false// 设置是否滑动停止状态播放(默认true)
+    listPlayer.isPlayableWhenScrollIdle = false// 设置是否滑动停止状态播放(默认true)
     // 定义列表滑动回调
     val videoScrollListener = object : ListPlayer.VideoListScrollListener {
             override fun getVideoContainer(position: Int): ViewGroup? {
