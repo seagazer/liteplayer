@@ -2,6 +2,15 @@
 <font color=#4A90CE size=5>A lite player for android by Kotlin language</font>
 <font color=#4A90CE size=5>一个完全使用Kotlin开发的简洁高效，轻量级的播放器框架</font>
 
+#### 特点：
+* 100% Kotlin编写，完美与目前主流项目搭配
+* 高效的列表性能，创新式的极简的列表接入方式，完美支持ListView和RecyclerView
+* 组件化设计，提供灵活自由的界面装配与展示
+* 对核心模块提供顶层接口，渲染，播放等核心功能可以单个或者完全自定义，并无缝接入
+* 集成Lifecycle，资源自动释放，无需再手动处理资源泄露问题
+* 框架极简，不提供冗余功能，更轻量，无需担心应用包大小敏感
+* 已用于商业应用线上运营，具备良好稳定性
+
 #### 目前版本已支持功能：
 * <font color=#4A90CE>支持ExoPlayer解码</font>
 * <font color=#4A90CE>支持MediaPlayer解码</font>
