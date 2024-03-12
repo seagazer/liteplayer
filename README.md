@@ -1,45 +1,50 @@
 # LitePlayer [![](https://www.jitpack.io/v/seagazer/liteplayer.svg)](https://www.jitpack.io/#seagazer/liteplayer)
+
 <font color=#4A90CE size=5>A lite player for android by Kotlin language</font>
-<font color=#4A90CE size=5>一个完全使用Kotlin开发的简洁高效，轻量级的播放器框架</font>
+<font color=#4A90CE size=5>一个完全使用 Kotlin 开发的简洁高效，轻量级的播放器框架</font>
 
 #### 特点：
-* 100% Kotlin编写，完美与目前主流项目搭配
-* 高效的列表性能，创新式的极简的列表接入方式，完美支持ListView和RecyclerView
-* 组件化设计，提供灵活自由的界面装配与展示
-* 对核心模块提供顶层接口，渲染，播放等核心功能可以单个或者完全自定义，并无缝接入
-* 集成Lifecycle，资源自动释放，无需再手动处理资源泄露问题
-* 框架极简，不提供冗余功能，更轻量，无需担心应用包大小敏感
-* 已用于商业应用线上运营，具备良好稳定性
+
+- 100% Kotlin 编写，完美与目前主流项目搭配
+- 高效的列表性能，创新式的极简的列表接入方式，完美支持 ListView 和 RecyclerView
+- 组件化设计，提供灵活自由的界面装配与展示
+- 对核心模块提供顶层接口，渲染，播放等核心功能可以单个或者完全自定义，并无缝接入
+- 集成 Lifecycle，资源自动释放，无需再手动处理资源泄露问题
+- 框架极简，不提供冗余功能，更轻量，无需担心应用包大小敏感
 
 #### 目前版本已支持功能：
-* <font color=#4A90CE>支持ExoPlayer解码</font>
-* <font color=#4A90CE>支持MediaPlayer解码</font>
-* <font color=#4A90CE>支持IjkPlayer解码</font>
-* <font color=#4A90CE>支持SurfaceView和TextureView渲染</font>
-* <font color=#4A90CE>支持AspectRatio画面比例模式</font>
-* <font color=#4A90CE>支持FullScreen模式</font>
-* <font color=#4A90CE>支持Window悬浮窗模式</font>
-* <font color=#4A90CE>支持RecyclerView列表播放</font>
-* <font color=#4A90CE>支持ListView列表播放</font>
-* <font color=#4A90CE>支持RTMP,DASH和其他数据流播放</font>
-* <font color=#4A90CE>支持手势seek, setBrightness, setVolume操作</font>
-* <font color=#4A90CE>支持预置Controller控制面板</font>
-* <font color=#4A90CE>支持预置Topbar信息面板</font>
-* <font color=#4A90CE>支持自定义Overlay面板</font>
 
-#### TODO计划：
-* 支持系统PictureInPicture模式
-* 提供预置弹幕控制面板(使用Bilibili弹幕库实现，本库不再集成)
-* 支持Cache本地缓存(可使用VideoCache库进行视频地址的本地代理实现，本库不再集成)
+- <font color=#4A90CE>支持 ExoPlayer 解码</font>
+- <font color=#4A90CE>支持 MediaPlayer 解码</font>
+- <font color=#4A90CE>支持 IjkPlayer 解码</font>
+- <font color=#4A90CE>支持 SurfaceView 和 TextureView 渲染</font>
+- <font color=#4A90CE>支持 AspectRatio 画面比例模式</font>
+- <font color=#4A90CE>支持 FullScreen 模式</font>
+- <font color=#4A90CE>支持 Window 悬浮窗模式</font>
+- <font color=#4A90CE>支持 RecyclerView 列表播放</font>
+- <font color=#4A90CE>支持 ListView 列表播放</font>
+- <font color=#4A90CE>支持 RTMP,DASH 和其他数据流播放</font>
+- <font color=#4A90CE>支持手势 seek, setBrightness, setVolume 操作</font>
+- <font color=#4A90CE>支持预置 Controller 控制面板</font>
+- <font color=#4A90CE>支持预置 Topbar 信息面板</font>
+- <font color=#4A90CE>支持自定义 Overlay 面板</font>
 
+#### TODO 计划：
 
+- 支持系统 PictureInPicture 模式
+- 提供预置弹幕控制面板(使用 Bilibili 弹幕库实现，本库不再集成)
+- 支持 Cache 本地缓存(可使用 VideoCache 库进行视频地址的本地代理实现，本库不再集成)
 
-#### v1版本模块设计：
-<img src="https://upload-images.jianshu.io/upload_images/4420407-43ebcad07f04fe94.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="820" height="500"/>
+#### v1 版本模块设计：
+
+<img src="./image/liteplayer.png" width="820" height="500"/>
 
 最新版本：[![](https://www.jitpack.io/v/seagazer/liteplayer.svg)](https://www.jitpack.io/#seagazer/liteplayer)
+
 #### 基本使用方法：
+
 1. 添加依赖和相关配置：
+
 ```java
     // 1.根目录的build.gradle配置maven地址:
     allprojects {
@@ -75,6 +80,7 @@
 ```
 
 2. `LitePlayerView`为基础视频播放控件，继承至`FrameLayout`，下面列举一些基础`API`：
+
 ```kotlin
 <LitePlayerView.kt>
     // xml解析或者代码构建实例
@@ -180,7 +186,9 @@
 ```
 
 3. `ListPlayer`支持以极简的方式接入`RecyclerView`列表播放，框架设计使用代理模式，因此上述`LitePlayerView`的所有`API`都适用于`ListPlayer`
-* 注意：`IPlayer`是在`attachToRecyclerView`中初始化，涉及Player的方法，例如`pause，setPlaySpeed`必须在`attachToRecyclerView`之后调用：
+
+- 注意：`IPlayer`是在`attachToRecyclerView`中初始化，涉及 Player 的方法，例如`pause，setPlaySpeed`必须在`attachToRecyclerView`之后调用：
+
 ```kotlin
 <ListPlayer.kt>
     // 默认构造需传入一个LitePlayerView实例
@@ -207,7 +215,9 @@
 ```
 
 4. `ListPlayer2`支持以极简的方式接入`ListView`列表播放，框架设计使用代理模式，因此上述`LitePlayerView`的所有`API`都适用于`ListPlayer2`
-* 注意：`IPlayer`是在`attachToListView`中初始化，涉及Player的方法，例如`pause，setPlaySpeed`必须在`attachToListView`之后调用：
+
+- 注意：`IPlayer`是在`attachToListView`中初始化，涉及 Player 的方法，例如`pause，setPlaySpeed`必须在`attachToListView`之后调用：
+
 ```kotlin
 <ListPlayer2.kt>
     // 默认构造需传入一个LitePlayerView实例
@@ -233,9 +243,11 @@
     // 设置自动缓存每个position对应视频的播放进度(默认false)
     listPlayer.supportHistory = true
 ```
+
 ##### 更多具体使用方式和场景可参考项目中的`sample`工程
 
-#### Demo展示：
+#### Demo 展示：
+
 <table>
 <tr>
 <td><center><img src="https://upload-images.jianshu.io/upload_images/4420407-b35972ffa16450c8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="240" height="450"/></center></td>
@@ -258,4 +270,4 @@
 </tr>
 </table>
 
-### <font color=#ff0000>注意：Demo展示中的视频链接均来源于网络，仅供学习交流使用，严禁用于商业用途，若有侵权请联系作者删除(seagazer@qq.com) </color>
+### <font color=#ff0000>注意：Demo 展示中的视频链接均来源于网络，仅供学习交流使用，严禁用于商业用途，若有侵权请联系作者删除(seagazer@qq.com) </color>
