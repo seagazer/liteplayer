@@ -37,7 +37,7 @@
 
 #### v1 版本模块设计：
 
-<img src="./image/liteplayer.png" width="820" height="500"/>
+<img src="./image/liteplayer.jpg" width="820" height="500"/>
 
 最新版本：[![](https://www.jitpack.io/v/seagazer/liteplayer.svg)](https://www.jitpack.io/#seagazer/liteplayer)
 
